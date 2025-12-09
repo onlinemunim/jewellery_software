@@ -561,9 +561,12 @@ function calstrprice() {
 //***************End code to add function for strellering calulations AUTHOR:DIKSHA08OCT2018*********
 /**********Start code to change ID's @Author: PRIYANKA-03-06-17*********/
 function callItemPrice() {
+    var rate;
     if (typeof (document.getElementById('sttr_metal_rate')) != 'undefined' &&
             (document.getElementById('sttr_metal_rate') != null)) {
-        var rate = document.getElementById('sttr_metal_rate').value;
+        rate = document.getElementById('sttr_metal_rate').value;
+        rate = adjustMetalRate(rate);
+        
     }
     var addprice = document.getElementById('sttr_price').value;
     var labCharges = document.getElementById('sttr_lab_charges').value;
@@ -5888,133 +5891,158 @@ function calculateTaxIncludingValNew() {
 }
 ///END CODE FOR TAX CALCULATION @AUTHOR:SHRIKANT 08022023
 
+// function calculateTaxIncludingVal() {
+//     //Code for checking checkbox clicked or not and calculate tax
+//     const cryFinElement = document.getElementById('addItemCryFinVal');
+//     let cryVal = 0; // Initialize your variable
+
+//     //if (document.getElementById('addItemCryFinVal').value != null && document.getElementById('addItemCryFinVal').value != '') {
+//     if (cryFinElement) {
+//         cryVal = document.getElementById('addItemCryFinVal').value;
+//     }
+//     if (document.getElementById("sttr_taxincl_checked").checked == true) {
+
+//         if (document.getElementById("sttr_tot_price_cgst_per").value > 0) {
+//             document.getElementById("sttr_valuation").value = ((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_cgst_per").value) + parseFloat(document.getElementById("sttr_tot_price_sgst_per").value)))).toFixed(2);
+//             document.getElementById("sttr_total_cust_price").value = parseFloat((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_cgst_per").value) + parseFloat(document.getElementById("sttr_tot_price_sgst_per").value)))).toFixed(2);
+//             document.getElementById('sttr_tot_tax').value = (parseFloat(document.getElementById('taxByValMainAmount').value) - parseFloat(document.getElementById('sttr_valuation').value)).toFixed(2);
+//         }
+
+//         if (document.getElementById("sttr_tot_price_igst_per").value > 0) {
+//             document.getElementById("sttr_valuation").value = ((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_igst_per").value)))).toFixed(2);
+//             document.getElementById("sttr_total_cust_price").value = parseFloat((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_igst_per").value)))).toFixed(2);
+//             document.getElementById('sttr_tot_tax').value = (parseFloat(document.getElementById('taxByValMainAmount').value) - parseFloat(document.getElementById('sttr_valuation').value)).toFixed(2);
+//         }
+
+//         if (document.getElementById("sttr_tax").value > 0) {
+//             document.getElementById("sttr_valuation").value = ((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tax").value)))).toFixed(2);
+//             document.getElementById("sttr_total_cust_price").value = parseFloat((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tax").value))));
+//             document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('sttr_valuation').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
+//         } else {
+//             document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('sttr_valuation').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
+//         }
+
+//         if (cryVal == '' || cryVal == null) {
+//             cryVal = 0;
+//         }
+//         document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + parseFloat(cryVal)).toFixed(2);
+
+//     }
+
+//     if (document.getElementById("sttr_taxincl_checked").checked == false) {
+
+//         if (document.getElementById("sttr_tot_price_cgst_per").value > 0) {
+//             document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * (document.getElementById('sttr_tot_price_cgst_per').value) * 2) / 100).toFixed(2);
+//             document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + (parseFloat(document.getElementById("sttr_tot_tax").value)) + (parseFloat(parseFloat(document.getElementById("addItemCryFinVal").value)))).toFixed(2);
+//         }
+
+
+//         if (document.getElementById("sttr_tot_price_igst_per").value > 0) {
+//             document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * document.getElementById('sttr_tot_price_igst_per').value) / 100).toFixed(2);
+//             document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + (parseFloat(document.getElementById("sttr_tot_tax").value)) + (parseFloat(parseFloat(document.getElementById("addItemCryFinVal").value)))).toFixed(2);
+//         }
+
+
+//         if (document.getElementById("sttr_tax").value > 0) {
+//             document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
+//             document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + (parseFloat(document.getElementById("sttr_tot_tax").value)) + (parseFloat(parseFloat(document.getElementById("addItemCryFinVal").value)))).toFixed(2);
+//         } else {
+//             document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
+//         }
+
+//         document.getElementById("sttr_valuation").value = parseFloat(parseFloat(document.getElementById("taxByValMainAmount").value)).toFixed(2);
+
+//     }
+//     //  CGST 
+//     if (document.getElementById('sttr_tot_price_cgst_per').value == '' || document.getElementById('sttr_tot_price_cgst_per').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_cgst_per').value = 0;
+//     }
+
+//     // CALCULATE CGST AMT 
+//     if (document.getElementById('sttr_tot_price_cgst_per').value != '') {
+//         document.getElementById('sttr_tot_price_cgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_cgst_per').value) / 100)).toFixed(2);
+//     }
+
+//     //CGST CHRG
+//     if (document.getElementById('sttr_tot_price_cgst_chrg').value == '' || document.getElementById('sttr_tot_price_cgst_chrg').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_cgst_chrg').value = 0;
+//     }
+
+//     //SGST 
+//     if (document.getElementById('sttr_tot_price_sgst_per').value == '' || document.getElementById('sttr_tot_price_sgst_per').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_sgst_per').value = 0;
+//     }
+
+//     // CALCULATE SGST AMT 
+//     if (document.getElementById('sttr_tot_price_sgst_per').value != '') {
+//         document.getElementById('sttr_tot_price_sgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_sgst_per').value) / 100)).toFixed(2);
+//     }
+
+//     // SGST CHRG 
+//     if (document.getElementById('sttr_tot_price_sgst_chrg').value == '' || document.getElementById('sttr_tot_price_sgst_chrg').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_sgst_chrg').value = 0;
+
+//     }
+
+//     //  IGST 
+//     if (document.getElementById('sttr_tot_price_igst_per').value == '' || document.getElementById('sttr_tot_price_igst_per').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_igst_per').value = 0;
+//     }
+
+//     // CALCULATE IGST AMT 
+//     if (document.getElementById('sttr_tot_price_igst_per').value != '') {
+//         document.getElementById('sttr_tot_price_igst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_igst_per').value) / 100)).toFixed(2);
+//     }
+
+//     // IGST CHRG 
+//     if (document.getElementById('sttr_tot_price_igst_chrg').value == '' || document.getElementById('sttr_tot_price_igst_chrg').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_igst_chrg').value = 0;
+//     }
+
+//     // TAX
+//     if (document.getElementById('sttr_tax').value == '' || document.getElementById('sttr_tax').value == 'NaN') {
+//         document.getElementById('sttr_tax').value = 0;
+//     }
+
+//     if (document.getElementById('sttr_final_valuation').value == 'NaN') {
+//         document.getElementById('sttr_final_valuation').value = 0;
+//     }
+
+//     if (document.getElementById('sttr_valuation').value == 'NaN') {
+//         document.getElementById('sttr_valuation').value = 0;
+//     }
+
+//     //     console.log('totVal======'+totaltaxamt);
+//     //     totVal = parseFloat(document.getElementById('sttr_valuation').value + totaltaxamt).toFixed(2);
+//     //        if (document.getElementById('addItemCryFinVal').value != '') {
+//     //            document.getElementById('sttr_final_valuation').value = (parseFloat(totVal) + parseFloat(document.getElementById('addItemCryFinVal').value)).toFixed(2);
+//     //        }
+//     return false;
+// }
+
 function calculateTaxIncludingVal() {
-    //Code for checking checkbox clicked or not and calculate tax
-    const cryFinElement = document.getElementById('addItemCryFinVal');
-    let cryVal = 0; // Initialize your variable
+    // This function ONLY handles the reverse calculation logic.
+    // It does NOT calculate the final totals (callItemPriceImitationB2 does that).
+    
+    var mainAmt = parseFloat(document.getElementById("taxByValMainAmount").value) || 0;
+    var totalTaxPer = 0;
 
-    //if (document.getElementById('addItemCryFinVal').value != null && document.getElementById('addItemCryFinVal').value != '') {
-    if (cryFinElement) {
-        cryVal = document.getElementById('addItemCryFinVal').value;
+    // Sum up all tax percentages
+    var cgst = parseFloat(document.getElementById("sttr_tot_price_cgst_per").value) || 0;
+    var sgst = parseFloat(document.getElementById("sttr_tot_price_sgst_per").value) || 0;
+    var igst = parseFloat(document.getElementById("sttr_tot_price_igst_per").value) || 0;
+    var otax = parseFloat(document.getElementById("sttr_tax").value) || 0;
+
+    totalTaxPer = cgst + sgst + igst + otax;
+
+    if (totalTaxPer > 0) {
+        // Reverse Calculation Formula: Base = Total / (1 + (TaxRate/100))
+        var baseAmt = (mainAmt * 100) / (100 + totalTaxPer);
+        document.getElementById("sttr_valuation").value = baseAmt.toFixed(2);
+    } else {
+        // If checked but no tax entered, Base = Total
+        document.getElementById("sttr_valuation").value = mainAmt.toFixed(2);
     }
-    if (document.getElementById("sttr_taxincl_checked").checked == true) {
-
-        if (document.getElementById("sttr_tot_price_cgst_per").value > 0) {
-            document.getElementById("sttr_valuation").value = ((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_cgst_per").value) + parseFloat(document.getElementById("sttr_tot_price_sgst_per").value)))).toFixed(2);
-            document.getElementById("sttr_total_cust_price").value = parseFloat((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_cgst_per").value) + parseFloat(document.getElementById("sttr_tot_price_sgst_per").value)))).toFixed(2);
-            document.getElementById('sttr_tot_tax').value = (parseFloat(document.getElementById('taxByValMainAmount').value) - parseFloat(document.getElementById('sttr_valuation').value)).toFixed(2);
-        }
-
-        if (document.getElementById("sttr_tot_price_igst_per").value > 0) {
-            document.getElementById("sttr_valuation").value = ((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_igst_per").value)))).toFixed(2);
-            document.getElementById("sttr_total_cust_price").value = parseFloat((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tot_price_igst_per").value)))).toFixed(2);
-            document.getElementById('sttr_tot_tax').value = (parseFloat(document.getElementById('taxByValMainAmount').value) - parseFloat(document.getElementById('sttr_valuation').value)).toFixed(2);
-        }
-
-        if (document.getElementById("sttr_tax").value > 0) {
-            document.getElementById("sttr_valuation").value = ((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tax").value)))).toFixed(2);
-            document.getElementById("sttr_total_cust_price").value = parseFloat((100 * parseFloat(document.getElementById("taxByValMainAmount").value)) / (100 + (parseFloat(document.getElementById("sttr_tax").value))));
-            document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('sttr_valuation').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
-        } else {
-            document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('sttr_valuation').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
-        }
-
-        if (cryVal == '' || cryVal == null) {
-            cryVal = 0;
-        }
-        document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + parseFloat(cryVal)).toFixed(2);
-
-    }
-
-    if (document.getElementById("sttr_taxincl_checked").checked == false) {
-
-        if (document.getElementById("sttr_tot_price_cgst_per").value > 0) {
-            document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * (document.getElementById('sttr_tot_price_cgst_per').value) * 2) / 100).toFixed(2);
-            document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + (parseFloat(document.getElementById("sttr_tot_tax").value)) + (parseFloat(parseFloat(document.getElementById("addItemCryFinVal").value)))).toFixed(2);
-        }
-
-
-        if (document.getElementById("sttr_tot_price_igst_per").value > 0) {
-            document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * document.getElementById('sttr_tot_price_igst_per').value) / 100).toFixed(2);
-            document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + (parseFloat(document.getElementById("sttr_tot_tax").value)) + (parseFloat(parseFloat(document.getElementById("addItemCryFinVal").value)))).toFixed(2);
-        }
-
-
-        if (document.getElementById("sttr_tax").value > 0) {
-            document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
-            document.getElementById("sttr_final_valuation").value = (parseFloat(document.getElementById("taxByValMainAmount").value) + (parseFloat(document.getElementById("sttr_tot_tax").value)) + (parseFloat(parseFloat(document.getElementById("addItemCryFinVal").value)))).toFixed(2);
-        } else {
-            document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('taxByValMainAmount').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
-        }
-
-        document.getElementById("sttr_valuation").value = parseFloat(parseFloat(document.getElementById("taxByValMainAmount").value)).toFixed(2);
-
-    }
-    //  CGST 
-    if (document.getElementById('sttr_tot_price_cgst_per').value == '' || document.getElementById('sttr_tot_price_cgst_per').value == 'NaN') {
-        document.getElementById('sttr_tot_price_cgst_per').value = 0;
-    }
-
-    // CALCULATE CGST AMT 
-    if (document.getElementById('sttr_tot_price_cgst_per').value != '') {
-        document.getElementById('sttr_tot_price_cgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_cgst_per').value) / 100)).toFixed(2);
-    }
-
-    //CGST CHRG
-    if (document.getElementById('sttr_tot_price_cgst_chrg').value == '' || document.getElementById('sttr_tot_price_cgst_chrg').value == 'NaN') {
-        document.getElementById('sttr_tot_price_cgst_chrg').value = 0;
-    }
-
-    //SGST 
-    if (document.getElementById('sttr_tot_price_sgst_per').value == '' || document.getElementById('sttr_tot_price_sgst_per').value == 'NaN') {
-        document.getElementById('sttr_tot_price_sgst_per').value = 0;
-    }
-
-    // CALCULATE SGST AMT 
-    if (document.getElementById('sttr_tot_price_sgst_per').value != '') {
-        document.getElementById('sttr_tot_price_sgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_sgst_per').value) / 100)).toFixed(2);
-    }
-
-    // SGST CHRG 
-    if (document.getElementById('sttr_tot_price_sgst_chrg').value == '' || document.getElementById('sttr_tot_price_sgst_chrg').value == 'NaN') {
-        document.getElementById('sttr_tot_price_sgst_chrg').value = 0;
-
-    }
-
-    //  IGST 
-    if (document.getElementById('sttr_tot_price_igst_per').value == '' || document.getElementById('sttr_tot_price_igst_per').value == 'NaN') {
-        document.getElementById('sttr_tot_price_igst_per').value = 0;
-    }
-
-    // CALCULATE IGST AMT 
-    if (document.getElementById('sttr_tot_price_igst_per').value != '') {
-        document.getElementById('sttr_tot_price_igst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_igst_per').value) / 100)).toFixed(2);
-    }
-
-    // IGST CHRG 
-    if (document.getElementById('sttr_tot_price_igst_chrg').value == '' || document.getElementById('sttr_tot_price_igst_chrg').value == 'NaN') {
-        document.getElementById('sttr_tot_price_igst_chrg').value = 0;
-    }
-
-    // TAX
-    if (document.getElementById('sttr_tax').value == '' || document.getElementById('sttr_tax').value == 'NaN') {
-        document.getElementById('sttr_tax').value = 0;
-    }
-
-    if (document.getElementById('sttr_final_valuation').value == 'NaN') {
-        document.getElementById('sttr_final_valuation').value = 0;
-    }
-
-    if (document.getElementById('sttr_valuation').value == 'NaN') {
-        document.getElementById('sttr_valuation').value = 0;
-    }
-
-    //     console.log('totVal======'+totaltaxamt);
-    //     totVal = parseFloat(document.getElementById('sttr_valuation').value + totaltaxamt).toFixed(2);
-    //        if (document.getElementById('addItemCryFinVal').value != '') {
-    //            document.getElementById('sttr_final_valuation').value = (parseFloat(totVal) + parseFloat(document.getElementById('addItemCryFinVal').value)).toFixed(2);
-    //        }
-    return false;
 }
 
 function calculateTaxIncludingValRetails() {
@@ -6184,12 +6212,18 @@ function showUpdateTagStockFormDiv(documentRootPath, sttrId, upPanelName, stockT
                 "&utransUserId=" + utransUserId + "&sttr_panel_name=" + sttr_panel_name, true);
     }
     //hrushali
-    else if (sttr_panel_name == 'FASHION_JEWELLARY' || $stockPanelName == 'FASHION_JEWELLARY_UPDATE') {
-        xmlhttp.open("POST", documentRootPath + "/include/php/ogiamndv.php?sttrId=" + sttrId + "&panelName=FASHION_JEWELLARY" +
-                "&updatePanelName=" + upPanelName + "&stockType=" + stockType +
-                "&invPanelName=" + invPanelName + "&utransInvId=" + utransId + "&formName=" + sttr_panel_name +
-                "&utransUserId=" + utransUserId + "&sttr_panel_name=" + sttr_panel_name, true);
-    }
+    // else if (sttr_panel_name == 'FASHION_JEWELLARY' || $stockPanelName == 'FASHION_JEWELLARY_UPDATE') {
+    //     xmlhttp.open("POST", documentRootPath + "/include/php/ogiamndv.php?sttrId=" + sttrId + "&panelName=FASHION_JEWELLARY" +
+    //             "&updatePanelName=" + upPanelName + "&stockType=" + stockType +
+    //             "&invPanelName=" + invPanelName + "&utransInvId=" + utransId + "&formName=" + sttr_panel_name +
+    //             "&utransUserId=" + utransUserId + "&sttr_panel_name=" + sttr_panel_name, true);
+    // }
+    else if (sttr_panel_name == 'FASHION_JEWELLARY' || sttr_panel_name == 'FASHION_JEWELLARY_UPDATE') {
+    xmlhttp.open("POST", documentRootPath + "/include/php/ogiamndv.php?sttrId=" + sttrId + "&panelName=FASHION_JEWELLARY" +
+            "&updatePanelName=" + upPanelName + "&stockType=" + stockType +
+            "&invPanelName=" + invPanelName + "&utransInvId=" + utransId + "&formName=" + sttr_panel_name +
+            "&utransUserId=" + utransUserId + "&sttr_panel_name=" + sttr_panel_name, true);
+}
     //end code
     else {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogiamndv.php?sttrId=" + sttrId + "&panelName=ImitationStock" +

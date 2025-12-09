@@ -1,0 +1,178 @@
+<?php
+//@tutorial: Save Positions of Indicators
+// Created on 26 Aug, 2023 11:50:39 AM
+// @FileName: omsave_positions.php
+
+// Define the project's root directory by going up 5 levels from the current script's directory.
+// This makes the path building reliable regardless of the server's directory structure.
+define('PROJECT_ROOT', dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))));
+
+$currentFileName = basename(__FILE__);
+include 'system/omsachsc.php';
+require_once 'system/omsgeagb.php';
+require_once 'system/omssopin.php';
+include_once 'ommpfndv.php';
+include_once 'ommstockpfunc.php';
+include_once 'conversions.php';
+
+// --- SECTION 1: Fetch dynamic path settings from the omlayout table ---
+
+$layoutQuery = "SELECT omly_option, omly_value FROM omlayout WHERE omly_option IN ('setBarcodePrinter', 'barcodeLblSize')";
+$layoutResult = mysqli_query($conn, $layoutQuery);
+
+if (!$layoutResult) {
+    die("Error: Failed to query the omlayout table. " . mysqli_error($conn));
+}
+
+$printerName = null;
+$labelSize = null;
+
+while ($row = mysqli_fetch_assoc($layoutResult)) {
+    if ($row['omly_option'] === 'setBarcodePrinter') {
+        $printerName = $row['omly_value'];
+    }
+    if ($row['omly_option'] === 'barcodeLblSize') {
+        $labelSize = $row['omly_value']; // e.g., 'lbl_81X12'
+    }
+}
+
+// Check if we found the required settings. If not, stop the script.
+if (empty($printerName) || empty($labelSize)) {
+    die("Error: 'setBarcodePrinter' or 'barcodeLblSize' options are not set in the omlayout table. Please check the database configuration.");
+}
+
+// --- NEW FUNCTION: Generate ZPL header based on label size ---
+
+/**
+ * Generates a ZPL header with dynamic print width and label length.
+ *
+ * @param string $labelSizeString The label size from the database (e.g., 'lbl_81X12').
+ * @param int $dotsPerMm The resolution of the printer (e.g., 8 dpmm for 203 dpi).
+ * @return string The generated ZPL header.
+ */
+function generateZplHeader($labelSizeString, $dotsPerMm = 8) {
+    // 1. Parse the label size string (e.g., 'lbl_81X12') into width and height
+    $parts = explode('X', str_replace('lbl_', '', $labelSizeString));
+    if (count($parts) !== 2 || !is_numeric($parts[0]) || !is_numeric($parts[1])) {
+        // Return a default header or handle the error if the format is unexpected
+        return "CT~~CD,~CC^~CT~
+^XA
+~TA000
+~JSN
+^LT0
+^MNW
+^MTT
+^PON
+^PMN
+^LH0,0
+^JMA
+^PR4,4
+~SD30
+^JUS
+^LRN
+^CI27
+^PA0,1,1,0
+^XZ
+^XA
+^MMT
+^PW647
+^LL0096
+^LS0";
+    }
+
+    $widthInMm = (int)$parts[0];
+    $heightInMm = (int)$parts[1];
+
+    // 2. Convert millimeters to dots
+    $printWidthInDots = $widthInMm * $dotsPerMm;
+    $labelLengthInDots = $heightInMm * $dotsPerMm;
+
+    // 3. Construct the ZPL header with the calculated values
+    $header = "CT~~CD,~CC^~CT~
+^XA
+~TA000
+~JSN
+^LT0
+^MNW
+^MTT
+^PON
+^PMN
+^LH0,0
+^JMA
+^PR4,4
+~SD30
+^JUS
+^LRN
+^CI27
+^PA0,1,1,0
+^XZ
+^XA
+^MMT
+^PW{$printWidthInDots}
+^LL{$labelLengthInDots}
+^LS0";
+
+    return $header;
+}
+
+
+// --- SECTION 2: Fetch indicator positions (Your original query) ---
+
+$indicatorQuery = "SELECT * FROM omindicators WHERE omin_option REGEXP '^tailBcOption([1-9]|1[0-8])$' AND omin_value != 'none' ";
+$indicatorResult = mysqli_query($conn, $indicatorQuery);
+
+$db_results = array();
+while ($row = mysqli_fetch_assoc($indicatorResult)) {
+    $db_results[] = $row;
+}
+
+
+// --- SECTION 3: Build the ZPL content ---
+
+// Dynamically generate the header based on the label size
+// Common printer resolutions: 8 dpmm for 203 dpi, 12 dpmm for 300 dpi
+$prn_header = generateZplHeader($labelSize, 8); // Using 8 dpmm (203 dpi) as an example
+
+$prn_footer = "^PQ1,0,1,Y
+^XZ";
+
+$zpl_options = "";
+
+$x_offset = 20;
+$y_offset = 33;
+$x_multiplier = 2.0;
+$y_multiplier = 2.2;
+
+foreach ($db_results as $row) {
+    if (isset($row['omx_pos']) && $row['omx_pos'] !== '' && isset($row['omy_pos']) && $row['omy_pos'] !== '') {
+        $x_pos = ($row['omx_pos'] * $x_multiplier) + $x_offset;
+        $y_pos = ($row['omy_pos'] * $y_multiplier) + $y_offset;
+        
+        $option_text = str_replace('tailBcOption', 'OPTION', $row['omin_option']);
+        $font_size = !empty($row['omin_fontsize']) ? $row['omin_fontsize'] : '18';
+        $font_params = $font_size . "," . ($font_size + 1);
+
+        $zpl_options .= "^FT" . $x_pos . "," . $y_pos . "^A@N," . $font_params . ",TT0003M_^FH\^CI28^FD" . $option_text . "^FS^CI27\n";
+    }
+}
+
+$zpl_qr_code = "\n";
+$final_prn_content = $prn_header . "\n" . $zpl_options . $zpl_qr_code . "\n" . $prn_footer;
+
+
+// --- SECTION 4: Dynamically construct the file path and save the file ---
+
+// Transform 'lbl_81X12' into 'barcode_81X12.prn'
+$fileName = str_replace('lbl_', 'barcode_', $labelSize) . '.prn';
+
+$file = PROJECT_ROOT . DIRECTORY_SEPARATOR . 'dbdir' . DIRECTORY_SEPARATOR . 'barcode' .
+        DIRECTORY_SEPARATOR . $printerName . DIRECTORY_SEPARATOR . $fileName;
+
+if (file_put_contents($file, $final_prn_content) !== false) {
+    echo "Success: PRN file was generated and saved as " . $file;
+} else {
+    // A more helpful error message
+    echo "Error: Could not write to file. Please check that the web server has write permissions for the directory: " . dirname($file);
+}
+
+?>

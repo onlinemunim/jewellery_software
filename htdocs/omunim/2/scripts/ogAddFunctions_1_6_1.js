@@ -1730,9 +1730,45 @@ function getSellPanel(custId, panelName, sellPanel) {
 /**********Start code to change condition for metal upadation   @Author:SHE04FEB16***************/
 /**********Start code to change condition slPrInvoiceNo TO INVOICE NO  @Author:GAUR12FEB16***************/
 /**********Start code to change condition metalsell type @Author:GAUR29NOV16***************/
-function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slPrInvoiceNo, emiChkValue, panel, metalSellType, UpdatePanelName, eInvoiceNo, eInvoicePreNo, subPanelName) {
+
+function getInvoiceNumber(documentRootPath){
+    xmlhttp.open("POST", documentRootPath + "/include/php/omgetInvoiceNumber.php", true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            // console.log('xmlhttp.responseText',xmlhttp.responseText);
+            document.getElementById('slPrInvoiceNo').value = xmlhttp.responseText
+        }
+    }
+    xmlhttp.send();
+}
+
+function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slPrInvoiceNo, emiChkValue, panel, metalSellType, UpdatePanelName, eInvoiceNo, eInvoicePreNo, subPanelName ,panelnamee) {
+
+    var xmlhttp = new XMLHttpRequest();
+
+    if ( panelName == 'imitationreturnupdatepanel' ){
+        subPanelName = 'imitationreturnupdatepanel';
+//        alert('hiiiii');
+        panelName = 'SellPayUp';
+        xmlhttp.open("POST", documentRootPath + "/include/php/ogspimidv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=StockPurchasePanel" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue+ "&subPanelName=" + subPanelName, true);
+        // returnItemListDiv
+        document.getElementById("main_ajax_loading_div").style.visibility = '';
+        xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("returnItemListDiv").innerHTML = xmlhttp.responseText;
+                document.getElementById("main_ajax_loading_div").style.visibility = 'hidden';
+            }
+        }
+        
+         xmlhttp.send();
+         
+         return false;
+    }    
+
     // alert('UpdatePanelName : ' + UpdatePanelName);
-//    alert('panel : ' + panel);
+    // alert('panel : ' + panel);
+
     if (documentRootPath == '') {
         if (typeof (document.getElementById('documentRootPath')) != 'undefined' &&
                 (document.getElementById('documentRootPath') != null)) {
@@ -1753,8 +1789,13 @@ function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slP
                 document.getElementById("custSellDiv").innerHTML = xmlhttp.responseText;
             } else if (panelName == 'custHome') {
                 document.getElementById("sellMainDiv").innerHTML = xmlhttp.responseText;
-            } else if (panelName == 'StockReturnPanel') {
+            } else if (panelName == 'StockReturnPanel' || panelName == 'ImitationStockReturnPanel' ) {
                 document.getElementById("sellPurchaseItemDetails").innerHTML = xmlhttp.responseText;
+                 // for imitation stock return
+                if ( panelName == 'ImitationStockReturnPanel' ){
+                    document.getElementById('slPrPreInvoiceNo').value = 'IK'
+                    getInvoiceNumber(documentRootPath);
+                }
             } else if (panelName == 'ItemApprovalRecUp' && subPanelName == 'ItemApprovalUpFromSellPanel') {
                 document.getElementById("mainMiddle").innerHTML = xmlhttp.responseText;
             } else {
@@ -1775,7 +1816,7 @@ function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slP
     } else if (panelName == 'CrystalPurchasePanel') {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=" + panelName + "&panelName=CrySellPayUp", true); // Panel name and file changed @Author:SHE24FEB15
     } else if (panel == 'ImitationStock') {// Start code to change condition for imitation stock panel @Author:SHRI05MAR15
-        xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&panelName=" + panelName + "&mainPanel=ImitationPurchasePanel" + "&UpdatePanelName=" + UpdatePanelName, true);
+        xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&panelName=" + panelName + "&mainPanel=ImitationPurchasePanel" + "&UpdatePanelName=" + UpdatePanelName +"&sellPanelName="+panelName, true);
     } else if (panel == 'StrelleringStock') {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&panelName=" + panelName + "&mainPanel=StrlleringPurchasePanel", true);
     } else if (panelName == 'dailyWholeSaleUp') {
@@ -1784,6 +1825,8 @@ function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slP
         xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=" + panelName + "&upPanel=" + panelName, true);
     } else if (panelName == 'StockReturnPanel') {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogrtjsdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=StockReturnPanel" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo, true);
+    } else if (panelName == 'ImitationStockReturnPanel') {
+        xmlhttp.open("POST", documentRootPath + "/include/php/ogrtimidv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=ImitationStockReturnPanel" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo, true);
     } else if (panelName == 'ItemApproval') {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=" + panelName + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue, true);
     } else if (panelName == 'ItemApprovalRecUp' && subPanelName == 'ItemApprovalUpFromSellPanel') {
@@ -1801,6 +1844,8 @@ function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slP
 
     } else if (panelName == 'EstimatePayUp') {
         xmlhttp.open("POST", documentRootPath + "/include/php/omestimate" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=StockPurchasePanel&panelDivName=EstimateUp&mainDivPanelEsName=EstimateGoUp&" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue + "&eInvoiceNo=" + eInvoiceNo + "&eInvoicePreNo=" + eInvoicePreNo, true);
+    } else if (panelName == 'ImitationSellPayUp' && panel == 'imitationpanel') {
+       xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=ImitationPurchasePanel " + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue+ "&panel=" + panel + "&flag=imistockreturnupdate ", true);
     } else {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=StockPurchasePanel" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue+ "&subPanelName=" + subPanelName+ "&panel=" + panel, true);
     }// End code to change condition for imitation stock panel @Author:SHRI05MAR15
@@ -2042,7 +2087,15 @@ function deleteReturnItem(custId, slPrId, panelName, mainPanel, panel, slPrInfo)
                         document.getElementById('deleteInvVerifyPopUp').style.visibility = "hidden";
                     }
                 } else {
-                    document.getElementById("sellPurchaseItemDetails").innerHTML = xmlhttp.responseText;
+                    if ( document.getElementById("sellPurchaseItemDetails") != null ){
+                        document.getElementById("sellPurchaseItemDetails").innerHTML = '';
+                        document.getElementById("sellPurchaseItemDetails").innerHTML = xmlhttp.responseText;
+                    }
+                    if ( document.getElementById("slPrCurrentInvBeforePay") != null ){
+                        document.getElementById("slPrCurrentInvBeforePay").innerHTML = '';
+                        document.getElementById("slPrCurrentInvBeforePay").innerHTML = xmlhttp.responseText;
+                    }
+                    // document.getElementById("sellPurchaseItemDetails").innerHTML = xmlhttp.responseText;
                 }
             } else {
                 document.getElementById("main_ajax_loading_div").style.visibility = "visible";
@@ -3212,12 +3265,16 @@ function closeMessDiv(divName, message) {
 /*********End code to add function @Author:PRIYA10FEB14***********/
 /*************Start code to add function @Author:PRIYA20FEB14**************/
 var subStatus;
-function getSmsTemplate(smtpId, smsTempId, smsTempText, smsType, panelName, smsTempOwner, message) {
-    if ((panelName == 'smsTempAdd') && (document.getElementById('smsTempId').value == '' || document.getElementById('smsTempText').value == '')) {
+function getSmsTemplate(smtpId, smsTempId,smsTempContentId, smsTempText, smsType, panelName, smsTempOwner, message) {
+    if ((panelName == 'smsTempAdd') && (document.getElementById('smsTempId').value == '' || document.getElementById('smsTempContentId').value == '' || document.getElementById('smsTempText').value == '')) {
         if (document.getElementById('smsTempId').value == '') {
             alert('Please Enter Template Id!');
             document.getElementById("smsTempId").focus();
-        } else if (document.getElementById('smsTempText').value == '') {
+        }
+         else if (document.getElementById('smsTempContentId').value == '') {
+             alert('Please Enter Content ID!');
+             document.getElementById("smsTempContentId").focus();
+         } else if (document.getElementById('smsTempText').value == '') {
             alert('Please Enter Template!');
             document.getElementById("smsTempText").focus();
         }
@@ -3266,7 +3323,7 @@ function getSmsTemplate(smtpId, smsTempId, smsTempText, smsType, panelName, smsT
                 }
             }
         };
-        xmlhttp.open("POST", "include/php/omsmstmp" + default_theme + ".php?smtpId=" + smtpId + "&smsTempId=" + smsTempId + "&smsTempText=" + encodeURIComponent(smsTempText) + "&smsType=" + smsType + "&smtp_staff_id=" + smtp_staff_id + "&panelName=" + panelName, true);
+      xmlhttp.open("POST", "include/php/omsmstmp" + default_theme + ".php?smtpId=" + smtpId + "&smsTempId=" + smsTempId + "&smsTempContentId=" + smsTempContentId + "&smsTempText=" + encodeURIComponent(smsTempText) + "&smsType=" + smsType + "&smtp_staff_id=" + smtp_staff_id + "&panelName=" + panelName, true);
         xmlhttp.send();
         //}
     }
@@ -4628,6 +4685,18 @@ function closeAdvanceMoneyDiv() {
 /***********Start code to add function to add adv money dep @Author:PRIYA17JUN14**************************/
 /***********Start code to add serialNum @Author:PRIYA01JUL14*****************/
 function showAdvMoneyDepositMoneyDiv(custId, admnId, amtLeft, firmId, preInvoiceNo, InvoiceNo, accCr, OthInfo, sdate, mdate, ydate, discount, utin_id, advanceRateStr = null) {
+    // console.log(' sdate: ',sdate);
+    let parts = preInvoiceNo.split(" - ");
+    discountIntAmt = parts[2];
+    discountIntAmtElement = document.getElementById(discountIntAmt);
+    // console.log('discount amount id : ',parts[2]); 
+    // console.log('discount amount id element : ',discountIntAmtElement); 
+    // console.log(' discount amount: ',discountIntAmtElement.value);
+
+    var udhaarDepLoanDrAccId = parseInt(document.getElementById("udhaarDepLoanDrAccId").value);
+    var udhaarDepDiscPaidAccId = parseInt(document.getElementById("udhaarDepDiscPaidAccId").value);
+    var udhaarDepIntRecAccId = parseInt(document.getElementById("udhaarDepIntRecAccId").value);
+    
     if (amtLeft == 0) {
         alert('Please enter deposit amount.');
     } else {
@@ -4657,13 +4726,21 @@ function showAdvMoneyDepositMoneyDiv(custId, admnId, amtLeft, firmId, preInvoice
 
         if (admnId == '') {
             var paymInfo = document.getElementById("advMoneyPayOtherInfo").value;
-
+            var interestAmt = document.getElementById("depositIntAmt" + admnId).value;
+            var interestAccId = document.getElementById("udhaarDepIntRecAccId" + admnId).value;
+             var roi = document.getElementById("selROIValue" + admnId).value;
+              var type = document.getElementById("udhaInterestType" + admnId).value;
+            
             xmlhttp.open("POST", "include/php/ompyamt" + default_theme + ".php?userId=" + custId + "&amtLeft=" + amtLeft +
                     "&firmId=" + firmId + "&PreInvoiceNo=" + preInvoiceNo + "&PostInvoiceNo=" + InvoiceNo + "&accCrId=" + accCr + "&PayOtherInfo=" + OthInfo
-                    + "&DOBDay=" + sdate + "&DOBMonth=" + mdate + "&DOBYear=" + ydate + "&paymInfo=" + paymInfo + str + "&advanceRateStr=" + advanceRateStr, true);
-        } else
+                    + "&DOBDay=" + sdate + "&DOBMonth=" + mdate + "&DOBYear=" + ydate + "&paymInfo=" + paymInfo  + str + "&advanceRateStr=" + advanceRateStr + "&roi=" + roi + "&type=" + type , true);
+        } else 
+            // +"&udhaarDepIntRecAccId=" + interestAccId
             xmlhttp.open("POST", "include/php/ompyamt" + default_theme + ".php?userId=" + custId + "&admnId=" + admnId + "&amtLeft=" + amtLeft +
-                    "&firmId=" + firmId + "&DOBDay=" + sdate + "&DOBMonth=" + mdate + "&DOBYear=" + ydate + "&depsoitDisc=" + discount + "&serialNum=" + preInvoiceNo + "&paymentPanelName=UdhaarPayment&mainPanelName=MONEY&transPanelName=MONEY", true);
+                    "&firmId=" + firmId + "&DOBDay=" + sdate + "&DOBMonth=" + mdate + "&DOBYear=" + ydate + "&depsoitDisc=" + discount + "&depositIntAmt=" + discountIntAmtElement.value  +  "&serialNum=" + preInvoiceNo + "&paymentPanelName=UdhaarPayment&mainPanelName=MONEY&transPanelName=ADVMONEY"+ "&udhaarDepIntRecAccId=" + udhaarDepIntRecAccId
+                    + "&udhaarDepLoanDrAccId=" + udhaarDepLoanDrAccId
+                    + "&udhaarDepDiscPaidAccId=" + udhaarDepDiscPaidAccId, true);
+                    
         xmlhttp.send();
 }
 }
@@ -5992,7 +6069,7 @@ function validateSuppPurByItemVal() {
     if (validateSelectField(document.getElementById("firmId").value, "Please select Firm!") == false) {
         document.getElementById("firmId").focus();
         return false;
-    } else if ((document.getElementById("addItemMetal").value != 'Other') && validateEmptyField(document.getElementById("addItemMetalRate").value, "Please enter Metal Rate!") == false) {
+    } else if ((document.getElementById("addItemMetal").value != 'Other') && validateEmptyField((function(){var __e=document.getElementById("addItemMetalRate"); console.log('[ogAddFunctions_1_6_1] addItemMetalRate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Please enter Metal Rate!") == false) {
         document.getElementById("addItemMetalRate").focus();
         return false;
     } else if (validateEmptyField(document.getElementById("addItemId").value, "Please enter Item Id!") == false ||

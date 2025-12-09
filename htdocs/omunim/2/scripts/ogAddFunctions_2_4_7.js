@@ -40,7 +40,7 @@ function validateAddWItemInputs() {
     } else if (validateEmptyField(document.getElementById("sttr_metal_type").value, "Please select Metal!") == false) {
         document.getElementById("sttr_metal_type").focus();
         return false;
-    } else if ((document.getElementById("sttr_metal_type").value != 'Other') && validateEmptyField(document.getElementById("sttr_metal_rate").value, "Please enter Metal Rate!") == false) {
+    } else if ((document.getElementById("sttr_metal_type").value != 'Other') && validateEmptyField((function(){var __e=document.getElementById("sttr_metal_rate"); console.log('[ogAddFunctions_2_4_7] sttr_metal_rate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Please enter Metal Rate!") == false) {
         document.getElementById("sttr_metal_rate").focus();
         return false;
     } else if (validateEmptyField(document.getElementById("sttr_item_pre_id").value, "Please enter Item Pre Id!") == false) {
@@ -192,7 +192,7 @@ function validateAddItemInputs()
     else if (validateEmptyField(document.getElementById("sttr_metal_type").value, "Please select Metal!") == false) {
         document.getElementById("sttr_metal_type").focus();
         return false;
-    } else if ((document.getElementById("sttr_metal_type").value != 'Other') && validateEmptyField(document.getElementById("sttr_metal_rate").value, "Please enter Metal Rate!") == false) {
+    } else if ((document.getElementById("sttr_metal_type").value != 'Other') && validateEmptyField((function(){var __e=document.getElementById("sttr_metal_rate"); console.log('[ogAddFunctions_2_4_7] sttr_metal_rate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Please enter Metal Rate!") == false) {
         document.getElementById("sttr_metal_rate").focus();
         return false;
 
@@ -2024,7 +2024,7 @@ function validateAddSellLotItemInputs() {
     } else if (validateSelectField(document.getElementById("addItemMetal").value, "Please select Metal!") == false) {
         document.getElementById("addItemMetal").focus();
         return false;
-    } else if ((document.getElementById("addItemMetal").value != 'Other') && validateEmptyField(document.getElementById("addItemMetalRate").value, "Please enter Metal Rate!") == false) {
+    } else if ((document.getElementById("addItemMetal").value != 'Other') && validateEmptyField((function(){var __e=document.getElementById("addItemMetalRate"); console.log('[ogAddFunctions_2_4_7] addItemMetalRate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Please enter Metal Rate!") == false) {
         document.getElementById("addItemMetalRate").focus();
         return false;
     }
@@ -3824,7 +3824,7 @@ function addMaster()
 //***************************************************************************************************************
 // START CODE TO ADD FUNCTION FOR PRN PRINT BY BARCODE AND REFERENCEID @RUTUJA-20MAY2020
 //***************************************************************************************************************
-function prnPrintByReference(prnPrintByBarcodeFrom, prnPrintByBarcodeTo, prnPrintByReferenceFrom, prnPrintByReferenceTo, prnPrintByRangeOption)
+function prnPrintByReference(prnPrintByBarcodeFrom, prnPrintByBarcodeTo, prnPrintByReferenceFrom, prnPrintByReferenceTo, prnPrintByRangeOption,panelName)
 {
     if (typeof (document.getElementById('imiPrnPrintByRange')) != 'undefined' &&
             (document.getElementById('imiPrnPrintByRange') != null)) {
@@ -3844,7 +3844,7 @@ function prnPrintByReference(prnPrintByBarcodeFrom, prnPrintByBarcodeTo, prnPrin
         xmlhttp.open("POST", "include/php/omPrnPrintByRange.php?prnPrintByBarcodeFrom=" + prnPrintByBarcodeFrom + "&prnPrintByBarcodeTo=" + prnPrintByBarcodeTo + "&prnPrintByReferenceFrom=" + prnPrintByReferenceFrom + "&prnPrintByReferenceTo=" + prnPrintByReferenceTo + "&prnPrintByRangeOption=" + prnPrintByRangeOption + "&ImiPrnPrintByRange=" + ImiPrnPrintByRange, true);
         xmlhttp.send();
     } else {
-        xmlhttp.open("POST", "include/php/omPrnPrintByRange.php?prnPrintByBarcodeFrom=" + prnPrintByBarcodeFrom + "&prnPrintByBarcodeTo=" + prnPrintByBarcodeTo + "&prnPrintByReferenceFrom=" + prnPrintByReferenceFrom + "&prnPrintByReferenceTo=" + prnPrintByReferenceTo + "&prnPrintByRangeOption=" + prnPrintByRangeOption, true);
+        xmlhttp.open("POST", "include/php/omPrnPrintByRange.php?prnPrintByBarcodeFrom=" + prnPrintByBarcodeFrom + "&prnPrintByBarcodeTo=" + prnPrintByBarcodeTo + "&prnPrintByReferenceFrom=" + prnPrintByReferenceFrom + "&prnPrintByReferenceTo=" + prnPrintByReferenceTo + "&prnPrintByRangeOption=" + prnPrintByRangeOption + "&panelName=" + panelName, true);
         xmlhttp.send();
     }
     return false;
@@ -3964,6 +3964,7 @@ function reverseCalcOfPaymentOnPurchase() {
     var weightForMetalCal = 0;
     var weightIdForMetalCal = "";
     var metalRate = document.getElementById('sttr_metal_rate').value;
+    metalRate = adjustMetalRate(metalRate);
     var metalPurity = document.getElementById('sttr_purity').value;
     var finalMetalPurity = document.getElementById('sttr_final_purity').value;
     var weightTypeForMetalCal = sttr_gs_weight_type;
@@ -4300,6 +4301,7 @@ function calcEstimateStockItemBalance() {
             var payTotalWeightType1 = document.getElementById('sttr_nt_weight_type' + dc).value;
 
             var payMetalRate1 = document.getElementById('sttr_metal_rate' + dc).value;
+            payMetalRate1 = adjustMetalRate(payMetalRate1);
 
             var payMetalTunch1 = document.getElementById('sttr_purity' + dc).value;
             var metalWeight = (payTotalWeight1 * payMetalTunch1) / 100;
@@ -4344,7 +4346,13 @@ function calcEstimateStockItemBalance() {
             var metal_Rate_Int_Val_Length = metal_Rate_Int_Val.toString().length;
             var metalType = document.getElementById('sttr_metal_type' + dc).value;
 
-            if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+            // START CODE TO FIX GOLD RATE CALCULATION WHEN RATE < 20000 @AUTHOR:USER-REQUEST
+            // If metal rate is less than 20,000 and metal type is Gold, treat rate as price per 1 gram
+            if (metal_Rate_Int_Val < 20000 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+                document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+                document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+                document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+            } else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
                 document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
                 document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
                 document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);

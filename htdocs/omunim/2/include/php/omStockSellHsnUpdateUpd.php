@@ -1,23 +1,3 @@
-<?php
-$currentFileName = basename(__FILE__);
-include 'system/omsachsc.php';
-require_once 'system/omsgeagb.php';
-require_once 'system/omssopin.php';
-include 'ommpsbac.php';
-include_once 'ommpfndv.php';
-require_once 'ommpincr.php';
-
-/*
-
-Reasons : HSN No Not Updated
-
-*/
-$query1="UPDATE stock_transaction SET sttr_hsn_no = 7113 WHERE sttr_transaction_type IN ('sell') and sttr_indicator IN('stock','imitation') ;";
-$query2="UPDATE stock_transaction SET sttr_hsn_no = 7108 WHERE sttr_transaction_type IN ('sell') where sttr_indicator IN('rawMetal') and sttr_metal_type='Gold';";
-$query3="UPDATE stock_transaction SET sttr_hsn_no = 7104 WHERE sttr_transaction_type IN ('sell') where sttr_indicator IN('crystal');";
-$query4="UPDATE stock_transaction SET sttr_hsn_no = 7106 WHERE sttr_transaction_type IN ('sell') where sttr_indicator IN('rawMetal') and sttr_metal_type='Silver';";
-mysqli_query($conn, $query1);
-mysqli_query($conn, $query2);
-mysqli_query($conn, $query3);
-mysqli_query($conn, $query4);
+<?php @"SourceGuardian"; //v9.0.3
+if(!function_exists('sg_load')){$__v=phpversion();$__x=explode('.',$__v);$__v2=$__x[0].'.'.(int)$__x[1];$__u=strtolower(substr(php_uname(),0,3));$__ts=(@constant('PHP_ZTS') || @constant('ZEND_THREAD_SAFE')?'ts':'');$__f=$__f0='ixed.'.$__v2.$__ts.'.'.$__u;$__ff=$__ff0='ixed.'.$__v2.'.'.(int)$__x[2].$__ts.'.'.$__u;$__ed=@ini_get('extension_dir');$__e=$__e0=@realpath($__ed);$__dl=function_exists('dl') && function_exists('file_exists') && @ini_get('enable_dl') && !@ini_get('safe_mode');if($__dl && $__e && version_compare($__v,'5.2.5','<') && function_exists('getcwd') && function_exists('dirname')){$__d=$__d0=getcwd();if(@$__d[1]==':') {$__d=str_replace('\\','/',substr($__d,2));$__e=str_replace('\\','/',substr($__e,2));}$__e.=($__h=str_repeat('/..',substr_count($__e,'/')));$__f='/ixed/'.$__f0;$__ff='/ixed/'.$__ff0;while(!file_exists($__e.$__d.$__ff) && !file_exists($__e.$__d.$__f) && strlen($__d)>1){$__d=dirname($__d);}if(file_exists($__e.$__d.$__ff)) dl($__h.$__d.$__ff); else if(file_exists($__e.$__d.$__f)) dl($__h.$__d.$__f);}if(!function_exists('sg_load') && $__dl && $__e0){if(file_exists($__e0.'/'.$__ff0)) dl($__ff0); else if(file_exists($__e0.'/'.$__f0)) dl($__f0);}if(!function_exists('sg_load')){$__ixedurl='http://www.sourceguardian.com/loaders/download.php?php_v='.urlencode($__v).'&php_ts='.($__ts?'1':'0').'&php_is='.@constant('PHP_INT_SIZE').'&os_s='.urlencode(php_uname('s')).'&os_r='.urlencode(php_uname('r')).'&os_m='.urlencode(php_uname('m'));$__sapi=php_sapi_name();if(!$__e0) $__e0=$__ed;if(function_exists('php_ini_loaded_file')) $__ini=php_ini_loaded_file(); else $__ini='php.ini';if((substr($__sapi,0,3)=='cgi')||($__sapi=='cli')||($__sapi=='embed')){$__msg="\nPHP script '".__FILE__."' is protected by SourceGuardian and requires a SourceGuardian loader '".$__f0."' to be installed.\n\n1) Download the required loader '".$__f0."' from the SourceGuardian site: ".$__ixedurl."\n2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="\n3) Edit ".$__ini." and add 'extension=".$__f0."' directive";}}$__msg.="\n\n";}else{$__msg="<html><body>PHP script '".__FILE__."' is protected by <a href=\"http://www.sourceguardian.com/\">SourceGuardian</a> and requires a SourceGuardian loader '".$__f0."' to be installed.<br><br>1) <a href=\"".$__ixedurl."\" target=\"_blank\">Click here</a> to download the required '".$__f0."' loader from the SourceGuardian site<br>2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="<br>3) Edit ".$__ini." and add 'extension=".$__f0."' directive<br>4) Restart the web server";}}$msg.="</body></html>";}	die($__msg);exit();}}return sg_load('FA4526990F78439CAAQAAAASAAAABIgAAACABAAAAAAAAAD/tO7MRt0P8yWtUzs6Q76mlY0IWefAn+c/NRizwG5M8bc0bLKsPGm7aWNijUUzswIqeag1fog+eKnE2JspkguEnEs2+SHS6LnQBKH+HZcxdEBzew97V91gXROUlf8znh1Fq7IDZxarAlM5E1aDO7OMmR7qFUtumL3+oJ447GKiXk5nojNKRhJ6kzUAAAAIAwAALJOlUUize9ucpIMnNOHDeJ0VnSEZqfBIH7n4dRR8z2jSb/sa9rIlA1teC11+lkvy/8PLZYeWRkSmH0fOhw7TUSUPlnx8mDQTz1fbH+eVA6Ns3GuDmswDzv1NBORLZCzM6qKsp2vZnCIVpsxTkGTaUFE0V1w07YDaMMXvFhjQkSfgcx2SJfNym9gyef0iTHba0cqMOcEMaAPiI56HuRfTOYC01zocAru2Y3CGrfrZJaCBN0b3KwpCPqpy2oR5rZey38xa4Lnq88qtlTtqUg9j8L87MXSQevNWDddsn2JJlQ/zQD0UktFlg55W8/+R53ZmEJBG2ytQkKPGAyabm++wkQKzRFlPhg/gyam463Q6G59R3Vvk5hG4/r1BekHCMefmh1b75JhBdsBL4S7V0wNOZgxpB6+0Fh6W2FqHr9+FLAQtrKnQboznaatg1AQZWGznaB/TGH2ijQbLm82gaXh5wsFT3U8Nfqhe6/ckteU1VaZF4YfieZ+k8YAvptZYXuK0cpiPjfUiY5AFCA1/JToemP4kW9TEe4NS0GzPlhlBs5zrF/DgPYiO/mFFbQvEhp0wFfcUD5JENFJI8Y4s/m1uFNOcQPXNkO6SAxU6qr+5fk+o+WxsJzLWXcXKX8lk6F+BJK5b6udmQnUvwvqJvzVXbNmtFqG4y4MiQOH4f3LEklK36WbhRlpRzo9Rnm4eAd54c19Idjnmh7g/DJDQ4CX9FMGbhDpfsJpHIAFY7t64MDoK3sC+1255Xexi9Vv7pVfK4WvelamODlie6e2Kp0jM3DpfZdXAG7KGTYWk+00AKhqF4WGEn1i4ROkEpq+3Qcq8LgxhF3fl6McEgQOUkEf2F4eaGyXHvmmg+BnJR/OpjhiLsxg8laXKDsq5d9eH8RoPo/KvRaQk7FfGNk7Gwb3zlDO6iG81+RtF8grp4tiPGxGKxFQ7UUAdWXCgT0X4yEjBWZujCIOlK06oZaDJ925/kx8Jy5avRBZRX8lz6BXOFRsyGl/6uiJVKHbmP4FeZUjbQh0g5ejda2sAAAAA');
 ?>

@@ -48,6 +48,51 @@ function closeAdvMetalDiv() {
 //********************* Show Udhaar Deposit Div ****************************
 /***********End code to change Div like addNewUdhaarDiv for adv metal @Author:ANUJA12JAN16*************/
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// START CODE FOR STOCK SELL IMITATION @PRATIKSHA:18FEB2025
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+function setPrice(priceType, franchise_Price, dealer_Price, discounted_Price, cust_Price) {
+    //alert('rrrr');
+    document.getElementById("sellPriceLabel").innerText = priceType; // Update SELL PRICE text
+
+    // Debugging: Log the parameters to check if they are correct
+    console.log("Price Type:", priceType);
+    console.log("FRANCHISE PRICE:", franchise_Price);
+    console.log("DEALER PRICE:", dealer_Price);
+    console.log("DISCOUNT PRICE:", discounted_Price);
+    console.log("MRP:", cust_Price);
+
+    // Update the text box based on the selected price type
+    if (priceType == 'FRANCHISE PRICE') {
+        //alert('aaaa');
+        document.getElementById("sttr_price").value = franchise_Price;  // Update textbox with franchise price
+        //document.getElementById("price").value = aaaa;  
+         document.getElementById("sttr_valuation").value = document.getElementById("sttr_quantity").value * document.getElementById("sttr_price").value;
+    } else if (priceType == 'DEALER PRICE') {
+        document.getElementById("sttr_price").value = dealer_Price;   // Update textbox with dealer price
+         //document.getElementById("price").value = bbb;  
+         document.getElementById("sttr_valuation").value = document.getElementById("sttr_quantity").value * document.getElementById("sttr_price").value;
+
+    } else if (priceType == 'DISCOUNT PRICE') {
+        document.getElementById("sttr_price").value = discounted_Price;   // Update textbox with dealer price
+        //document.getElementById("price").value = ccc;   // Update textbox with discount price
+         document.getElementById("sttr_valuation").value = document.getElementById("sttr_quantity").value * document.getElementById("sttr_price").value;
+
+    } else {
+        document.getElementById("sttr_price").value = cust_Price;// Default to MRP
+         document.getElementById("sttr_valuation").value = document.getElementById("sttr_quantity").value * document.getElementById("sttr_price").value;
+
+    }
+    //alert('aaaa' + aaaa);
+    //alert('sttr_valuation' + sttr_valuation);
+}
+
+
+//
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// END CODE FOR STOCK SELL IMITATION @PRATIKSHA:18FEB2025
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//
 function addAdvanceMetalDetails(obj) {
 //    alert(document.getElementById("advMetalOccCheck").value+" "+document.getElementById("advMetalTimePeriod").value);
     if (document.getElementById("paidCounter").value > 0) {
@@ -1066,6 +1111,10 @@ function addPaymentItemPurchase() {
             if (document.getElementById('payButClickId').value == 'true' && document.getElementById('noOfItemsInTable').value != 0) {
 
             } else {
+                const metalElement = document.getElementById("addItemMetal");
+                const rateElement = document.getElementById("addItemMetalRate");
+
+
                 if (document.getElementById("itemSubPanel").value == 'addByItemsUp' || document.getElementById("itemSubPanel").value == 'itemsAddUp' || document.getElementById('simItemPanel').value == 'SimilarItem' ||
                         document.getElementById("itemPanel").value == 'SuppOrderUp') {
                     if (noOfCrystal == '' || noOfCrystal == undefined) {
@@ -1075,8 +1124,8 @@ function addPaymentItemPurchase() {
                 if (validateSelectField(document.getElementById("firmId").value, "Please select Firm!") == false) {
                     document.getElementById("firmId").focus();
                     return false;
-                } else if ((document.getElementById("addItemMetal").value != 'Other') && validateEmptyField(document.getElementById("addItemMetalRate").value, "Please enter Metal Rate!") == false) {
-                    document.getElementById("addItemMetalRate").focus();
+                } else if ( metalElement && rateElement && metalElement.value !== 'Other' &&  validateEmptyField((function(){ console.log('[advanceMetal] rateElement exists:', !!rateElement, 'value:', rateElement?rateElement.value:null); return rateElement?rateElement.value:''; })(), "Please enter Metal Rate!") === false ) {
+                    rateElement.focus();
                     return false;
                 } else if (validateEmptyField(document.getElementById("addItemId").value, "Please enter Item Id!") == false ||
                         validateNum(document.getElementById("addItemId").value, "Accept only numeric characters without space character!") == false) {
@@ -3453,7 +3502,7 @@ function showAddWhStockPanel(panel) {
                     panel == 'ExpiredStockList' || panel == 'FineAllWholesaleStock' ||
                     panel == 'conversionPanel' || panel == 'deletedStockList' ||
                     panel == 'transferredStockList' || panel == 'discountList' || panel == 'AvailStockListWithFixedMrp' ||
-                    panel == 'discountCommissionList' || panel == 'discountCommissionListMostLess' || panel == 'discountCommissionListMostLessL' || panel == 'AvailStockListWithZeroQty' || panel == 'CrystalretailStock' || panel == 'CrystalrwholesaleStock' || panel == 'CadStock') {//add new panel for imitation and crystal @omkar30JAN2024
+                    panel == 'discountCommissionList' || panel == 'discountCommissionListMostLess' || panel == 'discountCommissionListMostLessL' || panel == 'AvailStockListWithZeroQty' || panel == 'CrystalretailStock' || panel == 'CrystalrwholesaleStock' || panel == 'CadStock',panel == 'imitationStock') {//add new panel for imitation and crystal @omkar30JAN2024
                 document.getElementById("stockPanelSubDiv").innerHTML = xmlhttp.responseText;
             } else {
                 document.getElementById("mainBigMiddle").innerHTML = xmlhttp.responseText;
@@ -3578,6 +3627,9 @@ function showAddWhStockPanel(panel) {
         xmlhttp.open("POST", "include/php/omavalblstkwiZeroQty" + default_theme + ".php?panelName=" + panel, true);
     } else if (panel == 'CadStock') {
         xmlhttp.open("POST", "include/php/omcadstockreports" + default_theme + ".php?panelName=" + panel, true);
+    }
+    else if (panel == 'imitationStock') {
+        xmlhttp.open("POST", "include/php/omimistockreports" + default_theme + ".php?panelName=" + panel, true);
     }
     /* END CODE FOR ADDED STOCK REPORT WITJ ZERO QTY @SIMRAN:02MAY2023*/
     else {
@@ -4863,9 +4915,9 @@ function calStockItemPrice() {
     if (document.getElementById('sttr_final_purity').value != '') {
         //
         document.getElementById('sttr_final_fine_weight').value = parseFloat((document.getElementById('sttr_final_purity').value * parseFloat(wt)) / 100).toFixed(4);
-        if (document.getElementById('itemReadyorderlist') != null) {
+        //if (document.getElementById('itemReadyorderlist') != null) {
             calculateWastageWtPurchase();
-        }
+        //}
         //
         //alert('sttr_final_fine_weight == ' + document.getElementById('sttr_final_fine_weight').value);
         //
@@ -4908,6 +4960,17 @@ function calStockItemPrice() {
     //
     // METAL RATE @PRIYANKA-20DEC2021
     var metalRate = parseFloat(document.getElementById('sttr_metal_rate').value);
+    // Diagnostic log: check element existence and value (guarded to avoid exceptions)
+    try {
+        var sttrMetalRateElem = document.getElementById('sttr_metal_rate');
+        if (sttrMetalRateElem) {
+            console.log('[calStockItemPrice] sttr_metal_rate element present, value =', sttrMetalRateElem.value);
+        } else {
+            console.log('[calStockItemPrice] sttr_metal_rate element NOT present');
+        }
+    } catch (e) {
+        console.log('[calStockItemPrice] error while logging sttr_metal_rate', e);
+    }
     //
     // METAL TYPE @PRIYANKA-20DEC2021
     var metalType = document.getElementById('sttr_metal_type').value;
@@ -4919,11 +4982,14 @@ function calStockItemPrice() {
     // FOR METAL RATE LENGTH @PRIYANKA-20DEC2021
     var metal_Rate_Int_Val_Length = metal_Rate_Int_Val.toString().length;
     //
+    // FIXED: Check actual rate value instead of digit count. Rates < 20,000 are per-gram; >= 20,000 are per-10gm/per-kg
+    var isRateLessThan20k = metalRate < 20000;
     //
     //alert('metalRate == ' + metalRate);
     //alert('metalType == ' + metalType);
     //alert('metal_Rate_Int_Val == ' + metal_Rate_Int_Val);
     //alert('metal_Rate_Int_Val_Length == ' + metal_Rate_Int_Val_Length);
+    //alert('isRateLessThan20k == ' + isRateLessThan20k);
     if (document.getElementById('checkarateonegm').value == 'true') {
         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
@@ -4931,20 +4997,19 @@ function calStockItemPrice() {
     } else {
         //
         // FOR METAL RATE @PRIYANKA-20DEC2021
-        if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3 || metal_Rate_Int_Val_Length == 4) &&
-                (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+        // UPDATED: Gold uses value-based check (<20,000 = per-gram, >=20,000 = per-10gm); Silver/StrSilver use digit-length
+        if (isRateLessThan20k && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
             //
-            // FOR GOLD METAL RATE PER GM @PRIYANKA-20DEC2021
+            // FOR GOLD METAL RATE PER GM (rate < 20,000) @PRIYANKA-20DEC2021 - UPDATED
             document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
             document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
             document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
             //
             //alert('gmWtInGm #== ' + document.getElementById('gmWtInGm').value);
             //
-        } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) &&
-                (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+        } else if (!isRateLessThan20k && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
             //
-            // FOR GOLD METAL RATE PER 10 GM @PRIYANKA-20DEC2021
+            // FOR GOLD METAL RATE PER 10 GM (rate >= 20,000) @PRIYANKA-20DEC2021 - UPDATED Later modified by Badshah- 12-11-2025
             document.getElementById('gmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
             document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
             document.getElementById('gmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
@@ -4963,8 +5028,7 @@ function calStockItemPrice() {
                 (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
             //
             // FOR SILVER METAL RATE PER GM @PRIYANKA-20DEC2021
-            //
-            // FOR DISPLAY SILVER RATE ACCORDING TO PER10GM@RENUKA-15DEC2022
+            //FOR DISPLAY SILVER RATE ACCORDING TO PER10GM@RENUKA-15DEC2022
             if (document.getElementById('silverMetalRateby10gm').value == 'yes') {
                 document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
                 document.getElementById('srGmWtInKg').value = parseFloat(100 * 1).toFixed(2);
@@ -4979,7 +5043,7 @@ function calStockItemPrice() {
         } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) &&
                 (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
             //
-            // FOR SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
+            // FOR STRUCTURED SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
             document.getElementById('strsrGmWtInKg').value = parseFloat(1).toFixed(2);
             document.getElementById('strsrGmWtInGm').value = parseFloat(1000 * 1).toFixed(2);
             document.getElementById('strsrGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
@@ -4988,9 +5052,8 @@ function calStockItemPrice() {
         } else if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3 || metal_Rate_Int_Val_Length == 4) &&
                 (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
             //
-            // FOR SILVER METAL RATE PER GM @PRIYANKA-20DEC2021
-            //
-            // FOR DISPLAY SILVER RATE ACCORDING TO PER10GM@RENUKA-15DEC2022
+            // FOR STRUCTURED SILVER METAL RATE PER GM @PRIYANKA-20DEC2021
+            //FOR DISPLAY SILVER RATE ACCORDING TO PER10GM@RENUKA-15DEC2022
             if (document.getElementById('strsilverMetalRateby10gm').value == 'yes') {
                 document.getElementById('strsrGmWtInGm').value = parseFloat(10).toFixed(2);
                 document.getElementById('strsrGmWtInKg').value = parseFloat(100 * 1).toFixed(2);
@@ -5067,7 +5130,7 @@ function calStockItemPrice() {
         //
         //alert('labChargesType == ' + labChargesType);
         //
-        if (document.getElementById('sttr_other_charges_by').value != 'lbInWt') {
+    if (document.getElementById('sttr_other_charges_by').value != 'lbInWt') {
 
             if (labCharges != '') {
 
@@ -5149,13 +5212,13 @@ function calStockItemPrice() {
         // ******************************************************************************************************
         // START CODE TO CALCULATE TOTAL OTHER CHARGES @PRIYANKA-12OCT2018
         // ******************************************************************************************************
-        var OtherCharges = document.getElementById('sttr_other_charges').value; // OTHER CHARGES
-        var OtherChargesType = document.getElementById('sttr_other_charges_type').value; // OTHER CHARGES TYPE
-        var OtherChargesBy = document.getElementById('sttr_nt_weight').value; // OTHER CHARGES BY NET WEIGHT
-        var otherWeightType = document.getElementById('sttr_nt_weight_type').value; // NET WEIGHT TYPE
-        var totalOtherCharges = 0;
+    var OtherCharges = document.getElementById('sttr_other_charges').value; // OTHER CHARGES
+    var OtherChargesType = document.getElementById('sttr_other_charges_type').value; // OTHER CHARGES TYPE
+    var OtherChargesBy = document.getElementById('sttr_nt_weight').value; // OTHER CHARGES BY NET WEIGHT
+    var otherWeightType = document.getElementById('sttr_nt_weight_type').value; // NET WEIGHT TYPE
+    var totalOtherCharges = 0;
         //
-        if (OtherCharges != '') {
+    if (OtherCharges != '') {
             //
             if (OtherChargesType == 'KG') {
                 //
@@ -5253,6 +5316,11 @@ function calStockItemPrice() {
 ////        metalType = 'StrSilver';
 //        console.log('metalType : '+metalType);
 //        console.log(wtType);
+        // Log sttr_final_valuation after every assignment
+        function logFinalValuation(context) {
+            var val = document.getElementById('sttr_final_valuation').value;
+            // console.log('[calStockItemPrice] sttr_final_valuation', context, ':', val);
+        }
         if (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold') {
             //
             //
@@ -5278,15 +5346,21 @@ function calStockItemPrice() {
             if (wtType == 'KG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Gold KG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'GM') {
                 document.getElementById('sttr_valuation').value = parseFloat((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value).toFixed(2);
                 document.getElementById('addItemValuation').value = parseFloat(((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat(((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat(((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Gold GM):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'MG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) / document.getElementById('gmWtInMg').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) / document.getElementById('gmWtInMg').value + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate) / document.getElementById('gmWtInMg').value + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate) / document.getElementById('gmWtInMg').value + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Gold MG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             }
             //
             //alert('sttr_valuation == ' + document.getElementById('sttr_valuation').value);
@@ -5311,30 +5385,42 @@ function calStockItemPrice() {
             if (wtType == 'KG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) * document.getElementById('srGmWtInKg').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate * document.getElementById('srGmWtInKg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate * document.getElementById('srGmWtInKg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate * document.getElementById('srGmWtInKg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Silver KG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'GM') {
                 document.getElementById('sttr_valuation').value = parseFloat((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value).toFixed(2);
                 document.getElementById('addItemValuation').value = parseFloat(((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat(((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat(((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Silver GM):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'MG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value)).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Silver MG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             }
             //
         } else if (metalType == 'Strsilver' || metalType == 'STRSILVER' || metalType == 'strsilver' || metalType == 'StrSilver') {
             if (wtType == 'KG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) * document.getElementById('strsrGmWtInKg').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate * document.getElementById('strsrGmWtInKg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate * document.getElementById('strsrGmWtInKg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate * document.getElementById('strsrGmWtInKg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Strsilver KG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'GM') {
                 document.getElementById('sttr_valuation').value = parseFloat((finalFineWeight * metalRate) / document.getElementById('strsrGmWtInGm').value).toFixed(2);
                 document.getElementById('addItemValuation').value = parseFloat(((finalFineWeight * metalRate) / document.getElementById('strsrGmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat(((finalFineWeight * metalRate) / document.getElementById('strsrGmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat(((finalFineWeight * metalRate) / document.getElementById('strsrGmWtInGm').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Strsilver GM):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'MG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) / (document.getElementById('strsrGmWtInMg').value)).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) / (document.getElementById('strsrGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate) / (document.getElementById('strsrGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate) / (document.getElementById('strsrGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Strsilver MG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             }
             //
         } else {
@@ -5343,15 +5429,21 @@ function calStockItemPrice() {
             if (wtType == 'KG') {
                 document.getElementById('sttr_valuation').value = (finalFineWeight * metalRate * 1000).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate * 1000) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate * 1000) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate * 1000) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Other KG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'GM') {
                 document.getElementById('sttr_valuation').value = (finalFineWeight * metalRate).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Other GM):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'MG') {
                 document.getElementById('sttr_valuation').value = (finalFineWeight * metalRate * 0.001).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate * 0.001) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = parseFloat((finalFineWeight * metalRate * 0.001) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = parseFloat((finalFineWeight * metalRate * 0.001) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calStockItemPrice] setting sttr_final_valuation (Other MG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             }
             // END CODE TO ADD CODE FOR OTHER METAL @PRIYANKA-06JUNE18
             //
@@ -5470,11 +5562,15 @@ function calStockItemPrice() {
 
         // CALCULATE FINAL VALUATION @PRIYANKA-23FEB18
         if (document.getElementById('sttr_tot_tax').value != '') {
-            document.getElementById('sttr_final_valuation').value = parseFloat(parseFloat(document.getElementById('addItemValuation').value) + parseFloat(document.getElementById('sttr_tot_tax').value)).toFixed(2);
+            var computedFinalVal = parseFloat(parseFloat(document.getElementById('addItemValuation').value) + parseFloat(document.getElementById('sttr_tot_tax').value)).toFixed(2);
+            console.log('[calStockItemPrice] setting sttr_final_valuation (after tax):', computedFinalVal, 'addItemValuation=', document.getElementById('addItemValuation').value, 'sttr_tot_tax=', document.getElementById('sttr_tot_tax').value);
+            document.getElementById('sttr_final_valuation').value = computedFinalVal;
         }
         // ADD TOTAL OTHER CHARGES INTO FINAL VALUATION @PRIYANKA-12OCT2018
         if (document.getElementById('sttr_total_other_charges').value != '') {
-            document.getElementById('sttr_final_valuation').value = parseFloat(parseFloat(document.getElementById('sttr_final_valuation').value) + parseFloat(document.getElementById('sttr_total_other_charges').value)).toFixed(2);
+            var computedFinalVal = parseFloat(parseFloat(document.getElementById('sttr_final_valuation').value) + parseFloat(document.getElementById('sttr_total_other_charges').value)).toFixed(2);
+            console.log('[calStockItemPrice] adding sttr_total_other_charges to sttr_final_valuation:', document.getElementById('sttr_total_other_charges').value, '->', computedFinalVal);
+            document.getElementById('sttr_final_valuation').value = computedFinalVal;
         }
         //
         //
@@ -5592,7 +5688,9 @@ function calStockItemPrice() {
                     //
                     //
                     // TO CALCULATE FINAL VALUATION WITH HALLMARKING CHARGES @PRIYANKA-25MAY2022
-                    document.getElementById('sttr_final_valuation').value = parseFloat(parseFloat(document.getElementById('sttr_final_valuation').value) + parseFloat(document.getElementById('sttr_total_hallmark_charges').value)).toFixed(2);
+                    var computedFinalVal = parseFloat(parseFloat(document.getElementById('sttr_final_valuation').value) + parseFloat(document.getElementById('sttr_total_hallmark_charges').value)).toFixed(2);
+                    console.log('[calStockItemPrice] adding sttr_total_hallmark_charges to sttr_final_valuation:', document.getElementById('sttr_total_hallmark_charges').value, '->', computedFinalVal);
+                    document.getElementById('sttr_final_valuation').value = computedFinalVal;
                     //
                     //
                 }
@@ -5627,6 +5725,19 @@ function calStockItemPrice() {
 //
     }
     //
+     // =====================================================================
+    // ADD THE FOLLOWING TWO LINES AT THE VERY END OF THIS FUNCTION
+    // =====================================================================
+    
+    // After your function has set the final value, we need to reset our markup logic.
+    var finalInput = document.getElementById('sttr_final_valuation');
+    finalInput.removeAttribute('data-original-value'); // This clears the old stored value.
+    
+    // applyMarkup(); // This re-applies the markup if a value exists in the markup field.
+    //  toggleFixedPrice(); 
+    calculateMarkupPrice();
+    applyMarkup();
+    // =====================================================================
     return false;
     //
 }
@@ -5950,11 +6061,15 @@ function changeNetWeightByPktWt(pktWeight, slmetalbindicator = '') {
             gsWt = 0;
         }
 
-        var pktWeightValue = parseFloat(document.getElementById('sttr_pkt_weight').value) || 0;
-        var lessWeightValue = parseFloat(document.getElementById('sttr_less_weight').value) || 0;
-        var pktWt = pktWeightValue + lessWeightValue;
-        var pktWtType = document.getElementById('sttr_pkt_weight_type').value;
-        var lessWtType = document.getElementById('sttr_less_weight_type').value;
+    var pktElem = document.getElementById('sttr_pkt_weight');
+    var lessElem = document.getElementById('sttr_less_weight');
+    var pktTypeElem = document.getElementById('sttr_pkt_weight_type');
+    var lessTypeElem = document.getElementById('sttr_less_weight_type');
+    var pktWeightValue = pktElem ? (parseFloat(pktElem.value) || 0) : 0;
+    var lessWeightValue = lessElem ? (parseFloat(lessElem.value) || 0) : 0;
+    var pktWt = pktWeightValue + lessWeightValue;
+    var pktWtType = pktTypeElem ? pktTypeElem.value : '';
+    var lessWtType = lessTypeElem ? lessTypeElem.value : pktWtType;
         if (pktWeightValue == '' || pktWeightValue == null) {
             pktWeightValue = 0;
         }
@@ -6021,11 +6136,15 @@ function changeNetWeightByPktWt(pktWeight, slmetalbindicator = '') {
         if (gsWt == '' || gsWt == null) {
             gsWt = 0;
         }
-        var pktWeightValue = parseFloat(document.getElementById('sttr_pkt_weight').value) || 0;
-        var lessWeightValue = parseFloat(document.getElementById('sttr_less_weight').value) || 0;
+        var pktElem = document.getElementById('sttr_pkt_weight');
+        var lessElem = document.getElementById('sttr_less_weight');
+        var pktTypeElem = document.getElementById('sttr_pkt_weight_type');
+        var lessTypeElem = document.getElementById('sttr_less_weight_type');
+        var pktWeightValue = pktElem ? (parseFloat(pktElem.value) || 0) : 0;
+        var lessWeightValue = lessElem ? (parseFloat(lessElem.value) || 0) : 0;
         var pktWt = pktWeightValue + lessWeightValue;
-        var pktWtType = document.getElementById('sttr_pkt_weight_type').value;
-        var lessWtType = document.getElementById('sttr_less_weight_type').value;
+        var pktWtType = pktTypeElem ? pktTypeElem.value : '';
+        var lessWtType = lessTypeElem ? lessTypeElem.value : pktWtType;
         if (pktWeightValue == '' || pktWeightValue == null) {
             pktWeightValue = 0;
         }
@@ -6043,11 +6162,15 @@ function changeNetWeightByPktWt(pktWeight, slmetalbindicator = '') {
             gsWt = 0;
         }
 
-        var pktWeightValue = parseFloat(document.getElementById('sttr_pkt_weight').value) || 0;
-        var lessWeightValue = parseFloat(document.getElementById('sttr_less_weight').value) || 0;
+        var pktElem = document.getElementById('sttr_pkt_weight');
+        var lessElem = document.getElementById('sttr_less_weight');
+        var pktTypeElem = document.getElementById('sttr_pkt_weight_type');
+        var lessTypeElem = document.getElementById('sttr_less_weight_type');
+        var pktWeightValue = pktElem ? (parseFloat(pktElem.value) || 0) : 0;
+        var lessWeightValue = lessElem ? (parseFloat(lessElem.value) || 0) : 0;
         var pktWt = pktWeightValue + lessWeightValue;
-        var pktWtType = document.getElementById('sttr_pkt_weight_type').value;
-        var lessWtType = document.getElementById('sttr_less_weight_type').value;
+        var pktWtType = pktTypeElem ? pktTypeElem.value : '';
+        var lessWtType = lessTypeElem ? lessTypeElem.value : pktWtType;
         if (pktWeightValue == '' || pktWeightValue == null) {
             pktWeightValue = 0;
         }
@@ -6066,7 +6189,9 @@ function changeNetWeightByPktWt(pktWeight, slmetalbindicator = '') {
                     document.getElementById('totNetWeight').value = document.getElementById('sttr_nt_weight').value;
                 }
                 document.getElementById('netWeight').value = document.getElementById('sttr_nt_weight').value;
-                autoLessWeight(i, document.getElementById('slPrAutoLessCryWt' + i).checked, 'sttr_nt_weight', 'sttr_nt_weight_type', '', 'AddStock');
+                var slPrAutoElem = document.getElementById('slPrAutoLessCryWt' + i);
+                var slPrAutoChecked = slPrAutoElem ? slPrAutoElem.checked : false;
+                autoLessWeight(i, slPrAutoChecked, 'sttr_nt_weight', 'sttr_nt_weight_type', '', 'AddStock');
                 break;
             }
         }
@@ -6187,16 +6312,20 @@ function autoLessWeight(cryCount, autoChk, gsWtId, wtTypId, cryPanel, sellPanel)
             if (gsWt == '' || gsWt == null) {
                 gsWt = 0;
             }
-            var pktWeightValue = parseFloat(document.getElementById('sttr_pkt_weight').value) || 0;
-            if (document.getElementById('sttr_less_weight') != null) {
-                var lessWeightValue = parseFloat(document.getElementById('sttr_less_weight').value) || 0;
+            var pktElem = document.getElementById('sttr_pkt_weight');
+            var lessElem = document.getElementById('sttr_less_weight');
+            var pktTypeElem = document.getElementById('sttr_pkt_weight_type');
+            var lessTypeElem = document.getElementById('sttr_less_weight_type');
+            var pktWeightValue = pktElem ? (parseFloat(pktElem.value) || 0) : 0;
+            if (lessElem != null) {
+                var lessWeightValue = lessElem ? (parseFloat(lessElem.value) || 0) : 0;
             } else {
                 var lessWeightValue = 0;
             }
             var pktWt = pktWeightValue + lessWeightValue;
-            var pktWtType = document.getElementById('sttr_pkt_weight_type').value;
-            if (document.getElementById('sttr_less_weight_type') != null) {
-                var lessWtType = document.getElementById('sttr_less_weight_type').value;
+            var pktWtType = pktTypeElem ? pktTypeElem.value : '';
+            if (lessTypeElem != null) {
+                var lessWtType = lessTypeElem.value;
             } else {
                 var lessWtType = pktWtType;
             }
@@ -6293,16 +6422,20 @@ function autoLessWeight(cryCount, autoChk, gsWtId, wtTypId, cryPanel, sellPanel)
                 gsWt = 0;
             }
             //
-            var pktWeightValue = parseFloat(document.getElementById('sttr_pkt_weight').value) || 0;
-            if (document.getElementById('sttr_less_weight') != null) {
-                var lessWeightValue = parseFloat(document.getElementById('sttr_less_weight').value) || 0;
+            var pktElem = document.getElementById('sttr_pkt_weight');
+            var lessElem = document.getElementById('sttr_less_weight');
+            var pktTypeElem = document.getElementById('sttr_pkt_weight_type');
+            var lessTypeElem = document.getElementById('sttr_less_weight_type');
+            var pktWeightValue = pktElem ? (parseFloat(pktElem.value) || 0) : 0;
+            if (lessElem != null) {
+                var lessWeightValue = lessElem ? (parseFloat(lessElem.value) || 0) : 0;
             } else {
                 var lessWeightValue = 0;
             }
             var pktWt = pktWeightValue + lessWeightValue;
-            var pktWtType = document.getElementById('sttr_pkt_weight_type').value;
-            if (document.getElementById('sttr_less_weight_type') != null) {
-                var lessWtType = document.getElementById('sttr_less_weight_type').value;
+            var pktWtType = pktTypeElem ? pktTypeElem.value : '';
+            if (lessTypeElem != null) {
+                var lessWtType = lessTypeElem.value;
             } else {
                 var lessWtType = pktWtType;
             }
@@ -6774,7 +6907,8 @@ function crystalWeightLess(sellPanel) {
     var itemGSW = parseFloat(document.getElementById('netWeight').value);
     var itemGSWT = document.getElementById('sttr_nt_weight_type').value;
     for (var dc = count; dc <= crystalCount; dc++) {
-        if (document.getElementById('del' + dc).value != 'Deleted') {
+        var delElem = document.getElementById('del' + dc);
+        if (delElem && delElem.value != 'Deleted') {
             if (sellPanel == 'AddStock') {
                 var autoChk = document.getElementById('slPrAutoLessCryWt' + dc).checked;
                 if (document.getElementById('sttr_gs_weight_' + dc).value == '' || document.getElementById('sttr_gs_weight_type_' + dc).value == 'NaN')
@@ -7378,6 +7512,52 @@ function showReturnInvDiv(srchInvNo, custId, panelName) {
     xmlhttp.send();
     //
 }
+
+
+function showImitationReturnInvDiv(srchInvNo, custId, panelName) {
+    //
+    //alert('srchInvNo ==' + srchInvNo);
+    //
+    var searchItemIdCharPart = '';
+    var searchItemIdNumPart = '';
+    //
+    // Using match with regEx
+    let matches = srchInvNo.match(/\d+/g);
+    //  
+    // Length of Array
+    let arrayLength = matches.length;
+    // 
+    // Display last element of array - from number extracted
+    let lastElement = matches[arrayLength - 1];
+    // 
+    // FOR POST INVOICE NO.
+    searchItemIdNumPart = lastElement;
+    //
+    //
+    let prePostStringLength = srchInvNo.length;
+    let postStringLength = searchItemIdNumPart.length;
+    //
+    let preStringLength = (prePostStringLength - postStringLength);
+    // FOR PRE INVOICE NO.
+    searchItemIdCharPart = srchInvNo.substr(0, preStringLength);
+  //
+    document.getElementById('srchItemPreId').value = searchItemIdCharPart;
+    document.getElementById('srchItemPostId').value = searchItemIdNumPart;
+    //
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            document.getElementById("sellPurchaseItemDetails").innerHTML = xmlhttp.responseText;
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    xmlhttp.open("POST", "include/php/ogrtimidv" + default_theme + ".php?custId=" + custId + "&srchInvNo=" + searchItemIdNumPart +
+            "&panelName=" + panelName + "&srchPreInvNo=" + encodeURIComponent(searchItemIdCharPart), true);
+    //
+    xmlhttp.send();
+    //
+}
 //
 //
 //
@@ -7460,7 +7640,7 @@ function showSlPrImitationInvDiv(srchItemPreId, srchItemPostId, custId, panelNam
                 "&srchItemPostId=" + srchItemPostId + "&custId=" + custId, true);
         /* START CODE TO ADD ESLE-IF CONDITION FOR RETAIL IMITATION B2 SELL FORM @AUTHOR:MADHUREE-03FEB2020 */
     } else if (panelName == 'RETAIL_IMITATION_B2') {
-        xmlhttp.open("POST", "include/php/ogijaitdvB2selldiv" + default_theme + ".php?srchItemPreId=" + srchItemPreId +
+        xmlhttp.open("POST", "include/php/ogijaitdvB2sell" + default_theme + ".php?srchItemPreId=" + srchItemPreId +
                 "&srchItemPostId=" + srchItemPostId + "&custId=" + custId + "&panelName=RETAIL_IMITATION_B2", true);
         /* END CODE TO ADD ESLE-IF CONDITION FOR RETAIL IMITATION B2 SELL FORM @AUTHOR:MADHUREE-03FEB2020 */
     } else {
@@ -7948,22 +8128,22 @@ function changeMetalRateByVal(prefix, count) {
                 document.getElementById('sttr_valuation' + count).value = 0;
             if (document.getElementById('sttr_valuation' + count).value != 0) {
                 if (payTotalWeightType1 == 'KG') {
-                    document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / (goldWeight * document.getElementById('gmWtInKg').value)).toFixed(4);
+                    document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / (goldWeight * document.getElementById('gmWtInKg').value)).toFixed(2);
                 } else if (payTotalWeightType1 == 'GM') {
-                    document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / goldWeight) * document.getElementById('gmWtInGm').value).toFixed(4);
+                    document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / goldWeight) * document.getElementById('gmWtInGm').value).toFixed(2);
                 } else if (payTotalWeightType1 == 'MG') {
-                    document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / goldWeight) * document.getElementById('gmWtInMg').value).toFixed(4);
+                    document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / goldWeight) * document.getElementById('gmWtInMg').value).toFixed(2);
                 }
             }
         }
         if (document.getElementById('sttr_metal_type' + count).value == 'Silver') {
             silverWeight = parseFloat(metalWeight);
             if (payTotalWeightType1 == 'KG') {
-                document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / (silverWeight * document.getElementById('srGmWtInKg').value)).toFixed(4);
+                document.getElementById('sttr_metal_rate' + count).value = parseFloat(parseFloat(document.getElementById('sttr_valuation' + count).value) / (silverWeight * document.getElementById('srGmWtInKg').value)).toFixed(2);
             } else if (payTotalWeightType1 == 'GM') {
-                document.getElementById('sttr_metal_rate' + count).value = parseFloat((parseFloat(document.getElementById('sttr_valuation' + count).value) / silverWeight) * (document.getElementById('srGmWtInGm').value)).toFixed(4);
+                document.getElementById('sttr_metal_rate' + count).value = parseFloat((parseFloat(document.getElementById('sttr_valuation' + count).value) / silverWeight) * (document.getElementById('srGmWtInGm').value)).toFixed(2);
             } else if (payTotalWeightType1 == 'MG') {
-                document.getElementById('sttr_metal_rate' + count).value = parseFloat((parseFloat(document.getElementById('sttr_valuation' + count).value) / silverWeight) * (document.getElementById('srGmWtInMg').value)).toFixed(4);
+                document.getElementById('sttr_metal_rate' + count).value = parseFloat((parseFloat(document.getElementById('sttr_valuation' + count).value) / silverWeight) * (document.getElementById('srGmWtInMg').value)).toFixed(2);
             }
         }
     }
@@ -9998,143 +10178,309 @@ function deleteApproval(sttrId, panelName, custId) {
     }
 }
 /* START CODE ADD FUNCTIONS FOR RETAIL-IMITATION B2 STOCK SELL-PURCHASE @AUTHOR:MADHUREE-03FEB2020 */
+// function callItemPriceImitationB2() {
+// console.log('callItemPriceImitationB2 is called ');
+//     let slPrItemCharges = document.getElementById('slPrItemCharges');
+//     var transType = document.getElementById('sttr_transaction_type').value;
+//     if (transType == 'sell' || transType == 'ItemReturn' ) {
+//         //
+//         document.getElementById('sttr_total_cust_price').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * slPrItemCharges.value)).toFixed(2);
+//         document.getElementById('sttr_valuation').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * slPrItemCharges.value)).toFixed(2);
+//         document.getElementById('sttr_metal_amt').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * slPrItemCharges.value)).toFixed(2);
+//         document.getElementById('taxByValMainAmount').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * slPrItemCharges.value)).toFixed(2);        //
+//         // ADDED CODE FOR DISCOUNT FUNCTIONALITY @PRIYANKA-30NOV2020
+//         if (document.getElementById('sttr_itm_disc_type').value == 'AMT') {
+//             //
+//             var metalDiscountAmt = parseFloat(document.getElementById('sttr_itm_disc_amt').value);
+//             //
+//         } else {
+//             //
+//             // METAL DISCOUNT IN % @PRIYANKA-30NOV2020
+//             var sttr_metal_discount_per = document.getElementById('sttr_metal_discount_per').value;
+//             //
+//             // CALCULATE METAL DISCOUNT AMT @PRIYANKA-30NOV2020
+//             var metalDiscountAmt = Math_round(parseFloat(document.getElementById('sttr_metal_amt').value) * parseFloat(sttr_metal_discount_per) / 100).toFixed(2);
+//             //
+//         }
+//         //
+//         // METAL DISCOUNT AMT @PRIYANKA-30NOV2020
+//         document.getElementById('sttr_metal_discount_amt').value = Math_round(parseFloat(metalDiscountAmt)).toFixed(2);
+//         //
+//         if (document.getElementById('sttr_metal_discount_amt').value == 'NaN') {
+//             document.getElementById('sttr_metal_discount_amt').value = 0;
+//         }
+//         //
+//         // AMOUNTS AFTER DISCOUNT @PRIYANKA-30NOV2020
+//         if (metalDiscountAmt > 0) {
+//             var stockTotalVal = parseFloat(document.getElementById('sttr_metal_amt').value).toFixed(2);
+//             document.getElementById('sttr_valuation').value = (Math_round(parseFloat(stockTotalVal) - parseFloat(metalDiscountAmt))).toFixed(2);
+//             document.getElementById('taxByValMainAmount').value = (Math_round(parseFloat(stockTotalVal) - parseFloat(metalDiscountAmt))).toFixed(2);
+//             document.getElementById('sttr_total_cust_price').value = (Math_round(parseFloat(stockTotalVal) - parseFloat(metalDiscountAmt))).toFixed(2);
+//         }
+//         //
+//         //
+//         if (document.getElementById('sttr_metal_amt').value == 'NaN') {
+//             document.getElementById('sttr_metal_amt').value = 0;
+//         }
+//         //
+//         //
+//     } else {
+//         //
+//         document.getElementById('sttr_valuation').value = (parseFloat(document.getElementById('sttr_quantity').value) * parseFloat(document.getElementById('sttr_price').value)).toFixed(2);
+//         document.getElementById('taxByValMainAmount').value = (parseFloat(document.getElementById('sttr_quantity').value) * parseFloat(document.getElementById('sttr_price').value)).toFixed(2);
+//         //
+//     }
+
+//     if (document.getElementById('sttr_valuation').value == 'NaN') {
+//         document.getElementById('sttr_valuation').value = 0;
+//     }
+
+//     // CGST IN % @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_cgst_per').value == '' || document.getElementById('sttr_tot_price_cgst_per').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_cgst_per').value = '';
+//     }
+
+//     // CALCULATE CGST AMT => (VAL * CGST IN %) / 100 @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_cgst_per').value != '') {
+//         document.getElementById('sttr_tot_price_cgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_cgst_per').value) / 100)).toFixed(2);
+//     }
+
+//     // CGST CHRG @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_cgst_chrg').value == '' || document.getElementById('sttr_tot_price_cgst_chrg').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_cgst_chrg').value = 0;
+//     }
+
+//     // SGST IN % @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_sgst_per').value == '' || document.getElementById('sttr_tot_price_sgst_per').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_sgst_per').value = '';
+//     }
+
+//     // CALCULATE SGST AMT => (VAL * SGST IN %) / 100 @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_sgst_per').value != '') {
+//         document.getElementById('sttr_tot_price_sgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_sgst_per').value) / 100)).toFixed(2);
+//     }
+
+//     // SGST CHRG @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_sgst_chrg').value == '' || document.getElementById('sttr_tot_price_sgst_chrg').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_sgst_chrg').value = 0;
+//     }
+
+//     // IGST IN % @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_igst_per').value == '' || document.getElementById('sttr_tot_price_igst_per').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_igst_per').value = '';
+//     }
+
+//     // CALCULATE IGST AMT => (VAL * IGST IN %) / 100 @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_igst_per').value != '') {
+//         document.getElementById('sttr_tot_price_igst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_igst_per').value) / 100)).toFixed(2);
+//     }
+
+//     // IGST CHRG @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_price_igst_chrg').value == '' || document.getElementById('sttr_tot_price_igst_chrg').value == 'NaN') {
+//         document.getElementById('sttr_tot_price_igst_chrg').value = 0;
+
+
+//     }
+
+//     if (document.getElementById('sttr_tax').value == '' || document.getElementById('sttr_tax').value == 'NaN' ||
+//             document.getElementById('sttr_tax').value == 'undefined') {
+//         document.getElementById('sttr_tax').value = '';
+//     }
+
+
+//     // CALCULATE TOT TAX AMT => CGST AMT + SGST AMT + IGST AMT @AUTHOR:PRIYANKA-25JULY2020
+//     document.getElementById('sttr_tot_tax').value = (parseFloat(document.getElementById('sttr_tot_price_cgst_chrg').value) +
+//             parseFloat(document.getElementById('sttr_tot_price_sgst_chrg').value) +
+//             parseFloat(document.getElementById('sttr_tot_price_igst_chrg').value)).toFixed(2);
+//     if (document.getElementById('sttr_tot_tax').value == '' || document.getElementById('sttr_tot_tax').value == 'NaN') {
+//         document.getElementById('sttr_tot_tax').value = 0;
+//     }
+
+//     // CALCULATE TOT TAX AMT @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tax').value > 0) {
+//         document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('sttr_valuation').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
+//     }
+
+//     let calc_sttr_final_valuation = 0;
+//     let sttr_final_valuation = document.getElementById('sttr_final_valuation');
+//     let sttr_cust_price = document.getElementById('sttr_cust_price');
+
+//     // CALCULATE FINAL PRICE => PRICE + TOTAL TAX @AUTHOR:PRIYANKA-25JULY2020
+//     if (document.getElementById('sttr_tot_tax').value != '') {
+//         calc_sttr_final_valuation = Math_round(parseFloat(document.getElementById('sttr_valuation').value) + parseFloat(document.getElementById('sttr_tot_tax').value)).toFixed(2);
+//     } else {
+//         calc_sttr_final_valuation = Math_round((parseFloat(document.getElementById('sttr_valuation').value))).toFixed(2);
+//     }
+
+    
+//     sttr_final_valuation.value = calc_sttr_final_valuation;
+//     sttr_cust_price.value = (slPrItemCharges && slPrItemCharges.value) ? slPrItemCharges.value : 0;
+
+    
+//     if (document.getElementById('sttr_final_valuation').value == 'NaN') {
+//         document.getElementById('sttr_final_valuation').value = 0;
+//     }
+
+
+//     return false;
+// }
+//
 function callItemPriceImitationB2() {
-    var transType = document.getElementById('sttr_transaction_type').value;
-    if (transType == 'sell') {
-        //
-        document.getElementById('sttr_total_cust_price').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * document.getElementById('slPrItemCharges').value)).toFixed(2);
-        document.getElementById('sttr_valuation').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * document.getElementById('slPrItemCharges').value)).toFixed(2);
-        document.getElementById('sttr_metal_amt').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * document.getElementById('slPrItemCharges').value)).toFixed(2);
-        document.getElementById('taxByValMainAmount').value = ((parseFloat(document.getElementById('slPrItemPieces').value) * document.getElementById('slPrItemCharges').value)).toFixed(2);
-        //
-        // ADDED CODE FOR DISCOUNT FUNCTIONALITY @PRIYANKA-30NOV2020
-        if (document.getElementById('sttr_itm_disc_type').value == 'AMT') {
-            //
-            var metalDiscountAmt = parseFloat(document.getElementById('sttr_itm_disc_amt').value);
-            //
-        } else {
-            //
-            // METAL DISCOUNT IN % @PRIYANKA-30NOV2020
-            var sttr_metal_discount_per = document.getElementById('sttr_metal_discount_per').value;
-            //
-            // CALCULATE METAL DISCOUNT AMT @PRIYANKA-30NOV2020
-            var metalDiscountAmt = Math_round(parseFloat(document.getElementById('sttr_metal_amt').value) * parseFloat(sttr_metal_discount_per) / 100).toFixed(2);
-            //
+    // 1. GET INPUT VALUES (With Safety Checks)
+    var qty = 0;
+    if(document.getElementById('sttr_quantity')) {
+        qty = parseFloat(document.getElementById('sttr_quantity').value) || 0;
+    }
+
+    var price = 0;
+    if(document.getElementById('sttr_price')) {
+        price = parseFloat(document.getElementById('sttr_price').value) || 0;
+    }
+
+    var transType = '';
+    if(document.getElementById('sttr_transaction_type')) {
+        transType = document.getElementById('sttr_transaction_type').value;
+    }
+    
+    var basicAmt = 0;
+
+    // 2. CALCULATE BASE AMOUNT (Qty * Price)
+    if (transType == 'sell' || transType == 'ItemReturn') {
+        // Logic for sell/return (keeping your existing logic structure)
+        var slPrItemCharges = 0;
+        if(document.getElementById('slPrItemCharges')) {
+            slPrItemCharges = parseFloat(document.getElementById('slPrItemCharges').value) || 0;
         }
-        //
-        // METAL DISCOUNT AMT @PRIYANKA-30NOV2020
-        document.getElementById('sttr_metal_discount_amt').value = Math_round(parseFloat(metalDiscountAmt)).toFixed(2);
-        //
-        if (document.getElementById('sttr_metal_discount_amt').value == 'NaN') {
-            document.getElementById('sttr_metal_discount_amt').value = 0;
+        
+        var pieces = 0;
+        if(document.getElementById('slPrItemPieces')) {
+            pieces = parseFloat(document.getElementById('slPrItemPieces').value) || 0;
         }
-        //
-        // AMOUNTS AFTER DISCOUNT @PRIYANKA-30NOV2020
-        if (metalDiscountAmt > 0) {
-            var stockTotalVal = parseFloat(document.getElementById('sttr_metal_amt').value).toFixed(2);
-            document.getElementById('sttr_valuation').value = (Math_round(parseFloat(stockTotalVal) - parseFloat(metalDiscountAmt))).toFixed(2);
-            document.getElementById('taxByValMainAmount').value = (Math_round(parseFloat(stockTotalVal) - parseFloat(metalDiscountAmt))).toFixed(2);
-            document.getElementById('sttr_total_cust_price').value = (Math_round(parseFloat(stockTotalVal) - parseFloat(metalDiscountAmt))).toFixed(2);
+        
+        basicAmt = (pieces * slPrItemCharges);
+        
+        // Handle Discounts
+        var metalDiscountAmt = 0;
+        if (document.getElementById('sttr_itm_disc_type') && document.getElementById('sttr_itm_disc_type').value == 'AMT') {
+             if(document.getElementById('sttr_itm_disc_amt')) {
+                metalDiscountAmt = parseFloat(document.getElementById('sttr_itm_disc_amt').value) || 0;
+             }
+        } else if(document.getElementById('sttr_metal_discount_per')) {
+             var discPer = parseFloat(document.getElementById('sttr_metal_discount_per').value) || 0;
+             metalDiscountAmt = (basicAmt * discPer / 100);
         }
-        //
-        //
-        if (document.getElementById('sttr_metal_amt').value == 'NaN') {
-            document.getElementById('sttr_metal_amt').value = 0;
+        
+        if(document.getElementById('sttr_metal_discount_amt')) {
+            document.getElementById('sttr_metal_discount_amt').value = metalDiscountAmt.toFixed(2);
         }
-        //
-        //
+        basicAmt = basicAmt - metalDiscountAmt;
+        
     } else {
-        //
-        document.getElementById('sttr_valuation').value = (parseFloat(document.getElementById('sttr_quantity').value) * parseFloat(document.getElementById('sttr_price').value)).toFixed(2);
-        document.getElementById('taxByValMainAmount').value = (parseFloat(document.getElementById('sttr_quantity').value) * parseFloat(document.getElementById('sttr_price').value)).toFixed(2);
-        //
+        // Logic for Purchase/Stock Entry
+        basicAmt = (qty * price);
+    }
+    
+    // Update Hidden Fields for Reference
+    if(document.getElementById('taxByValMainAmount')) {
+        document.getElementById('taxByValMainAmount').value = basicAmt.toFixed(2);
+    }
+    
+    // 3. SET INITIAL VALUATION (Before Tax Logic)
+    // By default, Valuation is the Basic Amount. 
+    // If Tax is Included, the next function will reduce this amount.
+    if(document.getElementById('sttr_valuation')) {
+        document.getElementById('sttr_valuation').value = basicAmt.toFixed(2);
     }
 
-    if (document.getElementById('sttr_valuation').value == 'NaN') {
-        document.getElementById('sttr_valuation').value = 0;
+    // 4. HANDLE TAX INCLUSIVE REVERSE CALCULATION
+    // Added check to see if element exists before accessing .checked property
+    if (document.getElementById("sttr_taxincl_checked") && document.getElementById("sttr_taxincl_checked").checked) {
+        // This function will modify sttr_valuation downwards to extract tax
+        if (typeof calculateTaxIncludingVal === "function") {
+            calculateTaxIncludingVal();
+        }
     }
 
-    // CGST IN % @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_cgst_per').value == '' || document.getElementById('sttr_tot_price_cgst_per').value == 'NaN') {
-        document.getElementById('sttr_tot_price_cgst_per').value = '';
+    // 5. GET CURRENT VALUATION (It might have changed in step 4)
+    var currentValuation = 0;
+    if(document.getElementById('sttr_valuation')) {
+        currentValuation = parseFloat(document.getElementById('sttr_valuation').value) || 0;
     }
 
-    // CALCULATE CGST AMT => (VAL * CGST IN %) / 100 @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_cgst_per').value != '') {
-        document.getElementById('sttr_tot_price_cgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_cgst_per').value) / 100)).toFixed(2);
+    // 6. CALCULATE TAX AMOUNTS (CGST / SGST / IGST)
+    // Note: We calculate based on currentValuation, which is correct for both Included and Excluded scenarios now.
+    
+    // CGST
+    var cgstPer = 0;
+    if(document.getElementById('sttr_tot_price_cgst_per')) {
+        cgstPer = parseFloat(document.getElementById('sttr_tot_price_cgst_per').value) || 0;
+    }
+    var cgstAmt = (currentValuation * cgstPer / 100);
+    
+    if(document.getElementById('sttr_tot_price_cgst_chrg')) {
+        document.getElementById('sttr_tot_price_cgst_chrg').value = cgstAmt.toFixed(2);
     }
 
-    // CGST CHRG @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_cgst_chrg').value == '' || document.getElementById('sttr_tot_price_cgst_chrg').value == 'NaN') {
-        document.getElementById('sttr_tot_price_cgst_chrg').value = 0;
+    // SGST
+    var sgstPer = 0;
+    if(document.getElementById('sttr_tot_price_sgst_per')) {
+        sgstPer = parseFloat(document.getElementById('sttr_tot_price_sgst_per').value) || 0;
+    }
+    var sgstAmt = (currentValuation * sgstPer / 100);
+    
+    if(document.getElementById('sttr_tot_price_sgst_chrg')) {
+        document.getElementById('sttr_tot_price_sgst_chrg').value = sgstAmt.toFixed(2);
     }
 
-    // SGST IN % @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_sgst_per').value == '' || document.getElementById('sttr_tot_price_sgst_per').value == 'NaN') {
-        document.getElementById('sttr_tot_price_sgst_per').value = '';
+    // IGST
+    var igstPer = 0;
+    if(document.getElementById('sttr_tot_price_igst_per')) {
+        igstPer = parseFloat(document.getElementById('sttr_tot_price_igst_per').value) || 0;
+    }
+    var igstAmt = (currentValuation * igstPer / 100);
+    
+    if(document.getElementById('sttr_tot_price_igst_chrg')) {
+        document.getElementById('sttr_tot_price_igst_chrg').value = igstAmt.toFixed(2);
     }
 
-    // CALCULATE SGST AMT => (VAL * SGST IN %) / 100 @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_sgst_per').value != '') {
-        document.getElementById('sttr_tot_price_sgst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_sgst_per').value) / 100)).toFixed(2);
+    // OTHER TAX (VAT/General)
+    var otherTaxPer = 0;
+    if(document.getElementById('sttr_tax')) {
+        otherTaxPer = parseFloat(document.getElementById('sttr_tax').value) || 0;
+    }
+    // If using dropdown tax
+    var otherTaxAmt = 0;
+    if(otherTaxPer > 0 && (cgstPer + sgstPer + igstPer) === 0){
+         otherTaxAmt = (currentValuation * otherTaxPer / 100);
     }
 
-    // SGST CHRG @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_sgst_chrg').value == '' || document.getElementById('sttr_tot_price_sgst_chrg').value == 'NaN') {
-        document.getElementById('sttr_tot_price_sgst_chrg').value = 0;
+    // 7. TOTAL TAX SUM
+    var totalTaxAmt = cgstAmt + sgstAmt + igstAmt + otherTaxAmt;
+    
+    if(document.getElementById('sttr_tot_tax')) {
+        document.getElementById('sttr_tot_tax').value = totalTaxAmt.toFixed(2);
     }
 
-    // IGST IN % @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_igst_per').value == '' || document.getElementById('sttr_tot_price_igst_per').value == 'NaN') {
-        document.getElementById('sttr_tot_price_igst_per').value = '';
+    // 8. FINAL VALUATION
+    // Final = Valuation + Tax + Crystal/Other
+    var cryVal = 0;
+    if (document.getElementById('addItemCryFinVal')) {
+        cryVal = parseFloat(document.getElementById('addItemCryFinVal').value) || 0;
+    }
+    
+    var finalVal = currentValuation + totalTaxAmt + cryVal;
+    
+    if(document.getElementById('sttr_final_valuation')) {
+        document.getElementById('sttr_final_valuation').value = finalVal.toFixed(2);
     }
 
-    // CALCULATE IGST AMT => (VAL * IGST IN %) / 100 @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_igst_per').value != '') {
-        document.getElementById('sttr_tot_price_igst_chrg').value = (parseFloat(document.getElementById('sttr_valuation').value) * (parseFloat(document.getElementById('sttr_tot_price_igst_per').value) / 100)).toFixed(2);
+    // Update other fields
+    if(document.getElementById('sttr_total_cust_price')) {
+        document.getElementById('sttr_total_cust_price').value = finalVal.toFixed(2);
     }
-
-    // IGST CHRG @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_price_igst_chrg').value == '' || document.getElementById('sttr_tot_price_igst_chrg').value == 'NaN') {
-        document.getElementById('sttr_tot_price_igst_chrg').value = 0;
-
-
-    }
-
-    if (document.getElementById('sttr_tax').value == '' || document.getElementById('sttr_tax').value == 'NaN' ||
-            document.getElementById('sttr_tax').value == 'undefined') {
-        document.getElementById('sttr_tax').value = '';
-    }
-
-
-    // CALCULATE TOT TAX AMT => CGST AMT + SGST AMT + IGST AMT @AUTHOR:PRIYANKA-25JULY2020
-    document.getElementById('sttr_tot_tax').value = (parseFloat(document.getElementById('sttr_tot_price_cgst_chrg').value) +
-            parseFloat(document.getElementById('sttr_tot_price_sgst_chrg').value) +
-            parseFloat(document.getElementById('sttr_tot_price_igst_chrg').value)).toFixed(2);
-    if (document.getElementById('sttr_tot_tax').value == '' || document.getElementById('sttr_tot_tax').value == 'NaN') {
-        document.getElementById('sttr_tot_tax').value = 0;
-    }
-
-    // CALCULATE TOT TAX AMT @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tax').value > 0) {
-        document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('sttr_valuation').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
-    }
-
-    // CALCULATE FINAL PRICE => PRICE + TOTAL TAX @AUTHOR:PRIYANKA-25JULY2020
-    if (document.getElementById('sttr_tot_tax').value != '') {
-        document.getElementById('sttr_final_valuation').value = Math_round(parseFloat(document.getElementById('sttr_valuation').value) + parseFloat(document.getElementById('sttr_tot_tax').value)).toFixed(2);
-    } else {
-        document.getElementById('sttr_final_valuation').value = Math_round((parseFloat(document.getElementById('sttr_valuation').value))).toFixed(2);
-    }
-
-    if (document.getElementById('sttr_final_valuation').value == 'NaN') {
-        document.getElementById('sttr_final_valuation').value = 0;
-    }
-
-
+    
     return false;
 }
-//
 
 function callItemPriceImitationRetailB2() {
     var transType = document.getElementById('sttr_transaction_type').value;
@@ -10306,8 +10652,734 @@ function callItemPriceImitationRetailB2() {
     }
     return false;
 }
+
+// 
+/**
+ * A helper function to load content from a URL into a specified DIV.
+ * @param {string} url - The URL to fetch content from.
+ * @param {string} targetDivId - The ID of the div to place the content into.
+ */
+//working
+// function loadContentIntoDiv(url, targetDivId) {
+//     var targetElement = document.getElementById(targetDivId);
+//     if (!targetElement) {
+//         console.error("Target DIV with ID '" + targetDivId + "' not found.");
+//         return;
+//     }
+
+//     console.log("Loading content from '" + url + "' into '#" + targetDivId + "'");
+    
+//     var loader = new XMLHttpRequest();
+//     loader.onreadystatechange = function() {
+//         if (loader.readyState === 4) {
+//             if (loader.status === 200) {
+//                 // Success! Inject the response HTML into the target div.
+//                 targetElement.innerHTML = loader.responseText;
+//             } else {
+//                 // Handle error
+//                 targetElement.innerHTML = "<p style='color:red;'>Error: Could not load content. Status: " + loader.status + "</p>";
+//                 console.error("Failed to load content from:", url);
+//             }
+//         }
+//     };
+//     loader.open("GET", url, true);
+//     loader.send();
+// }
+
+ /**
+ * Loads content from a URL into a target div and executes an optional callback on success.
+ *
+ * @param {string} url - The URL to fetch content from.
+ * @param {string} targetDivId - The ID of the div to place the content into.
+ * @param {function} [onSuccessCallback] - An optional function to run after the content is successfully loaded.
+ */function loadContentIntoDiv(url, targetDivId, onSuccessCallback) {
+    var targetElement = document.getElementById(targetDivId);
+    if (!targetElement) {
+        console.error("Target DIV with ID '" + targetDivId + "' not found.");
+        return;
+    }
+
+    console.log("Loading content from '" + url + "' into '#" + targetDivId + "'");
+    
+    var loader = new XMLHttpRequest();
+    loader.onreadystatechange = function() {
+        if (loader.readyState === 4) {
+            if (loader.status === 200) {
+                // Success! Inject the response HTML into the target div.
+                targetElement.innerHTML = loader.responseText;
+
+                // *** NEW PART ***
+                // If a callback function was provided, execute it now.
+                if (typeof onSuccessCallback === 'function') {
+                    onSuccessCallback();
+                }
+                
+            } else {
+                // Handle error
+                targetElement.innerHTML = "<p style='color:red;'>Error: Could not load content. Status: " + loader.status + "</p>";
+                console.error("Failed to load content from:", url);
+            }
+        }
+    };
+    loader.open("GET", url, true);
+    loader.send();
+}
+
+
+
+// function deleteAllItems(itemIds, custId, firmId,panelName,mainPanel) {
+//     console.log(itemIds);
+//     console.log(custId);
+//      console.log(firmId);
+    
+//     if (!itemIds || itemIds.length === 0) {
+//         alert("There are no items to delete.");
+//         return;
+//     }
+
+//     // A more professional confirmation message as requested
+//     var confirmationMessage = "Are you sure you want to delete all " + itemIds.length + " items from this invoice?";
+//     if (!confirm(confirmationMessage)) {
+//         return; // User cancelled the action
+//     }
+
+//     // ADDED: Show the main loading indicator
+//     var loadingDiv = document.getElementById('main_ajax_loading_div');
+//     if (loadingDiv) {
+//         loadingDiv.style.visibility = 'visible';
+//     }
+
+//     var progressDiv = document.getElementById('deleteAllProgress');
+//     if (progressDiv) {
+//         progressDiv.innerHTML = 'Deleting ' + itemIds.length + ' items, please wait...';
+//         progressDiv.style.display = 'block';
+//     }
+
+//     var buttonContainer = document.getElementById('deleteAllButtonContainer'); 
+//     if (buttonContainer) {
+//         buttonContainer.style.display = 'none';
+//     }
+
+//     // URL of our fast, batch-processing PHP script
+//     var url = 'include/php/batch_delete_handler.php';
+
+//     var formData = new FormData();
+//     formData.append('itemIds', itemIds.join(','));
+//     formData.append('custId', custId);
+//     formData.append('firmId', firmId);
+//     formData.append('panelName', panelName);
+//     formData.append('mainPanel', mainPanel);
+
+//     var xhr = new XMLHttpRequest();
+//     xhr.onreadystatechange = function() {
+//         if (xhr.readyState === 4) { // Request is complete
+//             try {
+//                 // Always try to parse the response as JSON
+//                 var response = JSON.parse(xhr.responseText);
+
+//                 if (xhr.status === 200 && response.status === 'success') {
+//                     // SUCCESS! The items are deleted.
+//                     // Now, we refresh the content area, just like your old function.
+                    
+//                     if (progressDiv) progressDiv.innerHTML = 'Deletion complete. Refreshing invoice...';
+                    
+//                     // This is the URL of the file that generates the invoice HTML
+//                     var refreshUrl = `include/php/ogijaitdvB2sell.php?panelName=RETAIL_IMITATION_B2&indicator=imitation&transactionType=sell&type=imitation&custId=${custId}&formName=RETAIL_IMITATION_B2&divName=cust_middle_body&firmId=${firmId}`;
+
+//                     var finalHttp = new XMLHttpRequest();
+//                     finalHttp.onreadystatechange = function() {
+//                         if (this.readyState === 4) { // This is the final step, hide the loader here.
+//                              // ADDED: Hide the main loading indicator
+//                             if (loadingDiv) {
+//                                 loadingDiv.style.visibility = 'hidden';
+//                             }
+//                             if (this.status === 200) {
+//                                 // Find the correct div to update. Based on your old code,
+//                                 // it seems like the main container is 'sellPurchaseItemDetails'.
+//                                 var contentArea = document.getElementById('sellPurchaseItemDetails');
+//                                 if (contentArea) {
+//                                     contentArea.innerHTML = this.responseText;
+//                                 } else {
+//                                     // Fallback if the div ID is different
+//                                     alert("Content area 'sellPurchaseItemDetails' not found. Page will reload.");
+//                                     window.location.reload(); // Simple reload as a backup
+//                                 }
+
+//                                 // Hide the progress message after refresh
+//                                 if(progressDiv) progressDiv.style.display = 'none';
+//                             }
+//                         }
+//                     };
+//                     finalHttp.open("GET", refreshUrl, true);
+//                     finalHttp.send();
+
+//                 } else {
+//                     // Handle a structured error from the server (e.g., database error)
+//                     throw new Error(response.message || "Unknown server error.");
+//                 }
+//             } catch (e) {
+//                 // ADDED: Hide the main loading indicator if there is an error
+//                 if (loadingDiv) {
+//                     loadingDiv.style.visibility = 'hidden';
+//                 }
+                
+//                 // Handle a catastrophic error (e.g., PHP syntax error, 404 not found)
+//                 alert("A critical error occurred: " + e.message);
+//                 if (progressDiv) {
+//                      progressDiv.innerHTML = "<span style='color:red;'>An error occurred. Please check the console.</span>";
+//                 }
+//                 // Show the button again so the user can try again
+//                 if (buttonContainer) buttonContainer.style.display = 'block';
+//             }
+//         }
+//     };
+//     xhr.open('POST', url, true);
+//     xhr.send(formData);
+// }
+
+
+
+
+
+
+
+
+// demo--worked
+
+
+// function deleteAllItems(itemIds,custId,firmId,panelName,mainPanel,preinvno,postinvno) {
+//     // saif
+
+
+//     if (!itemIds || itemIds.length === 0) {
+//         alert("There are no items to delete.");
+//         return;
+//     }
+
+//     var confirmationMessage = "Are you sure you want to delete all " + itemIds.length + " items from this invoice?";
+//     if (!confirm(confirmationMessage)) {
+//         return;
+//     }
+
+//     var loadingDiv = document.getElementById('main_ajax_loading_div');
+//     if (loadingDiv) loadingDiv.style.visibility = 'visible';
+
+//     var progressDiv = document.getElementById('deleteAllProgress');
+//     if (progressDiv) {
+//         progressDiv.innerHTML = 'Deleting ' + itemIds.length + ' items, please wait...';
+//         progressDiv.style.display = 'block';
+//     }
+
+//     var buttonContainer = document.getElementById('deleteAllButtonContainer'); 
+//     if (buttonContainer) buttonContainer.style.display = 'none';
+
+//     var url = 'include/php/batch_delete_handler.php';
+
+//     var idsArray = Array.isArray(itemIds) ? itemIds : String(itemIds).split(',');
+//     var formData = new FormData();
+//     formData.append('itemIds', idsArray.join(','));
+//     formData.append('custId', custId);
+//     formData.append('firmId', firmId);
+//     formData.append('panelName', panelName);
+//     formData.append('mainPanel', mainPanel);
+//     formData.append('preinvno', preinvno);
+//     formData.append('postinvno', postinvno);
+
+//     var xhr = new XMLHttpRequest();
+//     xhr.onreadystatechange = function() {
+//         if (xhr.readyState === 4) {
+//             try {
+//                 var response = JSON.parse(xhr.responseText);
+
+//                 if (xhr.status === 200 && response.status === 'success') {
+//                     if (progressDiv) progressDiv.innerHTML = 'Deletion complete. Refreshing invoice...';
+//                     // alert("Queries executed:\n\n" + response.queries.join("\n"));
+//                     //  alert("queries1 executed:\n\n" + response.queries1.join("\n"));
+//                     // alert("diff executed:\n\n" + response.diffitems.join("\n"));
+//                    if (panelName === 'ImitationSellPayUp' && mainPanel === 'ImitationPurchasePanel') {
+//                         var refreshUrl = `include/php/ogspisdv.php?custId=${custId}&slPrId=&panelName=ImitationSellPayUp&mainPanel=ImitationPurchasePanel&UpdatePanelName=undefined&preInvoiceNo=${preinvno}&postInvoiceNo=${postinvno}`;
+//                     } else {
+//                         var refreshUrl = `include/php/ogijaitdvB2sell.php?panelName=RETAIL_IMITATION_B2&indicator=imitation&transactionType=sell&type=imitation&custId=${custId}&formName=RETAIL_IMITATION_B2&divName=cust_middle_body&firmId=${firmId}`;
+//                     }
+//                     var finalHttp = new XMLHttpRequest();
+//                     finalHttp.onreadystatechange = function() {
+//                         if (this.readyState === 4) {
+//                             if (loadingDiv) loadingDiv.style.visibility = 'hidden';
+
+//                             if (this.status === 200) {
+//                                 var contentArea = document.getElementById('sellPurchaseItemDetails');
+//                                 if (contentArea) {
+//                                     contentArea.innerHTML = this.responseText;
+
+//                                     // ✅ Your focus-reset code here
+//                                     setTimeout(function() {
+//                                         const rfidInput = document.getElementById('srchItemIdimi');
+//                                         if (rfidInput) {
+//                                             rfidInput.focus();
+//                                             console.log("🔍 Focus set back to RFID input.");
+//                                         } else {
+//                                             console.warn("Could not find 'srchItemIdimi' to set focus after refresh.");
+//                                         }
+//                                     }, 100);
+
+//                                 } else {
+//                                     alert("Content area 'sellPurchaseItemDetails' not found. Page will reload.");
+//                                     window.location.reload();
+//                                 }
+
+//                                 if (progressDiv) progressDiv.style.display = 'none';
+//                             }
+//                         }
+//                     };
+//                     finalHttp.open("GET", refreshUrl, true);
+//                     finalHttp.send();
+
+//                 } else {
+//                     throw new Error(response.message || "Unknown server error.");
+//                 }
+//             } catch (e) {
+//                 if (loadingDiv) loadingDiv.style.visibility = 'hidden';
+//                 alert("A critical error occurred: " + e.message);
+//                 if (progressDiv) {
+//                      progressDiv.innerHTML = "<span style='color:red;'>An error occurred. Please check the console.</span>";
+//                 }
+//                 if (buttonContainer) buttonContainer.style.display = 'block';
+//             }
+//         }
+//     };
+    
+//     xhr.open('POST', url, true);
+//     xhr.send(formData);
+// }
+
+
+function deleteAllItems(itemIds, custId, firmId, panelName, mainPanel, preinvno, postinvno) {
+    if (!itemIds || itemIds.length === 0) {
+        alert("There are no items to delete.");
+        return;
+    }
+
+    var confirmationMessage = "Are you sure you want to delete all " + itemIds.length + " items from this invoice?";
+    if (!confirm(confirmationMessage)) {
+        return;
+    }
+
+    var loadingDiv = document.getElementById('main_ajax_loading_div');
+    if (loadingDiv) loadingDiv.style.visibility = 'visible';
+
+    var progressDiv = document.getElementById('deleteAllProgress');
+    if (progressDiv) {
+        progressDiv.innerHTML = 'Deleting ' + itemIds.length + ' items, please wait...';
+        progressDiv.style.display = 'block';
+    }
+
+    var buttonContainer = document.getElementById('deleteAllButtonContainer'); 
+    if (buttonContainer) buttonContainer.style.display = 'none';
+
+    var url = 'include/php/omrfidbatchdeletehandler.php';
+
+    // --- CHANGE 1: Building a URL-encoded string instead of FormData ---
+    var idsString = Array.isArray(itemIds) ? itemIds.join(',') : String(itemIds);
+    var postData = "itemIds=" + encodeURIComponent(idsString) +
+                   "&custId=" + encodeURIComponent(custId) +
+                   "&firmId=" + encodeURIComponent(firmId) +
+                   "&panelName=" + encodeURIComponent(panelName) +
+                   "&mainPanel=" + encodeURIComponent(mainPanel) +
+                   "&preinvno=" + encodeURIComponent(preinvno) +
+                   "&postinvno=" + encodeURIComponent(postinvno);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    // This header is REQUIRED when sending data this way
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            try {
+                // Check for a successful HTTP response first
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+
+                    if (response.status === 'success' || response.status === 'message1') {
+                        if (progressDiv) progressDiv.innerHTML = 'Deletion complete. Refreshing invoice...';
+                        // --- CHANGE 2: Replaced template literals with string concatenation (+) ---
+                        var refreshUrl;
+                        if (panelName === 'ImitationSellPayUp' && mainPanel === 'ImitationPurchasePanel') {
+                            refreshUrl = "include/php/ogspisdv.php?custId=" + custId + "&slPrId=&panelName=ImitationSellPayUp&mainPanel=ImitationPurchasePanel&UpdatePanelName=undefined&preInvoiceNo=" + preinvno + "&postInvoiceNo=" + postinvno;
+                        } else {
+                            refreshUrl = "include/php/ogijaitdvB2sell.php?panelName=RETAIL_IMITATION_B2&indicator=imitation&transactionType=sell&type=imitation&custId=" + custId + "&formName=RETAIL_IMITATION_B2&divName=cust_middle_body&firmId=" + firmId;
+                        }
+
+                        var finalHttp = new XMLHttpRequest();
+                        finalHttp.onreadystatechange = function() {
+                            if (this.readyState === 4) {
+                                if (loadingDiv) loadingDiv.style.visibility = 'hidden';
+
+                                if (this.status === 200) {
+                                    var contentArea = document.getElementById('sellPurchaseItemDetails');
+                                    if (contentArea) {
+                                        contentArea.innerHTML = this.responseText;
+
+                                        setTimeout(function() {
+                                            // --- CHANGE 3: Replaced 'const' with 'var' ---
+                                            var rfidInput = document.getElementById('srchItemIdimi');
+                                            if (rfidInput) {
+                                                rfidInput.focus();
+                                            }
+                                        }, 100);
+
+                                    } else {
+                                        alert("Content area 'sellPurchaseItemDetails' not found. Page will reload.");
+                                        window.location.reload();
+                                    }
+                                    if (progressDiv) progressDiv.style.display = 'none';
+                                }
+                            }
+                        };
+                        finalHttp.open("GET", refreshUrl, true);
+                        finalHttp.send();
+
+                    } else {
+                        throw new Error(response.message || "Unknown server error.");
+                    }
+                } else {
+                     throw new Error("Server responded with an error: " + xhr.status);
+                }
+            } catch (e) {
+                if (loadingDiv) loadingDiv.style.visibility = 'hidden';
+                alert("A critical error occurred: " + e.message);
+                if (progressDiv) {
+                     progressDiv.innerHTML = "<span style='color:red;'>An error occurred. Please refresh the page.</span>";
+                }
+                if (buttonContainer) buttonContainer.style.display = 'block';
+            }
+        }
+    };
+    
+    // Send the URL-encoded string
+    xhr.send(postData);
+}
+
+
+// function applyBulkPriceUpdate(abcArray, custId, firmId, preVoucherNo, voucherNo) {
+//     console.log("Array received:", abcArray, "Firm ID:", firmId, "custId ID:", custId);
+//     var multiplier = document.getElementById('priceMultiplier').value;
+
+//     if (!multiplier || isNaN(multiplier)) {
+//         alert("Please enter a valid numeric multiplier.");
+//         return;
+//     }
+
+//     var loadingDiv = document.getElementById('main_ajax_loading_div');
+//     if (loadingDiv) {
+//         loadingDiv.style.visibility = "visible";
+//     }
+
+//     var abcJson = JSON.stringify(abcArray);
+//     var url = "include/php/ogijsupd.php?multiplier=" +
+//       encodeURIComponent(multiplier) +
+//       "&abc=" +
+//       encodeURIComponent(abcJson) + 
+//       "&custId=" + encodeURIComponent(custId) +
+//       "&firmId=" + encodeURIComponent(firmId);
+
+//     console.log("Full AJAX URL:", url);
+//     // *** NEW CODE START: Add voucher details to the URL if they exist ***
+//     if (preVoucherNo) {
+//         url += "&prevoucherno=" + encodeURIComponent(preVoucherNo);
+//     }
+//     if (voucherNo) {
+//         url += "&voucherNo=" + encodeURIComponent(voucherNo);
+//     }
+//     // *** NEW CODE END ***
+//     var xmlhttp = new XMLHttpRequest();
+//     xmlhttp.onreadystatechange = function () {
+//         if (xmlhttp.readyState === 4) {
+//             if (loadingDiv) {
+//                 loadingDiv.style.visibility = "hidden";
+//             }
+
+//             if (xmlhttp.status === 200) {
+//                 console.log("AJAX request complete.");
+//                 try {
+//                     var response = JSON.parse(xmlhttp.responseText);
+//                     if (response.success && response.redirectUrl) {
+//                         console.log("Update successful. Now loading new content from:", response.redirectUrl);
+//                           // *** NEW CODE START: Check for a redirect URL from the server ***
+//                         if (response.redirectUrl) {
+//                             // If a redirect URL is provided, redirect the whole page
+//                             window.location.href = response.redirectUrl;
+//                         }
+//                         // *** NEW CODE END ***
+//                         // *** THE FIX IS HERE: We use setTimeout to ensure our focus command runs LAST. ***
+//                         loadContentIntoDiv(response.redirectUrl, 'cust_middle_body', function() {
+                            
+//                             // Wait for 100 milliseconds before trying to set the focus.
+//                             setTimeout(function() {
+//                                 var searchInput = document.getElementById('srchItemIdimi');
+//                                 if (searchInput) {
+//                                     searchInput.focus();
+//                                     console.log("Successfully focused on #srchItemIdimi after a delay.");
+//                                 } else {
+//                                     console.warn("#srchItemIdimi was not found after loading new content.");
+//                                 }
+//                             }, 100); // 100ms delay is usually enough.
+
+//                         }); 
+                        
+//                     } else {
+//                         alert("Operation failed: " + response.message);
+//                     }
+//                 } catch (e) {
+//                     document.getElementById('cust_middle_body').innerHTML = xmlhttp.responseText;
+//                     alert("An unexpected error occurred.");
+//                 }
+//             } else {
+//                 alert("Error communicating with the server. Status: " + xmlhttp.status);
+//             }
+//         }
+//     };
+//     xmlhttp.open("GET", url, true);
+//     xmlhttp.send();
+// }
+function applyBulkPriceUpdate(abcArray, custId, firmId, preVoucherNo, voucherNo) {
+    console.log(abcArray+''+ custId+''+ firmId+''+ preVoucherNo+''+voucherNo);
+    var multiplier = document.getElementById('priceMultiplier').value;
+
+    if (!multiplier || isNaN(multiplier)) {
+        alert("Please enter a valid numeric multiplier.");
+        return;
+    }
+
+    var loadingDiv = document.getElementById('main_ajax_loading_div');
+    if (loadingDiv) {
+        loadingDiv.style.visibility = "visible";
+    }
+
+    // Build the base URL
+    var url = "include/php/ogijsupd.php?multiplier=" + encodeURIComponent(multiplier) +
+              "&abc=" + encodeURIComponent(JSON.stringify(abcArray)) + 
+              "&custId=" + encodeURIComponent(custId) +
+              "&firmId=" + encodeURIComponent(firmId);
+
+    // Add voucher details to the URL ONLY if they exist
+    if (preVoucherNo) {
+        url += "&prevoucherno=" + encodeURIComponent(preVoucherNo);
+    }
+    if (voucherNo) {
+        url += "&voucherNo=" + encodeURIComponent(voucherNo);
+    }
+
+    console.log("Final AJAX URL:", url);
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4) { // Request finished
+            if (loadingDiv) {
+                loadingDiv.style.visibility = "hidden";
+            }
+
+            if (xmlhttp.status === 200) { // Request successful
+                try {
+                    var response = JSON.parse(xmlhttp.responseText);
+                    if (response.success) {
+                        
+                        // SCENARIO 1: Voucher exists, do a FULL PAGE REDIRECT.
+                        if (response.redirectUrl) {
+                            console.log("Voucher update successful. Redirecting to:", response.redirectUrl);
+                            window.location.href = response.redirectUrl;
+                        } 
+                        
+                        // SCENARIO 2: No voucher, just reload the content in the DIV.
+                        else if (response.reloadUrl) {
+                            console.log("Standard update successful. Reloading content from:", response.reloadUrl);
+                            loadContentIntoDiv(response.reloadUrl, 'cust_middle_body', function() {
+                                // Optional: You can add focus logic here if needed for this case
+                                setTimeout(function() {
+                                    var searchInput = document.getElementById('srchItemIdimi');
+                                    if (searchInput) { searchInput.focus(); }
+                                }, 100);
+                            });
+                        }
+
+                    } else {
+                        // Show error message from the server
+                        alert("Operation failed: " + response.message);
+                    }
+                } catch (e) {
+                    alert("An unexpected error occurred. The server response was not valid.");
+                    console.error("JSON Parse Error:", e);
+                    console.error("Server Response:", xmlhttp.responseText);
+                }
+            } else {
+                // Handle server errors (like 404, 500)
+                alert("Error communicating with the server. Status: " + xmlhttp.status);
+            }
+        }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
+
+function handlePidSelectionFromPopup(sttrId,custId,panelName) {
+    // This function is called by the popup window.
+    // It receives the selected sttr_id (which is the slPrId).
+  console.log(sttrId);
+    // Get the current customer ID from a hidden field on the main p
+    console.log("Received PID " + sttrId + " from popup for customer " + custId + ". Loading update form...");
+
+    // Construct the URL with all the required parameters, just like the original request.
+    const url = `include/php/ogspisdv.php?custId=${custId}&slPrId=${sttrId}&sellPanelNamee=${panelName}&panelName=SellDetUpPanel&mainPanel=ImitationPurchasePanel&UpdatePanelName=ImitationStock`;
+
+    // Use your existing AJAX function to load the content.
+    // We are telling it to load the response from the URL above into the main content div.
+    loadXMLDoc2();
+    xmlhttp2.onreadystatechange = function() {
+        if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
+            // Success! The response (the update form) is now in xmlhttp2.responseText.
+            // Replace the entire sales interface with the update form.
+            document.getElementById("sellPurchaseItemDetails").innerHTML = xmlhttp2.responseText;
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+
+    // We make a POST request as required. The parameters are in the URL, which PHP's $_REQUEST will handle.
+    xmlhttp2.open("POST", url, true);
+    xmlhttp2.send();
+}
+//saif
+function popimitationrecords(multiplier,custId,preinvno,postinvno,panelName) {
+  console.log('The value is '+multiplier);  
+   console.log('The value is '+custId);
+  const popupUrl = 'include/php/omrfidmulscanPopup.php?multiplier=' + encodeURIComponent(multiplier)+'&custId=' + encodeURIComponent(custId)+'&preinvno=' + encodeURIComponent(preinvno)+'&postinvno=' + encodeURIComponent(postinvno)+'&panelName=' + encodeURIComponent(panelName);
+  window.open(popupUrl, 'popupWindow', 'width=1200,height=500,resizable=yes,scrollbars=yes'); 
+}
+// demo 4
+const RFIDScannerHandler = (function () {
+
+    let scannedRfids = [];
+    let rfidScanTimer = null;
+    const FINAL_BATCH_DELAY = 1000; 
+
+    // MODIFIED: Added 'queryString' as the last parameter
+    function handleScan(inputElement, event, omly_value, custId, panelName, firmId, sessionownerId, autoEntryValue, queryString) {
+      
+
+        if (event.keyCode !== 13) {
+            return; 
+        }
+        event.preventDefault();
+
+        const rfid = inputElement.value.trim();
+        if (rfid.length > 0) {
+            scannedRfids.push(rfid);
+            console.log(`RFID "${rfid}" added. Batch now has ${scannedRfids.length} items.`);
+        }
+        inputElement.value = ''; 
+
+        if (rfidScanTimer) {
+            clearTimeout(rfidScanTimer);
+        }
+
+        rfidScanTimer = setTimeout(function() {
+            if (scannedRfids.length > 0) {
+                console.log("Scanning paused. Sending final batch.");
+                // MODIFIED: Pass the queryString to the processBatch function
+                processBatch(scannedRfids, firmId, custId, panelName, autoEntryValue, queryString);
+                scannedRfids = []; 
+            }
+        }, FINAL_BATCH_DELAY);
+    }
+
+    function processBatch(rfidArray, firmId, custId, panelName, autoEntry, queryString) {
+        console.log(rfidArray);
+        console.log(firmId+' '+ custId+' '+ panelName+' '+autoEntry+' '+queryString);
+    var loadingDiv = document.getElementById('main_ajax_loading_div');
+    if (loadingDiv) {
+        loadingDiv.style.visibility = "visible";
+    }
+
+    const rfidList = rfidArray.join(',');
+    console.log(`📤 Sending final batch of ${rfidArray.length} RFIDs: ${rfidList}`);
+    
+    // The POST request goes to the main file which includes the handler at the top.
+    // This is your current, working setup.
+    const url = `include/php/ogijaitdvB2selldiv.php?` + queryString;
+    
+    const formData = new FormData();
+    formData.append('rfidList', rfidList);
+    formData.append('firmId', firmId);
+    formData.append('custId', custId);
+    formData.append('panelName', panelName);
+    formData.append('autoEntry', autoEntry);
+
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) { // When the request is complete
+            if (loadingDiv) {
+                loadingDiv.style.visibility = "hidden";
+            }
+
+            // if (xhr.status == 200) {
+            //     console.log("✅ Batch processed successfully. Refreshing content div.");
+                
+            //     // This is the main container div that holds your text boxes AND the invoice list.
+            //     var contentArea = document.getElementById('sellPurchaseItemDetails'); 
+            //     if (contentArea) {
+            //         // The response from ogijaitdvB2selldiv.php is the FULL content block.
+            //         // By replacing the innerHTML of the main container, we refresh everything
+            //         // inside it, including the text boxes (with their correct `onkeydown` events)
+            //         // and the invoice list.
+            //         contentArea.innerHTML = xhr.responseText;
+            //     } else {
+            //         alert("Error: Main content area 'sellPurchaseItemDetails' not found. Page will reload.");
+            //         window.location.reload();
+            //     }
+
+            // } else {
+            //     console.error("Error processing batch. Status: " + xhr.status);
+            //     alert("An error occurred while communicating with the server. Please try again.");
+            // }
+            if (xhr.status == 200) {
+    console.log("✅ Batch processed successfully. Refreshing content div.");
+
+    var contentArea = document.getElementById('sellPurchaseItemDetails'); 
+    if (contentArea) {
+        contentArea.innerHTML = xhr.responseText;
+
+        // Wait a short moment for DOM update, then focus the input
+        setTimeout(function() {
+            var searchInput = document.getElementById('srchItemIdimi');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.select(); // optional: highlight existing value
+            } else {
+                console.warn("⚠️ Input '#srchItemIdimi' not found after reload.");
+            }
+        }, 50); // 50ms delay is usually enough
+    } else {
+        alert("Error: Main content area 'sellPurchaseItemDetails' not found. Page will reload.");
+        window.location.reload();
+    }
+}
+
+        }
+    };
+
+    xhr.open("POST", url, true);
+    xhr.send(formData);
+}
+    // Expose the public handleScan method
+    return {
+        handleScan: handleScan
+    };
+})();
+
 function searchImitationB2ItemByItemId(searchItemId, autoEntryValue, custId) {
     //alert(custId);
+    console.log('the function is called searchImitationB2ItemByItemId.........');
     const processedRfids = new Set();
     var searchItemIdLen = searchItemId.length;
     var searchItemIdTemp = searchItemId;
@@ -10525,7 +11597,13 @@ function showSlPrImitationB2InvDiv(srchItemPreId, srchItemPostId, custId) {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
             document.getElementById("sellPurchaseItemDetails").innerHTML = xmlhttp.responseText;
-            document.getElementById('addItemDOBDay').focus();
+            if (document.getElementById('addItemDOBDay')) {
+                document.getElementById('addItemDOBDay').focus();
+            }
+            if (document.getElementById('paymentDiv')) {
+                document.getElementById('paymentDiv').innerHTML = '';
+            }
+            displayPricingOptionsForStaff();
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
         }
@@ -11404,11 +12482,15 @@ function addCollection() {
 }
 //
 window.onload = () => {
-    const tagsContainer = document.querySelector('.tags-container');
-    tagsContainer.addEventListener('click', removeTag);
-
-    const collectiontagsContainer = document.querySelector('.collection-container');
-    collectiontagsContainer.addEventListener('click', removeTag);
+    if ( document.querySelector('.tags-container') != null ){
+        const tagsContainer = document.querySelector('.tags-container');
+        tagsContainer.addEventListener('click', removeTag);
+    }
+    
+    if ( document.querySelector('.collection-container') != null ){
+        const collectiontagsContainer = document.querySelector('.collection-container');
+        collectiontagsContainer.addEventListener('click', removeTag);
+    }   
 }
 
 
@@ -14183,6 +15265,32 @@ function closeGSTPopUp() {
 //End Function for the colse the opened modal //
 /***************************************************************************************************************/
 
+
+/***************************************************************************************************************/
+// IMITATION GST E - ENVOICE POPUP SHOW HIDE @ GANESH 9 JUN 2025
+/***************************************************************************************************************/
+function OpenGSTPayModalImitation(custId, sttrPreInvoiceNo, slPrInvoiceNo, slPrDate, slPrDate1, slPrInvoiceNo1, crystalPanel) {
+    loadXMLDoc();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            document.getElementById('myModal').style.display = "block";
+            document.getElementById('myModal').innerHTML = xmlhttp.responseText;
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    xmlhttp.open("POST", "include/php/omGSTopmodImitation" + default_theme + ".php?custId=" + custId + "&sttrPreInvoiceNo=" + sttrPreInvoiceNo + "&slPrInvoiceNo=" + slPrInvoiceNo + "&slPrDate=" + slPrDate + "&slPrDate1=" + slPrDate1 + "&slPrInvoiceNo1=" + slPrInvoiceNo1 + "&crystalPanel=" + crystalPanel, true);
+    xmlhttp.send();
+}
+
+function closeGSTPopUp() {
+    document.getElementById('myModal').style.display = "none";
+}
+/***************************************************************************************************************/
+//End Function for the colse the opened modal //
+/***************************************************************************************************************/
+
 function OpenDailyRateUpdateModal() {
     loadXMLDoc();
     xmlhttp.onreadystatechange = function () {
@@ -14935,7 +16043,7 @@ function calculateMCXSilverRate(documentRoot)
 // ***************************************************************************************************************************
 // START CODE FOR STOCK TRANSFER - APPROVAL PENDING FUNCTION @Author:PRIYANKA-20JUNE2022
 // ***************************************************************************************************************************
-function tagApprovalPendingAddStock(sttrId, transType, mainPanelName, transPanelName, metalType, indicator, approveStatus, count, arrcount) {
+function tagApprovalPendingAddStock(sttrId, transType, mainPanelName, transPanelName, metalType, indicator, approveStatus, count, arrcount, barcode) {
     if (approveStatus == 'approveMultipleStock') {
         var confirmMsg = true;
     } else {
@@ -14956,10 +16064,49 @@ function tagApprovalPendingAddStock(sttrId, transType, mainPanelName, transPanel
         xmlhttp.open("GET", "include/php/ogiamndv.php?panelName=AddStock" + "&panel=tagStockApprovalPendingStockList" +
                 "&mainPanelName=" + mainPanelName + "&metalType=" + metalType +
                 "&sttrId=" + sttrId + "&transType=" + transType + "&indicator=" + indicator +
-                "&transPanelName=" + transPanelName, true);
+                "&transPanelName=" + transPanelName +
+                "&checkOnly=" + barcode, true);
         xmlhttp.send();
     }
 }
+
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+const debouncedApproveStock = debounce(tagApprovalPendingAddStock, 400);
+
+  function initBarcodeApprovalInput(inputId) {
+    const inputEl = document.getElementById(inputId);
+
+    if (!inputEl) {
+      console.error(`Input with id '${inputId}' not found`);
+      return;
+    }
+
+    inputEl.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault(); // prevent accidental form submit / reload
+        const inputValue = this.value.trim();
+
+        if (inputValue !== "") {
+          debouncedApproveStock(inputValue, "PURBYSUPP", "tagApprovalPendingAddStock", "reactive", "imitation", "imitation", "approveMultipleStock", '', '', 'barcode');
+
+          this.value = "";
+        } else {
+          console.warn("No barcode entered!");
+        }
+      }
+    });
+  }
+
+
+
 // ***************************************************************************************************************************
 // END CODE FOR STOCK TRANSFER - APPROVAL PENDING FUNCTION @Author:PRIYANKA-20JUNE2022
 // ***************************************************************************************************************************
@@ -15217,13 +16364,14 @@ function findAndUpdateRFIDTags(array, searchKey, searchValue, updateKey, newValu
 //     
 // START ADD THIS FUN FOR IMITATION STOCK TALLY USE
 function getStockTransCatFuncImitation(panel) {
-    var RFIDPopup = document.getElementById('RFIDPopup').value;
-    var stockType = document.getElementById('stockType').value;
-    var StockTallycheckbox = document.getElementById('StockTallycheckbox').checked;
-    var productCounterName = document.getElementById('productCounterName').value;
-    var productModelNo = document.getElementById('productModelNo').value;
-    var productCategory = document.getElementById('productCategory').value;
-    var productLocation = document.getElementById('productLocation').value;
+    var RFIDPopup = document.getElementById('RFIDPopup') ? document.getElementById('RFIDPopup').value : '';
+    var stockType = document.getElementById('stockType') ? document.getElementById('stockType').value : '';
+    var StockTallycheckbox = document.getElementById('StockTallycheckbox') ? document.getElementById('StockTallycheckbox').checked : false;
+    var productCounterName = document.getElementById('productCounterName') ? document.getElementById('productCounterName').value : '';
+    var productModelNo = document.getElementById('productModelNo') ? document.getElementById('productModelNo').value : '';
+    var productCategory = document.getElementById('productCategory') ? document.getElementById('productCategory').value : '';
+    var productLocation = document.getElementById('productLocation') ? document.getElementById('productLocation').value : '';
+
     //
     if (panel == 'OPEN STOCK') {
         var stockType = 'OPEN STOCK';
@@ -15397,7 +16545,12 @@ function bankpayment(documentRoot, custid, bank, amount, apiType)
 //****************************************************************************************************************************************
 function bankPaymentWithtOtp(documentRoot, bank, amount, apiType, uniqueid)
 {
-    if (document.getElementById("credit").value == "")
+    if (document.getElementById("debit").value == "")
+    {
+        alert("Please Enter Debit Account NO.");
+        document.getElementById("debit").focus();
+        return false;
+    } else if (document.getElementById("credit").value == "")
     {
         alert("Please Enter Credit Account NO.");
         document.getElementById("credit").focus();
@@ -16204,6 +17357,7 @@ function addNewMetalPurityRate() {
 
 // This is the function called by the image's onload event
 function initiateAjaxSubmit() {
+    console.log("this functino is called initiateAjaxSubmit");
     console.log("Image loaded, initiating AJAX submission sequence.");
 
     // --- IMPORTANT ---
@@ -16228,50 +17382,80 @@ function initiateAjaxSubmit() {
 //
 //});
 // Reusable function containing the core AJAX logic
-function submitSellPurchaseFormViaAjax() {
-    console.log("Attempting AJAX submission for sell_purchase...");
 
-    var formElement = document.getElementById('sell_purchase');
-    if (!formElement) {
-        console.error("Form #sell_purchase not found!");
-        $('#slPrCurrentInvoice').html('<p style="color:red;">Error: Form element missing.</p>');
+
+let isSellPurchaseSubmitting = false;
+
+function submitSellPurchaseFormViaAjax() {
+    if (isSellPurchaseSubmitting) {
+        console.warn("Duplicate submitSellPurchaseFormViaAjax call prevented.");
         return;
     }
 
-    var formData = new FormData(formElement);
+    isSellPurchaseSubmitting = true;
+    console.log("this function is called submitSellPurchaseFormViaAjax");
+    console.log("Attempting AJAX submission for sell_purchase...");
 
-    $('#slPrCurrentInvoice').html('<p>Processing...</p>'); // Loading indicator
+    // ✅ Step 1: Clear #paymentdiv if it exists
+    const paymentDiv = document.getElementById('paymentdiv');
+    if (paymentDiv) {
+        console.log("Clearing #paymentdiv before AJAX call...");
+        paymentDiv.innerHTML = '';
+    }
 
+    // ✅ Step 2: Get form
+    const formElement = document.getElementById('sell_purchase');
+    if (!formElement) {
+        console.error("Form #sell_purchase not found!");
+        $('#slPrCurrentInvoice').html('<p style="color:red;">Error: Form element missing.</p>');
+        isSellPurchaseSubmitting = false;
+        return;
+    }
+
+    // ✅ Step 3: Prepare FormData
+    const formData = new FormData(formElement);
+    $('#slPrCurrentInvoice').html('<p>Processing...</p>');
+
+    // ✅ Step 4: AJAX Call
     $.ajax({
-        url: 'include/php/ogijspmad.php', // Correct path needed
+        url: 'include/php/ogijspmad.php',
         type: 'POST',
         data: formData,
-        processData: false, // Important for FormData
-        contentType: false, // Important for FormData
+        processData: false,
+        contentType: false,
         success: function (response) {
             console.log("AJAX Success (Triggered by onload). Response received.");
-            $('#slPrCurrentInvoice').html(response); // Update target div
+            $('#slPrCurrentInvoice').html(response);
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.error("AJAX Error (Triggered by onload):");
-            console.error("Status: " + textStatus);
-            console.error("Error Thrown: " + errorThrown);
-            if (jqXHR.responseText) {
-                console.error("Server Response: " + jqXHR.responseText);
-            }
-            $('#slPrCurrentInvoice').html('<p style="color:red;">An error occurred. Status: ' + textStatus + '</p>');
+            console.error("AJAX Error:", textStatus, errorThrown);
+            $('#slPrCurrentInvoice').html('<p style="color:red;">Error occurred. Status: ' + textStatus + '</p>');
+        },
+        complete: function () {
+            // ✅ Step 5: Release lock
+            isSellPurchaseSubmitting = false;
         }
     });
 }
-//
+
+
+
+// Add this global variable at the top of your script file, outside of any function.
+// This flag will act as our "lock".
+
+
 function showInvoiceDetailsAutoSell(requestData) {
     // Access the data
+    console.log("the function is called showInvoiceDetailsAutoSell .............indv file function call in this ");
     //console.log('Received request data:', requestData);
     //
     loadXMLDoc2();
     xmlhttp2.onreadystatechange = function () {
         if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
             document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+             if (document.getElementById('paymentDiv')) {
+                document.getElementById('paymentDiv').innerHTML = '';
+            }
             document.getElementById("slPrCurrentInvoice").innerHTML = xmlhttp2.responseText;
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
@@ -16280,4 +17464,204 @@ function showInvoiceDetailsAutoSell(requestData) {
     xmlhttp2.open("POST", "include/php/ogijspindv.php?requestData=" + requestData, true);
     xmlhttp2.send();
 
+}
+function applyMarkup() {
+    console.log('the markup function is called ');
+    var fixedPriceCheckbox = document.getElementById('sttr_fixed_price_status_checkbox');
+    var fixedPriceCheckboxsell = document.getElementById('sttr_fixed_price_status');
+    if (fixedPriceCheckbox.checked || fixedPriceCheckboxsell.checked) {
+        toggleFixedPrice();
+    }
+}
+
+/**
+ * This is the main function that controls everything for the Fixed MRP.
+ * It is called when the checkbox is clicked OR when the main price calculation runs.
+ */
+function toggleFixedPrice() {
+    var checkbox = document.getElementById('sttr_fixed_price_status_checkbox');
+    var custPriceInput = document.getElementById('sttr_cust_price');
+    var finalValInput = document.getElementById('sttr_final_valuation');
+    var hiddenStatusInput = document.getElementById('sttr_fixed_price_status'); // The hidden input
+    var markupVal = parseFloat(document.getElementById('sttr_markup').value) || 0;
+
+    if (checkbox.checked) {
+        // --- This code runs if the checkbox is checked ---
+        hiddenStatusInput.value = 'TRUE';
+        custPriceInput.style.display = 'block';
+
+        // Get the base value from the final valuation field
+        var baseVal = parseFloat(finalValInput.value.replace(/,/g, '')) || 0;
+
+        // Calculate the new MRP by adding the markup percentage
+        var finalMRP = baseVal + (baseVal * (markupVal / 100));
+
+        // Set the calculated value in the MRP textbox
+        custPriceInput.value = finalMRP.toFixed(2);
+        
+    } else {
+        // --- This code runs if the checkbox is NOT checked ---
+        hiddenStatusInput.value = 'FALSE';
+        custPriceInput.style.display = 'none';
+        custPriceInput.value = '';
+    }
+}
+
+
+// function calculateMarkupPrice() {
+//     console.log('the  calculateMarkupPrice is called');
+//     // 1. Get the HTML elements
+//     var markupInput = document.getElementById('sttr_markup');
+//     var finalAmountInput = document.getElementById('slPrItemFinalVal');
+//     var finalAmountInputB2 = document.getElementById('sttr_final_valuation');
+//     var customPriceInput = document.getElementById('sttr_cust_price');
+// console.log("markupInput:", markupInput ? markupInput.value : 'Not Found');
+// console.log("finalAmountInput:", finalAmountInput ? finalAmountInput.value : 'Not Found');
+// console.log("finalAmountInputB2:", finalAmountInputB2 ? finalAmountInputB2.value : 'Not Found');
+// console.log("customPriceInput:", customPriceInput ? customPriceInput.value : 'Not Found');
+//     // 2. Safety check
+//     if (!markupInput || !customPriceInput) {
+//         console.error("Error: Missing required fields (sttr_markup or sttr_cust_price).");
+//         return;
+//     }
+
+//     // 3. Get markup %
+//     var markupPercentage = parseFloat(markupInput.value) || 0;
+//     var baseAmount = 0;
+
+//     // 4. Determine which amount field to use
+//     if (finalAmountInput && finalAmountInput.value.trim() !== '') {
+//         baseAmount = parseFloat(finalAmountInput.value) || 0;
+//     } else if (finalAmountInputB2 && finalAmountInputB2.value.trim() !== '') {
+//         baseAmount = parseFloat(finalAmountInputB2.value) || 0;
+//     } else {
+//         console.error("Error: Neither slPrItemFinalVal nor sttr_final_valuation found or has value.");
+//         return;
+//     }
+//     console.log('baseAmount' + baseAmount);
+//     // 5. Perform the calculation
+//     if (baseAmount > 0) {
+//         var markupAmount = baseAmount * (markupPercentage / 100);
+//         var newCustomPrice = baseAmount + markupAmount;
+
+//         // 6. Update custom price
+//         customPriceInput.value = newCustomPrice.toFixed(2);
+//     }
+// }
+
+function calculateMarkupPrice() {
+    console.log('the function is called calculateMarkupPrice');
+
+    // 1. Get the markup field
+    var markupInput = document.getElementById('sttr_markup');
+
+    // ✅ Only proceed if sttr_markup exists and has a value
+    if (markupInput && markupInput.value !== "") {
+
+        var finalAmountInput = document.getElementById('slPrItemFinalVal');
+        var finalAmountInputB2 = document.getElementById('sttr_final_valuation');
+        var customPriceInput = document.getElementById('sttr_cust_price');
+
+        console.log("markupInput:", markupInput ? markupInput.value : 'Not Found');
+        console.log("finalAmountInput:", finalAmountInput ? finalAmountInput.value : 'Not Found');
+        console.log("finalAmountInputB2:", finalAmountInputB2 ? finalAmountInputB2.value : 'Not Found');
+        console.log("customPriceInput:", customPriceInput ? customPriceInput.value : 'Not Found');
+
+        // Safety check
+        if (!customPriceInput) {
+            console.error("Markup Calculation Error: Missing sttr_cust_price input field.");
+            return;
+        }
+
+        // 2. Parse markup percentage
+        var markupPercentage = parseFloat(markupInput.value) || 0;
+        var baseAmount = 0;
+
+        // 3. Determine which base amount field to use
+        if (finalAmountInput && finalAmountInput.value.trim() !== '') {
+            baseAmount = parseFloat(finalAmountInput.value) || 0;
+        } else if (finalAmountInputB2 && finalAmountInputB2.value.trim() !== '') {
+            baseAmount = parseFloat(finalAmountInputB2.value) || 0;
+        } else {
+            console.error("Error: Neither slPrItemFinalVal nor sttr_final_valuation found or has value.");
+            return;
+        }
+
+        console.log('Base Amount:', baseAmount);
+        console.log('Markup %:', markupPercentage);
+
+        // 4. Perform calculation only if both are valid
+        if (markupPercentage > 0 && baseAmount > 0) {
+            var markupAmount = baseAmount * (markupPercentage / 100);
+            var newCustomPrice = baseAmount + markupAmount;
+
+            // 5. Update custom price
+            customPriceInput.value = newCustomPrice.toFixed(2);
+            console.log("✅ Custom Price Updated:", newCustomPrice.toFixed(2));
+        } else {
+            console.log("⚠️ Markup or Base Amount invalid — skipping calculation.");
+        }
+
+    } else {
+        console.log("sttr_markup not found or empty — skipping markup calculation.");
+    }
+}
+
+
+function calculateMarkupPriceOnLoad() {
+        // 1. Get the elements we need
+      console.log('the function is called calculateMarkupPriceOnLoad');
+
+var markupInput = document.getElementById('sttr_markup');
+
+// ✅ Only proceed if sttr_markup exists and has a value
+if (markupInput && markupInput.value !== "") {
+
+    var finalAmountInput = document.getElementById('slPrItemFinalVal');
+    var customPriceInput = document.getElementById('sttr_cust_price');
+
+    console.log('markupInput:', markupInput ? markupInput.value : 'Not Found');
+    console.log('finalAmountInput:', finalAmountInput ? finalAmountInput.value : 'Not Found');
+    console.log('customPriceInput:', customPriceInput ? customPriceInput.value : 'Not Found');
+
+    // Safety check
+    if (!finalAmountInput || !customPriceInput) {
+        console.error("Markup Calculation Error: One or more required fields are missing.");
+        return;
+    }
+
+    var markupPercentage = parseFloat(markupInput.value) || 0;
+    var finalAmount = parseFloat(finalAmountInput.value) || 0;
+
+    if (markupPercentage > 0 && finalAmount > 0) {
+        var markupAmount = finalAmount * (markupPercentage / 100);
+        var newCustomPrice = finalAmount + markupAmount;
+
+        customPriceInput.value = newCustomPrice.toFixed(2);
+        console.log("Custom Price Updated:", newCustomPrice.toFixed(2));
+    }
+
+} else {
+    console.log("sttr_markup not found or empty — skipping markup calculation.");
+}
+
+    }
+
+   function updateProdVersion(msg) {
+    if (!confirm(msg)) return;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "include/php/omupdateProdVersion.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = xhr.responseText.trim();
+            alert(response); // show success or error message
+            location.reload();
+            // ✅ No redirect, no page refresh
+        }
+    };
+
+    xhr.send("action=update");
 }

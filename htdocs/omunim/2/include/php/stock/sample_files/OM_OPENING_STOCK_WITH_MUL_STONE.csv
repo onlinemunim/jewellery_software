@@ -1,0 +1,49 @@
+FIRM,DATE,TYPE,RATE,PRE ID,POST ID,STOCK TYPE,CATEGORY,NAME,QTY,GS WT,GS WT TYP,PKT WT,PKT WT TYP,NT WT,NT WT TYP,PURITY,WSTG,CUST WSTG,CUST WSTG WT,VALUE ADDED,LAB CHRGS,LAB CHRGS TYP,TOT LAB CHRGS,VALUATION,FINAL VALUATION,SELL RATE,SELL RATE TYPE,HUID,LOCATION,COUNTER,BRAND/KARIGAR NAME,RFID,BARCODE,HSN NO,SIZE,SHAPE,COLOUR,CLARITY,CERTIFICATE NO.,OTHER INFO.,LAB CGST PER,LAB CGST CHRG,LAB SGST PER,LAB SGST CHRG,LAB IGST PER,LAB IGST CHRG,MKG CHARGES,MKG CHARGES TYPE,HM CHARGES,HM CHARGES TYPE,OTHER CHARGES,OTHER CHARGES TYPE,TOTAL OTHER CHARGES,METAL CGST PER,METAL CGST CHRG,METAL SGST PER,METAL SGST CHRG,METAL IGST PER,METAL IGST CHRG,TAX,TOT TAX,MODEL NO,DI CATEGORY,DI NAME,DI QTY,DI GS WT,DI GS WT TYPE,DI PUR RATE,DI PUR RATE TYPE,DI VALUATION,DI SELL RATE,DI SELL RATE TYPE,DI LESS CRYSTAL WT FROM GT WT,ST CATEGORY,ST NAME,ST QTY,ST GS WT,ST GS WT TYPE,ST PUR RATE,ST PUR RATE TYPE,ST VALUATION,ST SELL RATE,ST SELL RATE TYPE,ST LESS CRYSTAL WT FROM GT WT
+OM,18-Apr-22,GOLD,0,BNSET,1,retail,BABY NAZARIYA SET,BNSET1,1,1,GM,,,1,GM,100,,,,,,GM,,,,,,,,,,,BNSET1,,,,,,,VKAR (PP),,,,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,on,,,1,,,,,,,,on
+OM,18-Apr-22,GOLD,0,BNSET,2,retail,BABY NAZARIYA SET,BNSET2,1,1,GM,,,1,GM,100,,,,,,GM,,,,,,,,,,,BNSET2,,,,,,,VKAR (PP),,,,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,on,,,1,,,,,,,,on
+OM,18-Apr-22,GOLD,0,DBT,5,retail,DIAMOND BABY TOPS,DBT5,1,2.3,GM,,,2.248,GM,58.5,,,,,1300,GM,,,,,,,,,,,DBT5,,,,,,,DIDR,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,0.26,CT,,,,52500,CT,on,,,1,,,,,,,,on
+OM,18-Apr-22,GOLD,0,DBT,6,retail,DIAMOND BABY TOPS,DBT6,1,2.33,GM,,,2.24,GM,58.5,,,,,1300,GM,,,,,,,,,,,DBT6,,,,,,,IIDR,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,0.45,CT,,,,22500,CT,on,,,1,,,,,,,,on
+OM,18-Apr-22,GOLD,0,DBS,4,retail,DIAMOND BANGLES,DBS4,1,22.88,GM,,,21.156,GM,58.5,,,,,1300,GM,,,,,,,,,,,DBS4,,,,,,,NADR,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,2.57,CT,,,,39500,CT,on,STONES,STONES,1,6.05,CT,,,,300,CT,on
+OM,18-Apr-22,GOLD,0,DBS,5,retail,DIAMOND BANGLES,DBS5,1,22.16,GM,,,21.122,GM,58.5,,,,,1300,GM,,,,,,,,,,,DBS5,,,,,,,NIDR,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,5.19,CT,,,,32500,CT,on,,,1,,,,,,,,on
+OM,18-Apr-22,GOLD,0,DBS,75,retail,DIAMOND BANGLES,DBS75,1,33.88,GM,,,32.79,GM,58.5,,,,,1300,GM,,,,,,,,,,,DBS75,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,2.37,CT,,,,69500,CT,on,,,1,,,,,,,,on
+OM,18-Apr-22,GOLD,0,,,retail,,,1,,GM,,,,GM,,,,,,,GM,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,3.08,CT,,,,42500,CT,on,,,1,,,,,,,,on
+OM,18-Apr-22,GOLD,0,DDANLR,10,retail,DIAMOND DANGLERS,DDANLR10,1,14.93,GM,,,13.922,GM,58.5,,,,,1300,GM,,,,,,,,,,,DDANLR10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,1.54,CT,,,,42500,CT,on,STONES,STONES,1,3.5,CT,,,,300,CT,on
+OM,18-Apr-22,GOLD,0,DDANLR,12,retail,DIAMOND DANGLERS,DDANLR12,1,22.89,GM,,,18.468,GM,58.5,,,,,1300,GM,,,,,,,,,,,DDANLR12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DIAMOND,DIAMOND,1,4.11,CT,,,,42500,CT,on,STONES,STONES,1,18,CT,,,,300,CT,on
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,IMP POINTS ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,1)The file must be saved in .csv format before import.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,"2)Firm Name is mandatory. If it is missing, the row will not be imported.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,3)After the firm name empty it willl not take the entry whether it is stone or what ever,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,"3)For gold items, the following are mandatory:",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,        CATEGORY and NAME must be filled.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,        STOCK TYPE must be exactly "RETAIL" — any other value will result in the item not showing in stock.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,"        PURITY is required in percentage format, for example:",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,        Silver = 100,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,        14KT = 58.5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,        18KT = 75,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,        22KT = 91.6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,4)For diamond entries:,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,"          DI CATEGORY, DI NAME, DI QTY, and DI GS WT must be filled it is mandatory.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,          DI QTY should always be entered as 1 — it won’t affect anything if your DI is calculate in GS WT.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,"          If you want to subtract the diamond weight from the main item's GS WT, enter ""on"" in the column DI LESS          CRYSTAL WT FROM GT WT.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,          If you dont have any diamond just remains it blank,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,5)For stone entries:,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,"                ST CATEGORY, ST NAME, ST QTY, and ST GS WT must be filled it is mandatory.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,                ST QTY should also be entered as 1 — it won’t affect anything if your ST is calculate in GS WT.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,"                If you want to subtract the stone weight from the main item's GS WT, enter ""on"" in the column ST LESS CRYSTAL WT FROM GT WT",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,                If you dont have any stone just remains it blank,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,6) MAX Entries is allowed is 3000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,7) When u are inserting do close the tab or process it will effect the insufficient data,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

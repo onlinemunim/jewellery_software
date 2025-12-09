@@ -1720,8 +1720,8 @@ function validateAddMetalRateInputs(obj) {
     } else if (validateEmptyField(document.getElementById("metalSelectId").value, "Please enter Metal Id!") == false) {
         document.getElementById("metalSelectId").focus();
         return false;
-    } else if (validateEmptyField(document.getElementById("metalRate").value, "Please enter Metal Rate!") == false ||
-            validateNumWithDot(document.getElementById("metalRate").value, "Accept only numeric characters without space character!") == false) { //With Dot Validation Added @Author:SHRI03MAY17
+    } else if (validateEmptyField((function(){var __e=document.getElementById("metalRate"); console.log('[validateAddMetalRateInputs] metalRate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Please enter Metal Rate!") == false ||
+        validateNumWithDot((function(){var __e=document.getElementById("metalRate"); console.log('[validateAddMetalRateInputs] metalRate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Accept only numeric characters without space character!") == false) { //With Dot Validation Added @Author:SHRI03MAY17
         document.getElementById("metalRate").focus();
         return false;
     } else if (valTaxCheck == true && validateEmptyField(document.getElementById("metalRateTaxPrecent").value, "Please enter tax percentage!") == false) {

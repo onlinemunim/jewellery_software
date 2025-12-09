@@ -560,7 +560,7 @@ function validateUpdateGirviDepositMoneyInputsHindi(obj) {
     return true;
 }
 /********Start code to add code gor mpney deposit @Author:PRIYA24APR15******************/
-function updateGirviDepositMoneyHindi(obj, selROIValue, girviSerialNo, dateComapre) {
+function updateGirviDepositMoneyHindi(obj, selROIValue, girviSerialNo, dateComapre, releasedItemsSelect) {
     document.getElementById("main_ajax_loading_div").style.visibility = "visible";
     document.getElementById("girviUpdateDepMoneyButDiv").style.visibility = "hidden";
     document.getElementById("ajaxLoadDepositMoneyDiv").style.visibility = "visible";
@@ -653,6 +653,18 @@ function updateGirviDepositMoneyHindi(obj, selROIValue, girviSerialNo, dateComap
                             + "&girviDepCashAccId=" + encodeURIComponent(document.getElementById("girviDepCashAccId").value)
                             + "&girviNewDOBStr=" + encodeURIComponent(document.getElementById("girviNewDOBStr").value)
                             + str;
+                            
+                    // *** START: NEW CODE TO ADD RELEASED ITEMS ***
+                    if (releasedItemsSelect) {
+                        var selectedItems = $(releasedItemsSelect).val();
+                        if (selectedItems && selectedItems.length > 0) {
+                            for (var i = 0; i < selectedItems.length; i++) {
+                                poststr += '&released_items[]=' + encodeURIComponent(selectedItems[i]);
+                            }
+                        }
+                    }
+                    // *** END: NEW CODE ***
+                            
                     if (girviDepositMonOpt == 'SimplyDeposit') {
                         update_girvi_deposit_money('include/php/olgudmsm.php', poststr); //change in filename @AUTHOR: SANDY20NOV13
                     } else if (girviDepositMonOpt == 'CalculateNow') {
@@ -1823,7 +1835,7 @@ function releasePrincipalAmountHindiVikSam(documentRootPath, custId, girviId, pr
     //}
 }
 var poststr1 = '';
-function updateGirviDepositMoneyHindiVikDate(obj, selROIValue, girviSerialNo, dateComapre, girviDOBTithi, girviDOBPaksha) {
+function updateGirviDepositMoneyHindiVikDate(obj, selROIValue, girviSerialNo, dateComapre, girviDOBTithi, girviDOBPaksha, releasedItemsSelect) {
 
     document.getElementById("main_ajax_loading_div").style.visibility = "visible";
     document.getElementById("girviUpdateDepMoneyButDiv").style.visibility = "hidden";
@@ -1894,7 +1906,19 @@ function updateGirviDepositMoneyHindiVikDate(obj, selROIValue, girviSerialNo, da
                     + "&girviSerialNo=" + encodeURIComponent(girviSerialNo)
                     + "&girviDOBTithi=" + encodeURIComponent(girviDOBTithi)
                     + "&girviDOBPaksha=" + encodeURIComponent(girviDOBPaksha)
-                    + "&girviDepositMonOpt=" + girviDepositMonOpt//added @Author:PRIYA05MAY14
+                    + "&girviDepositMonOpt=" + girviDepositMonOpt;//added @Author:PRIYA05MAY14
+
+            // *** START: NEW CODE TO ADD RELEASED ITEMS ***
+            if (releasedItemsSelect) {
+                var selectedItems = $(releasedItemsSelect).val();
+                if (selectedItems && selectedItems.length > 0) {
+                    for (var i = 0; i < selectedItems.length; i++) {
+                        // We add to the global poststr1 here
+                        poststr1 += '&released_items[]=' + encodeURIComponent(selectedItems[i]);
+                    }
+                }
+            }
+            // *** END: NEW CODE ***
 
             searchHindiDate("update_girvi_deposit_money", "display_girvi_money_dep_eng_date");
 //            functionToSubmitMoneyDepForm();

@@ -40,6 +40,30 @@ function showGirviTallyDiv()
 /**************** Start to add function to add active girvi to tally girvi side @AUTHOR: SANDY13SEP13 *********/
 /**************Start of Changes in function  to correct error @AUTHOR: SANDY27OCT13***********************/
 function addToGirviTally(pre, post, panel, num) {
+    // --- FIX START: Handle Barcode Scanner Logic ---
+    
+    // 1. Clean the input: Convert to string and trim whitespace/newlines
+    pre = (pre) ? pre.toString().trim() : "";
+    post = (post) ? post.toString().trim() : "";
+
+    // 2. Logic: If 'post' (Serial) is empty, but 'pre' contains data (e.g. "S1841")
+    if ((post == "" || post == null) && pre.length > 0) {
+        
+        // Regex: Match Letters at start (Group 1), Numbers at end (Group 2)
+        // Example: "S1841" -> match[1]="S", match[2]="1841"
+        var matches = pre.match(/^([a-zA-Z]+)(\d+)$/);
+        
+        if (matches) {
+            pre = matches[1].toUpperCase(); // FORCE UPPERCASE (fixes 's' vs 'S' issues)
+            post = matches[2]; // The number part
+        } else if (!isNaN(pre)) {
+            // If 'pre' is purely numbers (e.g. "1841"), treat it as the serial number
+            post = pre;
+            pre = "";
+        }
+    }
+    // --- FIX END ---
+
     var fromDay = document.getElementById("loantallyfromDay").value;
     var fromMonth = document.getElementById("loantallyfromMonth").value;
     var fromYear = document.getElementById("loantallyfromYear").value;
@@ -48,42 +72,55 @@ function addToGirviTally(pre, post, panel, num) {
     var toYear = document.getElementById("loantallyToYear").value;
     var fromDate = fromYear + '-' + fromMonth + '-' + fromDay;
     var toDate = toYear + '-' + toMonth + '-' + toDay;
+
+    // Helper function to handle AJAX
+    var performTally = function() {
+        loadXMLDoc();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "hidden";
+                document.getElementById("girviTallyPanelDiv").innerHTML = xmlhttp.responseText;
+                
+                // Auto-focus back to serial input for faster scanning
+                var serialInput = document.getElementById('enterSerialNum');
+                // Check if the barcode input exists, focus that instead if checking tally
+                var barcodeInput = document.getElementById('textareaMultibarcodeTags');
+
+                if (barcodeInput && panel == 'NON TALLY') {
+                    barcodeInput.value = '';
+                    barcodeInput.focus();
+                } else if(serialInput) {
+                    serialInput.value = ''; 
+                    serialInput.focus();
+                }
+            } else {
+                document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "visible";
+            }
+        };
+        
+        // We explicitly DO NOT pass the 'type=MULTIPLE' parameter. 
+        // This forces the PHP backend to use the standard Pre/Post Serial Number update query,
+        // which is what we want for "S1841".
+        var url = "include/php/orgrvtly" + default_theme + ".php?preId=" + encodeURIComponent(pre) + "&postId=" + encodeURIComponent(post) + "&panel=" + panel + "&num=" + num + "&fromDate=" + encodeURIComponent(fromDate) + "&toDate=" + encodeURIComponent(toDate);
+        
+        xmlhttp.open("POST", url, true);
+        xmlhttp.send();
+    };
+
     if (panel == 'NON TALLY') {
-        confirm_box = confirm("Do you really want to tally this Loan!");
-        if (confirm_box == true) {
-            loadXMLDoc();
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "hidden";
-                    document.getElementById("girviTallyPanelDiv").innerHTML = xmlhttp.responseText;
-                    document.getElementById('enterSerialNum').focus();
-                } else {
-                    document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "visible";
-                }
-            };
-            xmlhttp.open("POST", "include/php/orgrvtly" + default_theme + ".php?preId=" + pre + "&postId=" + post + "&panel=" + panel + "&num=" + num + "&fromDate=" + encodeURIComponent(fromDate) + "&toDate=" + encodeURIComponent(toDate), true);
-            xmlhttp.send();
-        }
+        // For scanning, we usually skip the confirm box for speed, 
+        // but if you want it, uncomment the lines below.
+        // var confirm_box = confirm("Do you really want to tally this Loan!");
+        // if (confirm_box == true) { performTally(); }
+        performTally();
     } else {
-        confirm_box = confirm("Do you really want to back this Loan");
+        var confirm_box = confirm("Do you really want to back this Loan");
         if (confirm_box == true) {
-            loadXMLDoc();
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "hidden";
-                    document.getElementById("girviTallyPanelDiv").innerHTML = xmlhttp.responseText;
-                    document.getElementById('enterSerialNum').focus();
-                } else {
-                    document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "visible";
-                }
-            };
-            xmlhttp.open("POST", "include/php/orgrvtly" + default_theme + ".php?preId=" + pre + "&postId=" + post + "&panel=" + panel + "&num=" + num + "&fromDate=" + encodeURIComponent(fromDate) + "&toDate=" + encodeURIComponent(toDate), true);
-            xmlhttp.send();
+            performTally();
         }
     }
 }
-/**************End of Changes in function to correcr error @AUTHOR: SANDY27OCT13***********************/
-/******************* End to add function to add active girvi to tally girvi side @AUTHOR: SANDY13SEP13 *********/
+
 /**************START New function for Date Filter in LOAN TALLY PANEL @AUTHOR: SAIF16JUN2025***********************/
 function check() {
     var fromDay = document.getElementById("loantallyfromDay").value;
@@ -94,7 +131,6 @@ function check() {
     var toYear = document.getElementById("loantallyToYear").value;
     var fromDate = fromYear + '-' + fromMonth + '-' + fromDay;
     var toDate = toYear + '-' + toMonth + '-' + toDay;
-
 
     if (new Date(fromDate) > new Date(toDate)) {
         alert("From date cannot be after To date!");
@@ -109,7 +145,6 @@ function check() {
 
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            // Inject response into the page
             document.getElementById("girviListPanelDiv").innerHTML = xmlhttp.responseText;
         }
     };
@@ -124,13 +159,22 @@ function showEnteredGirvi(serialno, num) {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "hidden";
             document.getElementById("girviTallyPanelDiv").innerHTML = xmlhttp.responseText;
-            document.getElementById('girviSerialNum' + serialno).focus();
+            
+            // Safety check for element existence
+            var focusElement = document.getElementById('girviSerialNum' + serialno);
+            if (focusElement) {
+                focusElement.focus();
+            } else {
+                // If specific row not found, focus main input
+                var mainInput = document.getElementById('enterSerialNum');
+                if(mainInput) mainInput.focus();
+            }
         } else {
             document.getElementById("ajaxLoadShowGirviListDiv").style.visibility = "visible";
         }
     };
     var serialno = serialno.toUpperCase();
-    xmlhttp.open("POST", "include/php/orgpgtly" + default_theme + ".php?serialNo=" + serialno + "&num=" + num, true);
+    xmlhttp.open("POST", "include/php/orgpgtly" + default_theme + ".php?serialNo=" + encodeURIComponent(serialno) + "&num=" + num, true);
     xmlhttp.send();
 }
 /******************* End to add function to search girvi from serial Number @AUTHOR: SANDY6SEP13 *******************/
@@ -2921,6 +2965,165 @@ function showSchemeCollectionList() {
         }
     };
     xmlhttp.open("GET", "include/php/omcollectionlst" + default_theme + ".php", true);
+    xmlhttp.send();
+}
+function printLuckyDrawStickers(divId) {
+  var content = document.getElementById(divId).innerHTML;
+  var printWindow = window.open('', '', 'height=800,width=900');
+
+  printWindow.document.write('<html><head><title>Lucky Draw Stickers</title>');
+  printWindow.document.write('<style>');
+  printWindow.document.write(`
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    html, body { 
+        width: 100%; 
+        height: 100%; 
+        font-family: Arial, sans-serif; 
+    }
+
+    @page { 
+        size: A4 portrait; 
+        margin: 10mm; /* A 1cm margin around the page */
+    }
+    @media print {
+      body { 
+        -webkit-print-color-adjust: exact; /* Ensures background colors print */
+        print-color-adjust: exact;
+      }
+    }
+
+    .paper-page {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(5, 1fr); /* 3 columns x 5 rows = 15 stickers per page */
+      gap: 4mm; /* This creates the white space between stickers */
+    }
+
+    .pdf-sticker {
+      width: 100%;
+      height: 100%;
+      border: 1.5pt solid #001f4d;   /* The thick dark blue border */
+      background-color: #87CEEB !important; /* The blue background */
+      padding: 3mm;                  /* Space between border and text */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Styles for the text inside, using PT for better print scaling */
+    .firm-name { font-size: 16pt; font-weight: 900; text-transform: uppercase; color: #ffffff !important; margin-bottom: 2pt; }
+    .scheme-name { font-size: 14pt; font-weight: bold; text-transform: uppercase; color: #ffffff !important; margin-bottom: 6pt; }
+    .draw-round { font-size: 11pt; color: #000000 !important; }
+    .draw-amount { font-size: 11pt; color: #000000 !important; }
+    .winner { font-size: 12pt; font-weight: bold; text-transform: uppercase; color: #000000 !important; margin-top: 4pt; }
+    .sticker-meta { font-size: 9pt; color: #000000 !important; margin-top: 4pt; }
+  `);
+  printWindow.document.write('</style></head><body>');
+  printWindow.document.write(content);
+  printWindow.document.write('</body></html>');
+
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 500);
+}
+
+
+function LuckyDrawPrint(schemeName = '') {
+    loadXMLDoc();
+    
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            document.getElementById("schemeMainDiv").innerHTML = xmlhttp.responseText;
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    
+    // CORRECTED URL: Make sure this points to your actual PHP file.
+    let url = "include/php/omluckydrawprint.php"; 
+    
+    if (schemeName) {
+        url += "?scheme_name_search=" + encodeURIComponent(schemeName);
+    }
+    
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
+function submitLuckyDrawStickerForm() {
+    const schemeName = document.getElementById("scheme_name_search").value;
+    const winnerNo = document.getElementById("winner_no_input").value;
+
+    if (!schemeName || !winnerNo) {
+        alert("Please enter both Scheme Name and Winner Number.");
+        return false;
+    }
+
+    loadXMLDoc(); // Existing loader from your system
+
+    const url = "include/php/omluckydrawprint.php?scheme_name_search=" +
+                encodeURIComponent(schemeName) + "&winner_no=" + encodeURIComponent(winnerNo);
+
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            document.getElementById("schemeMainDiv").innerHTML = xmlhttp.responseText;
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+
+    return false; // prevent form from redirecting
+}
+
+
+function attachFormHandler() {
+    const form = document.querySelector('#schemeMainDiv form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const schemeName = form.querySelector('[name="scheme_name_search"]').value;
+            showLuckyDrawReport(schemeName);
+        });
+    }
+}
+
+function showLuckyDrawReport(schemeName = '') {
+    loadXMLDoc();
+    
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            document.getElementById("schemeMainDiv").innerHTML = xmlhttp.responseText;
+            // Attach event listener to the form after loading
+            attachFormHandler();
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    
+    // Include schemeName in the URL if provided
+    let url = "include/php/omluckydrawreport.php";
+    if (schemeName) {
+        url += "?scheme_name_search=" + encodeURIComponent(schemeName);
+    }
+    
+    xmlhttp.open("GET", url, true);
     xmlhttp.send();
 }
 

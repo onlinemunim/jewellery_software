@@ -1139,7 +1139,7 @@ function printOneAllLabelBarcode(barcodeId)
     xmlhttp.open("GET", "include/php/ogibbc55x13" + default_theme + ".php?sttrId=" + barcodeId + "&panel=" + panel, true);
     xmlhttp.send();
 }
-function printOneAllLabelBarcodeBySttrId(sttrId, Indicator, systemOnOrOff, sysLocalDBRemote, prnPrintOption) {
+function printOneAllLabelBarcodeBySttrId(sttrId, Indicator, systemOnOrOff, sysLocalDBRemote, prnPrintOption,panelName) {
     //
     var documentRootPath = '';
     //
@@ -1162,6 +1162,9 @@ function printOneAllLabelBarcodeBySttrId(sttrId, Indicator, systemOnOrOff, sysLo
         if (Indicator == 'imitation') {
             var panel = 'Items55x13IMBarCodePanel';
             xmlhttp.open("GET", documentRootPath + "/include/php/ogibbc55x13imi" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel, true);
+        }else  if (panelName == 'CrystalPanel') {
+            var panel = 'DiamondLooseStonePanel';
+            xmlhttp.open("GET", documentRootPath + "/include/php/omDiamondLooseStoneTag" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel, true);
         } else {
             var panel = 'Items55x13BarCodePanel';
             xmlhttp.open("GET", documentRootPath + "/include/php/ogibbc55x13" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel, true);
@@ -1171,7 +1174,10 @@ function printOneAllLabelBarcodeBySttrId(sttrId, Indicator, systemOnOrOff, sysLo
         if (Indicator == 'imitation') {
             var panel = 'Items55x13IMBarCodePanel';
             xmlhttp.open("GET", "include/php/ogibbc55x13imi" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel, true);
-        } else {
+        }else  if (panelName == 'CrystalPanel') {
+            var panel = 'DiamondLooseStonePanel';
+            xmlhttp.open("GET", documentRootPath + "/include/php/omDiamondLooseStoneTag" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel, true);
+        }  else {
             var panel = 'Items55x13BarCodePanel';
             xmlhttp.open("GET", "include/php/ogibbc55x13" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel, true);
         }

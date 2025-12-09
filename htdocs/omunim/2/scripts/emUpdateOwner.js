@@ -3831,7 +3831,7 @@ function alertUpdateGirviDepositMoney() {
     }
 }
 /************Start code to add girviSerialNo @Author:PRIYA14APR14*********************/
-function updateGirviDepositMoney(obj, selROIValue, girviSerialNo, nepalidate = '', nepaliIndicator = '') {
+function updateGirviDepositMoney(obj, selROIValue, girviSerialNo, nepalidate = '', nepaliIndicator = '', releasedItemsSelect) {
     document.getElementById("main_ajax_loading_div").style.visibility = "visible";
     document.getElementById("girviUpdateDepMoneyButDiv").style.visibility = "hidden";
     document.getElementById("ajaxLoadDepositMoneyDiv").style.visibility = "visible";
@@ -3905,6 +3905,17 @@ function updateGirviDepositMoney(obj, selROIValue, girviSerialNo, nepalidate = '
                     + "&girvDepOnlineNarration=" + encodeURIComponent(document.getElementById("girvDepOnlineNarration").value)
                     + "&operdayint=" + encodeURIComponent(document.getElementById("operdayint").value)
                     + "&iperdayint=" + encodeURIComponent(document.getElementById("iperdayint").value);
+            
+            // *** START: NEW CODE TO ADD RELEASED ITEMS ***
+            if (releasedItemsSelect) {
+                var selectedItems = $(releasedItemsSelect).val();
+                if (selectedItems && selectedItems.length > 0) {
+                    for (var i = 0; i < selectedItems.length; i++) {
+                        poststr += '&released_items[]=' + encodeURIComponent(selectedItems[i]);
+                    }
+                }
+            }
+            // *** END: NEW CODE ***
 
             if (girviDepositMonOpt == 'SimplyDeposit') {
                 update_girvi_deposit_money('include/php/olgudmsm.php', poststr);//change in filename @AUTHOR: SANDY20NOV13
@@ -4359,6 +4370,8 @@ function udhaarDepositMoney(obj, udhaarId, firmId, count, utin_main_inv_no) {
         var udhaarDepLoanCrAccId = parseInt(document.getElementById("udhaarDepLoanCrAccId").value);
         var udhaarDepLoanDrAccId = parseInt(document.getElementById("udhaarDepLoanDrAccId").value);
         var udhaarDepDiscPaidAccId = parseInt(document.getElementById("udhaarDepDiscPaidAccId").value);
+        var udhaarDepIntRecAccId = parseInt(document.getElementById("udhaarDepIntRecAccId").value); // 🔥 Add THIS line
+
     }
     //alert("Deposit amount(" + depositAmt + ") & udhaar amount(" + udhaarLeftAmt + ")!");
     if (depositAmt > udhaarLeftAmt) {
@@ -4385,6 +4398,8 @@ function udhaarDepositMoney(obj, udhaarId, firmId, count, utin_main_inv_no) {
                     + "&DOBYear=" + encodeURIComponent(document.getElementById("DOBYear" + count).value)
                     + "&udhaarOtherInfo=" + encodeURIComponent(document.getElementById("udhaarOtherInfo").value)
                     + "&udhaarDepLoanAccId=" + udhaarDepLoanCrAccId
+                    + "&depositIntAmt=" + encodeURIComponent(document.getElementById("depositIntAmt" + count).value)
+                     + "&udhaarDepIntRecAccId=" + udhaarDepIntRecAccId
                     + "&udhaarDepLoanDrAccId=" + udhaarDepLoanDrAccId
                     + "&udhaarDepDiscPaidAccId=" + udhaarDepDiscPaidAccId;
 //        var poststr = "firmId=" + firmId + " & udhaarId = " + udhaarId + " & udhaarDepositAmount = " + depositAmt + " & udhaarDiscountAmount = " + discAmt;
@@ -9433,3 +9448,238 @@ function updateJointLoanSerialNo(girviId, jointLoanSerialNo, jointLoanMainGirvId
         xmlhttp.send();
     }
 }
+
+    // Get modal element once to use in multiple functions
+
+
+// Function to open the modal
+function openBillModal() {
+    const modal = document.getElementById('makeBillModal');
+    modal.style.display = 'flex';
+}
+
+// Function to close the modal
+function closeBillModal() {
+    const modal = document.getElementById('makeBillModal');
+    modal.style.display = 'none';
+}
+
+// Function to fetch users for a given firm and populate a dropdown
+function fetchUsersForFirm(firmId, userDropdownId) {
+    const userDropdown = document.getElementById(userDropdownId);
+    userDropdown.innerHTML = '<option value="">-- Loading... --</option>';
+
+    if (!firmId) {
+        userDropdown.innerHTML = '<option value="">-- Select a Firm First --</option>';
+        return;
+    }
+    
+    fetch('include/php/omfetch_data.php?action=get_users&firm_id=' + firmId)
+        .then(function(response) {
+            if (!response.ok) throw new Error('Network error.');
+            return response.json();
+        })
+        .then(function(users) {
+            userDropdown.innerHTML = '<option value="">-- Select a User --</option>';
+            users.forEach(function(user) {
+                const option = document.createElement('option');
+                option.value = user.user_id;
+                option.textContent = user.user_name;
+                userDropdown.appendChild(option);
+            });
+        })
+        .catch(function(error) {
+            console.error('Fetch error:', error);
+            userDropdown.innerHTML = '<option value="">-- Error fetching users --</option>';
+        });
+}
+
+// Function to handle the change of the source firm dropdown
+function handleSourceFirmChange(selectElement) {
+    const selectedFirmId = selectElement.value;
+    const destinationFirmSelect = document.getElementById('destination_firm');
+    
+    // Clear destination selections
+    destinationFirmSelect.value = '';
+    document.getElementById('destination_user').innerHTML = '<option value="">-- Select a Firm First --</option>';
+
+    // Update destination dropdown to exclude the selected source firm
+    const allDestinationOptions = destinationFirmSelect.options;
+    for (let i = 0; i < allDestinationOptions.length; i++) {
+        allDestinationOptions[i].style.display = ''; 
+    }
+    if (selectedFirmId) {
+        const optionToHide = destinationFirmSelect.querySelector('option[value="' + selectedFirmId + '"]');
+        if (optionToHide) {
+            optionToHide.style.display = 'none';
+        }
+    }
+
+    // Fetch users for the source firm
+    fetchUsersForFirm(selectedFirmId, 'source_user');
+}
+
+// Function to handle the change of the destination firm dropdown
+function handleDestinationFirmChange(selectElement) {
+    const selectedFirmId = selectElement.value;
+    fetchUsersForFirm(selectedFirmId, 'destination_user');
+}
+
+function toggleLoader(visibility) {
+  const loader = document.getElementById("main_ajax_loading_div");
+  if (loader) {
+    loader.style.visibility = visibility; // "visible" or "hidden"
+  }
+}
+
+// Function to handle the form submission
+function handleFormSubmit(event) {
+    event.preventDefault(); // Stop the form from reloading the page
+    toggleLoader("visible"); 
+    
+    const form = document.getElementById('billForm');
+    const formData = new FormData(form);
+
+    var select = document.getElementById('invoice_select');
+    var selectedOption = select.options[select.selectedIndex];
+    var voucherNo = selectedOption.getAttribute('voucherno');
+    var prevoucherno = selectedOption.getAttribute('prevoucherno');
+    var firm = selectedOption.getAttribute('firm');
+
+    const formValues = {
+        invoice: formData.get('invoice'),
+        source_firm: formData.get('source_firm'),
+        source_user: formData.get('source_user'),
+        destination_firm: formData.get('destination_firm'),
+        destination_user: formData.get('destination_user')
+    };
+
+    targetDiv  = document.getElementById('stockPanelSubDiv');
+    var url = 'include/php/omtransferredStockInvoice.php?prevoucherno=' + encodeURIComponent(prevoucherno) +
+                  '&voucherNo=' + encodeURIComponent(voucherNo) +
+                  '&firmId=' + encodeURIComponent(firm);
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            console.log('Response:', data);
+            toggleLoader("hidden");
+            targetDiv.innerHTML = data; // Put API response HTML into div
+        })
+        .catch(error => console.error('Error:', error));
+
+    console.log("Form Data:", formValues);
+    //alert("Bill data logged to the browser's console! (Press F12 to see)");
+
+    closeBillModal(); // Close the modal
+
+    return false; // This also helps prevent form submission
+}
+
+
+    // let firmDropdownId = 'headerfirmSelection';
+    // let firmElement = document.getElementById(firmDropdownId);
+
+    function populateUserList(firmId,userDropdown) {
+        
+
+        userDropdown.innerHTML = '<option value="">-- Loading users... --</option>';
+
+        // If no firm is selected, reset the user dropdown
+        if (!firmId) {
+            userDropdown.innerHTML = '<option value="">-- Please select a firm first --</option>';
+            return;
+        }
+
+        // Use the Fetch API to make an AJAX call to our PHP backend
+        fetch('include/php/omfetch_data.php?action=get_users&firm_id=' + firmId)
+            .then(function(response) {
+                if (!response.ok) throw new Error('Network response was not ok.');
+                return response.json(); // Parse the response as JSON
+            })
+            .then(function(users) {
+                userDropdown.innerHTML = '<option value="">-- Select a User --</option>';
+                // Loop through the array of users returned from PHP
+                users.forEach(function(user) {
+                    const option = document.createElement('option');
+                    option.value = user.user_id;
+                    option.textContent = user.user_name; // Display the user's name
+                    userDropdown.appendChild(option);
+                });
+            })
+            .catch(function(error) {
+                console.error('Error fetching user list:', error);
+                userDropdown.innerHTML = '<option value="">-- Could not load users --</option>';
+            });
+    }
+
+    // --- 2. Attach an event listener to your existing firm dropdown ---
+    // firmElement.addEventListener('change', function() {
+    //     // When the firm changes, call our function with the new firm ID
+    //     populateUserList(this.value);
+    // });
+
+    // $(document).on('change', '#headerfirmSelection', function () {
+    //     populateUserList($(this).val());
+    // });
+    
+    // --- 3. Initial Check on Page Load ---
+    // This will automatically populate the user list if the firm dropdown
+    // already has a value when the page first loads.
+    // if (firmElement.value) {
+    //     populateUserList(firmElement.value);
+    // }
+
+function initializeAutocomplete(inputId, resultsId, searchUrl) {
+        var inputField = document.getElementById(inputId);
+        var resultsContainer = document.getElementById(resultsId);
+
+        if (!inputField || !resultsContainer) {
+            console.error("Autocomplete elements not found!");
+            return;
+        }
+
+        inputField.onkeyup = function() {
+            var searchTerm = inputField.value;
+
+            if (searchTerm.length < 1) {
+                resultsContainer.innerHTML = '';
+                resultsContainer.style.display = 'none';
+                return;
+            }
+
+            var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    resultsContainer.innerHTML = '';
+                    var results = JSON.parse(this.responseText);
+
+                    if (results.length > 0) {
+                        for (var i = 0; i < results.length; i++) {
+                            var resultItem = document.createElement('div');
+                            resultItem.innerHTML = results[i];
+                            resultItem.onclick = function() {
+                                inputField.value = this.innerHTML;
+                                resultsContainer.innerHTML = '';
+                                resultsContainer.style.display = 'none';
+                            };
+                            resultsContainer.appendChild(resultItem);
+                        }
+                        resultsContainer.style.display = 'block';
+                    } else {
+                        resultsContainer.style.display = 'none';
+                    }
+                }
+            };
+
+            xhr.open("GET", searchUrl + "?action=get_item_code_for_transfer&term=" + encodeURIComponent(searchTerm), true);
+            xhr.send();
+        };
+
+        // Hide dropdown when clicking elsewhere
+        document.addEventListener("click", function (e) {
+            if (e.target != inputField) {
+                resultsContainer.style.display = 'none';
+            }
+        });
+    }

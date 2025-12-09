@@ -15,9 +15,12 @@ function validateAddNewSuppInvoice(payPanelName) {
     } else if (payPanelName == 'NwOrPayment' || payPanelName == 'NwOrPayUp') {
         prefix = 'nwOr';
     }
-    if (validateEmptyField(document.getElementById(prefix + "PayTotAmtBal").value, "Please enter value in Total Amount Balance Field!") == false) {
-        document.getElementById(prefix + "PayTotAmtBal").focus();
-        return false;
+
+    if ( document.getElementById(prefix + "PayTotAmtBal") != null ) {
+        if ( validateEmptyField(document.getElementById(prefix + "PayTotAmtBal").value, "Please enter value in Total Amount Balance Field!") == false ){
+            document.getElementById(prefix + "PayTotAmtBal").focus();
+            return false;
+        }
     } else {
         if (payPanelName == 'UdhaarPayment') {
             var depositAmt = parseFloat(parseInt(document.getElementById(prefix + "PayCashAmtRec").value) +
@@ -406,6 +409,78 @@ function addPayment() {
     }
 //    }      
 }
+/**
+ * Attaches an event listener to the payment form to intercept submission.
+ * This simplified version just "triggers" the server-side session processing.
+ */
+function setupSchemeDiscountInterceptor() {
+    var form = document.getElementById('add_payment');
+    if (!form) { return; }
+
+    var submissionHandler = function(event) {
+        var schemeFlag = document.getElementById('schemeDiscountAppliedFlag');
+        if (!schemeFlag || schemeFlag.value !== '1') {
+            return; // If no scheme is applied, do nothing.
+        }
+
+        // If a scheme IS applied, stop the form's default submission.
+        if (event.preventDefault) { event.preventDefault(); } else { event.returnValue = false; }
+
+        var submitButton = document.getElementById('paySubButton');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.value = 'PLEASE WAIT...';
+        }
+
+        // Perform the AJAX call to our API.
+        var xhr = new XMLHttpRequest();
+        // We use POST, but we don't need to send any parameters in the body.
+        xhr.open('POST', 'include/php/omapply_scheme_discount.php', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) { // Request finished.
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        // Log the detailed results for debugging
+                        console.log("--- API Processing Report ---");
+                        console.log(response);
+
+                        if (response.success) {
+                            if (form.removeEventListener) {
+                                form.removeEventListener('submit', submissionHandler, false);
+                            } else {
+                                form.detachEvent('onsubmit', submissionHandler);
+                            }
+                            form.submit();
+                        } else {
+                            alert('Error: ' + response.message + '\n\nCheck the browser console (F12) for more details.');
+                            if (submitButton) { submitButton.disabled = false; submitButton.value = 'SUBMIT'; }
+                        }
+                    } catch (e) {
+                        // This catch block will handle the "unexpected character" error
+                        alert('A critical error occurred. The server did not provide a valid response. Check the Network tab for details.');
+                        console.error("Failed to parse JSON. Raw server response was:");
+                        console.error(xhr.responseText); // Log the raw, broken response
+                        if (submitButton) { submitButton.disabled = false; submitButton.value = 'SUBMIT'; }
+                    }
+                } else {
+                    alert('A server communication error occurred (Status: ' + xhr.status + ').');
+                    if (submitButton) { submitButton.disabled = false; submitButton.value = 'SUBMIT'; }
+                }
+            }
+        };
+        // The send() call is now empty.
+        xhr.send();
+    };
+
+    if (form.addEventListener) {
+        form.addEventListener('submit', submissionHandler, false);
+    } else {
+        form.attachEvent('onsubmit', submissionHandler);
+    }
+}
 /*********End Code To add panel @Author:SANT30NOV16************/
 /*********End Code To add panel @Author:SANT14OCT16************/
 /*********End Code To add panel @Author:PRIYA04FEB14************/
@@ -625,7 +700,7 @@ function validateSellPurchaseInputs() {
     } else if (validateSelectField(document.getElementById("slPrItemMetal").value, "Please select Metal!") == false) {
         document.getElementById("slPrItemMetal").focus();
         return false;
-    } else if ((document.getElementById("slPrItemMetal").value != 'Other') && validateEmptyField(document.getElementById("slPrItemMetalRate").value, "Please enter Metal Rate!") == false) {
+    } else if ((document.getElementById("slPrItemMetal").value != 'Other') && validateEmptyField((function(){var __e=document.getElementById("slPrItemMetalRate"); console.log('[ogAddFunctions] slPrItemMetalRate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Please enter Metal Rate!") == false) {
         document.getElementById("slPrItemMetalRate").focus();
         return false;
     } else if (validateEmptyField(document.getElementById("slPrItemCategory").value, "Please enter Item Category!") == false) {
@@ -2453,13 +2528,26 @@ function showProductDetailsDivForStockManagementByCounter(srchItemPreId, srchIte
 //
 //
 // START CODE STOCK TRANSFER PANEL FUNCTIONS @AUTHOR:DNYANESHWARI 21AUG2024
-function stockTransManagementByCsvFile(panel, sttranspPreVoucherNo, sttransPostVoucherNo, productCode, selectedFirm, preVoucherNo, postVoucherNo) {
+function stockTransManagementByCsvFile(panel, sttranspPreVoucherNo, sttransPostVoucherNo, productCode, selectedFirm, preVoucherNo, postVoucherNo, stockTransferAccess = null) {
 //    alert('panel==>'+panel);
     const firm = document.getElementById('selectedFirm').value;
     const fileInput = document.getElementById('CVSFile');
+    const productCounter = document.getElementById('productCounter');
     //
     const formData = new FormData();
+    if ( productCounter != null && productCounter != 'NotSelected' ){
+        formData.append('productCounter', productCounter.value);
+    }
+    formData.append('stockTransferAccess', stockTransferAccess);
     if (panel == 'sendData') {
+
+        const source_user_main = document.getElementById('source_user_main');
+        const destination_user_main = document.getElementById('destination_user_main');
+        if ( source_user_main && destination_user_main ){
+            formData.append('source_user_main', source_user_main.value);
+            formData.append('destination_user_main', destination_user_main.value);
+        }
+
 //        formData.append('arraySttrId', arraySttrId);
         formData.append('checkPanelName', panel);
         formData.append('sttranspPreVoucherNo', sttranspPreVoucherNo);
@@ -2507,6 +2595,10 @@ function stockTransManagementByCsvFile(panel, sttranspPreVoucherNo, sttransPostV
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
         }
+        if ( document.getElementById('searchProduct') != null ){
+            document.getElementById('searchProduct').value = ''
+        }
+        
     };
     xmlhttp.open("POST", "include/php/omtransferstockfile.php", true);
     //
@@ -2524,7 +2616,7 @@ function showdivhide() {
     }
 }
 //
-function  showTransferData(selectedFirm, stTransId, operation, sttransPreVoucherNo, sttransVoucherNo) {
+function  showTransferData(selectedFirm, stTransId, operation, sttransPreVoucherNo, sttransVoucherNo, stockTransferAccess) {
 //    alert('selectedFirm==>'+selectedFirm);
 //     alert('postVoucherNo==>'+postVoucherNo);
     //
@@ -2540,7 +2632,7 @@ function  showTransferData(selectedFirm, stTransId, operation, sttransPreVoucher
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
         }
     };
-    xmlhttp.open("POST", "include/php/omtransferpendingstocktbl.php?selectedFirm=" + selectedFirm + "&stTransId=" + stTransId + "&operation=" + operation + "&sttransPreVoucherNo=" + sttransPreVoucherNo + "&sttransVoucherNo=" + sttransVoucherNo, true);
+    xmlhttp.open("POST", "include/php/omtransferpendingstocktbl.php?selectedFirm=" + selectedFirm + "&stTransId=" + stTransId + "&operation=" + operation + "&sttransPreVoucherNo=" + sttransPreVoucherNo + "&sttransVoucherNo=" + sttransVoucherNo + "&stockTransferAccess=" + stockTransferAccess, true);
     //
     xmlhttp.send();
 }
@@ -2549,18 +2641,40 @@ function  showTransferData(selectedFirm, stTransId, operation, sttransPreVoucher
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX //
 // START CODE STOCK TRANSFER PANEL FUNCTIONS @AUTHOR:PRIYANKA-09DEC2021
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX //
-function getStockTransferSelectedOptionsFunc(productCounter, selectedStaff, selectedFirm, stockTransferNavPanelName, preVoucherNo) {
+function getStockTransferSelectedOptionsFunc(productCounter, selectedStaff, selectedFirm, stockTransferNavPanelName, preVoucherNo, stockTransferAccess = null) {
     //
     //alert('productCounter == ' + productCounter);
     //alert('selectedStaff == ' + selectedStaff);
     //alert('selectedFirm == ' + selectedFirm);
     //
+    const contentArea = document.getElementById("stockManagementByCounterMainDiv");
     loadXMLDoc();
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
-            document.getElementById("stockManagementByCounterMainDiv").innerHTML = xmlhttp.responseText;
+            contentArea.innerHTML = xmlhttp.responseText;
             showTransferData(selectedFirm);
+            let loaded = 0;
+            function afterLoaded() {
+                loaded++;
+                if (loaded === 2) { 
+                    window.initSearchableSelects(contentArea);
+                }
+            }
+            let userDropdown = document.getElementById('source_user_main');
+            let userDropdown1 = document.getElementById('destination_user_main');
+            if ( userDropdown && userDropdown1 ){
+
+                let firmDropdownId = 'headerfirmSelection';
+                let firmElement = document.getElementById(firmDropdownId);
+                populateUserList(firmElement.value,userDropdown,afterLoaded);
+                populateUserList(selectedFirm, userDropdown1, afterLoaded);
+
+            }
+
+            // window.initSearchableSelects(contentArea); 
+
+            
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
         }
@@ -2577,7 +2691,7 @@ function getStockTransferSelectedOptionsFunc(productCounter, selectedStaff, sele
     } else {
         //
         xmlhttp.open("POST", "include/php/omStockManagementByCounter.php?productCounter=" + productCounter +
-                "&selectedStaff=" + selectedStaff + "&selectedFirm=" + selectedFirm + "&preVoucherNo=" + preVoucherNo, true);
+                "&selectedStaff=" + selectedStaff + "&selectedFirm=" + selectedFirm + "&preVoucherNo=" + preVoucherNo + "&stockTransferAccess=" + stockTransferAccess, true);
         //
         xmlhttp.send();
         //

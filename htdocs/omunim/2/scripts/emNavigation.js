@@ -3583,7 +3583,7 @@ function searchBarCode(barCode, firmId) {
     } else if (panelName == 'emailId') {
         barCode = 'M' + barCode;
     } else if (panelName == 'loyalityCard') {
-        barCode = '2' + barCode;
+        barCode = 'L' + barCode;
     } else if (panelName == 'SterlingJewelleryWithItmCode') {
         barCode = 'B' + barCode;
     } else if (panelName == 'SterlingJewelleryBarcode') {
@@ -3849,6 +3849,9 @@ function sendProdId(ProdName, panel) {
     };
     if (panel == 'ItemsRFIDBarCodePanel') {
         xmlhttp.open("GET", "include/php/ogRFIDibbc55x13" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
+    }
+    else if (panel == 'DiamondLooseStonePanel') {
+        xmlhttp.open("POST", "include/php/omDiamondLooseStoneTag" + default_theme + ".php?prodid=" + ProdName + "&panel=" + panel, true);
     } else {
         xmlhttp.open("POST", "include/php/ogibbc55x13" + default_theme + ".php?prodid=" + ProdName + "&panel=" + panel, true);
     }
@@ -3890,33 +3893,253 @@ function directPRNPrint(panel, page)
 }
 //
 // Start Code to Create New Function for DIRECT PRINT PRN - Tail Label @PRIYANKA-11MAR19
-function directPRNPrintTailLabel(panel, sttrId, page, girv_cust_id, girv_firm_id) {
-    loadXMLDoc();
+// function directPRNPrintTailLabel(panel, sttrId, page, girv_cust_id, girv_firm_id) {
+//     loadXMLDoc();
+//     xmlhttp.onreadystatechange = function () {
+//         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+//             document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+//         } else {
+//             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+//         }
+//     };
+//     var poststr = "printOption=directPRNPrint"
+//             + "&sttrId=" + encodeURIComponent(sttrId)
+//             + "&panel=" + encodeURIComponent(panel)
+//             + "&page=" + encodeURIComponent(page)
+//             + "&girv_cust_id=" + encodeURIComponent(girv_cust_id)
+//             + "&girv_firm_id=" + encodeURIComponent(girv_firm_id);
+//     //&setQuantity=Yes
+//     if (panel == 'ItemsRFIDBarCodePanel') {
+//         xmlhttp.open("GET", "include/php/omstockTransRFIDibbc55x13dv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
+//     } else if (panel == 'Items55x13IMBarCodePanel') {
+//         xmlhttp.open("GET", "include/php/omstockTransibbc55x13imidv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
+//     } else if (panel == 'Items55x13LoanBarCodePanel') {
+//         xmlhttp.open("GET", "include/php/olggbc55x13dv" + default_theme + ".php?" + poststr, true);
+//     } else {
+//         xmlhttp.open("GET", "include/php/omstockTransibbc55x13dv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
+//     }
+//     xmlhttp.send();
+// }
+// function directPRNPrintTailLabel(panel, sttrId, page, girv_cust_id, girv_firm_id) {
+    
+//     console.log(panel+','+ sttrId+','+ page+','+ girv_cust_id+','+girv_firm_id);
+//     // 1. Get the quantity from the input box by its ID
+//     var quantityInput = document.getElementById("print_qty");
+//     var numberOfLabels = 1; // Default to 1 just in case
+
+//     // 2. Check if the input box exists and has a valid number
+//     if (quantityInput) {
+//         var qtyValue = parseInt(quantityInput.value, 10);
+//         // Make sure the value is a number and is 1 or greater
+//         if (!isNaN(qtyValue) && qtyValue >= 1) {
+//             numberOfLabels = qtyValue;
+//         }
+//     }
+    
+//     console.log("Printing " + numberOfLabels + " labels..."); // For debugging
+
+//     // 3. Create a loop that runs for the desired quantity
+//     for (var i = 0; i < numberOfLabels; i++) {
+        
+//         // --- All of your original code now runs inside the loop ---
+//         loadXMLDoc();
+//         xmlhttp.onreadystatechange = function () {
+//             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+//                 document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+//             } else {
+//                 document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+//             }
+//         };
+//         var poststr = "printOption=directPRNPrint"
+//                 + "&sttrId=" + encodeURIComponent(sttrId)
+//                 + "&panel=" + encodeURIComponent(panel)
+//                 + "&page=" + encodeURIComponent(page)
+//                 + "&girv_cust_id=" + encodeURIComponent(girv_cust_id)
+//                 + "&girv_firm_id=" + encodeURIComponent(girv_firm_id);
+//         //&setQuantity=Yes
+//         if (panel == 'ItemsRFIDBarCodePanel') {
+//             xmlhttp.open("GET", "include/php/omstockTransRFIDibbc55x13dv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
+//         } else if (panel == 'Items55x13IMBarCodePanel') {
+//             xmlhttp.open("GET", "include/php/omstockTransibbc55x13imidv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
+//         } else if (panel == 'Items55x13LoanBarCodePanel') {
+//             xmlhttp.open("GET", "include/php/olggbc55x13dv" + default_theme + ".php?" + poststr, true);
+//         } else {
+//             xmlhttp.open("GET", "include/php/omstockTransibbc55x13dv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
+//         }
+//         xmlhttp.send();
+//         // --- The original code ends here ---
+
+//     } // The loop finishes here
+// }
+function directPRNPrintTailLabel(panel, sttrId, page, girv_cust_id, girv_firm_id, systemOnOrOff, sysLocalDBRemote, batchFileName) {
+    
+    // 1. Get Quantity
+    var quantityInput = document.getElementById("print_qty");
+    var numberOfLabels = 1;
+    if (quantityInput) {
+        var qtyValue = parseInt(quantityInput.value, 10);
+        if (!isNaN(qtyValue) && qtyValue >= 1) {
+            numberOfLabels = qtyValue;
+        }
+    }
+
+    console.log("Starting Print Process. Labels: " + numberOfLabels + " | Mode: " + systemOnOrOff);
+
+    // 2. Loop through labels
+    for (var i = 0; i < numberOfLabels; i++) {
+        
+        // Cache Buster
+        var uniqueId = Math.random(); 
+        
+        var poststr = "printOption=directPRNPrint"
+                + "&sttrId=" + encodeURIComponent(sttrId)
+                + "&panel=" + encodeURIComponent(panel)
+                + "&page=" + encodeURIComponent(page)
+                + "&girv_cust_id=" + encodeURIComponent(girv_cust_id)
+                + "&girv_firm_id=" + encodeURIComponent(girv_firm_id)
+                + "&antibuster=" + uniqueId;
+
+        // Determine URL
+        var url = "";
+        if (panel == 'ItemsRFIDBarCodePanel') {
+            url = "include/php/omstockTransRFIDibbc55x13dv" + default_theme + ".php?" + poststr;
+        } else if (panel == 'Items55x13IMBarCodePanel') {
+            url = "include/php/omstockTransibbc55x13imidv" + default_theme + ".php?" + poststr;
+        } else if (panel == 'Items55x13LoanBarCodePanel') {
+            url = "include/php/olggbc55x13dv" + default_theme + ".php?" + poststr;
+        } else if (panel == 'DiamondLooseStonePanel') {
+             url = "include/php/omDiamondLooseStoneTag" + default_theme + ".php?" + poststr;
+        } else {
+            url = "include/php/omstockTransibbc55x13dv" + default_theme + ".php?" + poststr;
+        }
+
+        // 3. SYNCHRONOUS REQUEST (The Freeze)
+        // We put this in a Try-Catch block to handle exceptions
+        try {
+            var xhr = new XMLHttpRequest();
+            
+            // 'false' makes the browser freeze until PHP finishes. 
+            // This is required to keep the "User Gesture" active for localexplorer.
+            xhr.open("GET", url, false); 
+            xhr.send(null); 
+
+            if (xhr.status === 200) {
+                console.log("✅ File Generated Successfully (Status 200).");
+                
+                // 4. Launch External Handler (Only if Online)
+                if (systemOnOrOff == 'ON' && sysLocalDBRemote != 'Y') {
+                    console.log("🚀 Online Mode: Launching " + batchFileName);
+                    
+                    // Use window.location to trigger the protocol handler
+                    window.location.href = "localexplorer:C:/OMPRN/" + batchFileName;
+                }
+            } else {
+                console.error("Server Error: " + xhr.status);
+                alert("❌ Error: Server returned status " + xhr.status + ". Please check server logs.");
+            }
+        } catch (e) {
+            console.error("Request Exception", e);
+            alert("❌ Communication Error: Could not reach the server.");
+        }
+    }
+}
+
+function saveprnPrintTailLabel(){
+     loadXMLDoc();
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            alert(xmlhttp.responseText);
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
         }
     };
-    var poststr = "printOption=directPRNPrint"
-            + "&sttrId=" + encodeURIComponent(sttrId)
-            + "&panel=" + encodeURIComponent(panel)
-            + "&page=" + encodeURIComponent(page)
-            + "&girv_cust_id=" + encodeURIComponent(girv_cust_id)
-            + "&girv_firm_id=" + encodeURIComponent(girv_firm_id);
     //&setQuantity=Yes
-    if (panel == 'ItemsRFIDBarCodePanel') {
-        xmlhttp.open("GET", "include/php/omstockTransRFIDibbc55x13dv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
-    } else if (panel == 'Items55x13IMBarCodePanel') {
-        xmlhttp.open("GET", "include/php/omstockTransibbc55x13imidv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
-    } else if (panel == 'Items55x13LoanBarCodePanel') {
-        xmlhttp.open("GET", "include/php/olggbc55x13dv" + default_theme + ".php?" + poststr, true);
-    } else {
-        xmlhttp.open("GET", "include/php/omstockTransibbc55x13dv" + default_theme + ".php?printOption=directPRNPrint&panel=" + panel + "&sttrId=" + sttrId + "&page=" + page, true);
-    }
+
+    xmlhttp.open("GET", "include/php/omsave_positions" + default_theme + ".php", true);
     xmlhttp.send();
 }
+
+
+function handleBisSizeChange(value){
+    loadXMLDoc();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            // alert(xmlhttp.responseText);
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    xmlhttp.open("GET", "include/php/omBisSizeChange" + default_theme + ".php?bis_size=" + value, true);
+    xmlhttp.send(); 
+}
+
+
+
+function toggleLogoOnLabel(value){
+    loadXMLDoc();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            // alert(xmlhttp.responseText);
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    xmlhttp.open("GET", "include/php/omLogoonlbl" + default_theme + ".php?logoonlbl=" + value, true);
+    xmlhttp.send();
+}
+
+
+
+function uploadZplLogo() {
+
+    // SHOW LOADER IMMEDIATELY
+    document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+
+    var form = document.getElementById('zplUploadForm');
+    var formData = new FormData(form);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "include/php/om_ajax_zpl_handler" + default_theme + ".php", true);
+
+    xhr.onload = function() {
+
+        // ALWAYS HIDE LOADER WHEN REQUEST ENDS
+        document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+
+        if (xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            alert(json.status);   // <-- this will show: Logo Saved successfully
+            console.log(json);
+        } else {
+            alert("Upload failed!");
+        }
+    };
+
+    xhr.onerror = function() {
+        document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+        alert("Network error!");
+    };
+
+    xhr.send(formData);
+
+    return false; // prevent default submit
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 //
 // End Code to Create New Function for DIRECT PRINT PRN - Tail Label @PRIYANKA-11MAR19
 // 
@@ -3941,6 +4164,124 @@ function directXrfPrnPrint(panelName, custId, firm_long_name, firm_address, user
 // *************************************************************************************************************
 // END CODE FOR XRF PRN PRINT OPTION @AUTHOR SIMRAN-29JUNE2022
 // *************************************************************************************************************
+
+// ADDED FOR 65L PRINT ISSUE @PRAJWAL
+
+function printBarCodeA4Sheet65L(obj) {
+    const documentContainer = document.getElementById(obj);
+    if (!documentContainer) {
+        console.error("Error: Element with ID '" + obj + "' not found.");
+        alert("Could not find the content to print.");
+        return;
+    }
+    // Collect existing stylesheets
+    let stylesheets = '';
+    document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+        stylesheets += link.outerHTML;
+    });
+    // Construct printable HTML
+    const html = `
+        <html>
+            <head>
+                <title>Online Munim - Print Page | www.OnlineMunim.com | www.omunim.com</title>
+                ${stylesheets}
+                <style>
+                    html, body {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        width: 210mm;
+                        height: 297mm;
+                        background: #fff;
+                    }
+
+                    .page-wrapper {
+                        width: 210mm;
+                        height: 297mm;
+                        margin: 0 auto;
+                        background: #fff;
+                        box-sizing: border-box;
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        align-content: flex-start;
+                        transform-origin: top left;
+                    }
+
+                    /* Slight scale-down safeguard to ensure it fits within page */
+                    .page-wrapper.scale-fit {
+                        transform: scale(0.98); /* Shrinks slightly to fit A4 */
+                    }
+
+                    .noPrint {
+                        text-align: center;
+                        margin-top: 20px;
+                    }
+
+                    @media print {
+                        @page {
+                            size: A4 portrait;
+                            margin: 0;
+                        }
+
+                        html, body {
+                            width: 210mm;
+                            height: 297mm;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            overflow: hidden !important;
+                            background: #fff;
+                        }
+
+                        .page-wrapper {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            width: 210mm;
+                            height: 297mm;
+                            box-shadow: none !important;
+                            background: #fff;
+                            overflow: hidden !important;
+                            transform: scale(0.98); /* fits content to 1 page */
+                            transform-origin: top left;
+                        }
+
+                        .noPrint {
+                            display: none !important;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="page-wrapper">
+                    ${documentContainer.innerHTML}
+                </div>
+                <div class="noPrint">
+                    <button onclick="window.print();" style="cursor: pointer; font-size: 16px; padding: 10px 20px;">
+                        Print Again
+                    </button>
+                </div>
+            </body>
+        </html>
+    `;
+// Open new print window
+    const printWindow = window.open("", "PrintWindow", "width=1000,height=800,top=120,left=120,scrollbars=yes,resizable=yes");
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+// Ensure scaling class applied after rendering
+    setTimeout(() => {
+        const pageWrapper = printWindow.document.querySelector('.page-wrapper');
+        if (pageWrapper) pageWrapper.classList.add('scale-fit');
+    }, 200);
+
+    // Trigger print after short delay
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.onafterprint = () => printWindow.close();
+    }, 900);
+}
+
+// END CODE
 
 function printBarCodeA4Sheet(obj) {
 
@@ -4983,6 +5324,7 @@ function navigateRepairPanel() {
 /***************Start code to add loan tags panel @Author:PRIYA25APR14**********/
 /**************Start code to add panel @Author:PRIYA05NOV14***********************/
 function showBarCodePrintPanel(divPanel, stockTypeP1) {
+    console.log(divPanel+' ,'+stockTypeP1);
     document.getElementById("a4SheetsPrintButtonDiv").style.visibility = "visible";
     showBarCodeSettingPanel(divPanel);
     loadXMLDoc();
@@ -5064,6 +5406,10 @@ function showBarCodePrintPanel(divPanel, stockTypeP1) {
     /****** START CODE TO ADD CONDITION FOR BRACODE PRN PRINT SETUP @Author:SIMRAN:25JAN2023 ******/
     else if (divPanel == 'barcodePRNPrintSetupPanel') {
         xmlhttp.open("POST", "include/php/omBarcodePRNPrintSetup" + default_theme + ".php", true);
+    }
+    else if (divPanel == 'DiamondLooseStonePanel') {
+    document.getElementById("a4SheetsPrintButtonDiv").style.visibility = "hidden";
+    xmlhttp.open("POST", "include/php/omDiamondLooseStoneTag.php?panel=" + divPanel, true);
     }
     /****** END CODE TOADD CONDITION FOR BRACODE PRN PRINT SETUP @Author:SIMRAN:25JAN2023 ******/
 
@@ -13762,5 +14108,150 @@ function initializeLazyLoadForNewContent(newContentContainer, delayMs = 0) {
         }, delayMs);
     } else {
         scanAndLoadLazyImages(newContentContainer, false); // false = DON'T check viewport for this initial batch
+    }
+}
+
+function showPrizeListPopup(element) {
+    // Get input values
+    const NoofDraw = parseInt(document.getElementById('NoofDraw').value) || 0;
+const multiplier = parseFloat(document.getElementById('drawMultiplier').value) || 0;
+const luckyDrawAmount = NoofDraw * multiplier;
+const miniAmount = parseFloat(document.getElementById('miniAmount').value) || 0;
+const emiOrderType = document.getElementById('emiOrderType').value;
+
+//const gap = multiplier; // 👈 Use multiplier as prize step gap
+
+
+    // Get popup elements
+    const popup = element.nextElementSibling;
+    const prizeListContent = popup.querySelector('#prizeListContent table');
+
+    // Clear and rebuild table structure
+    prizeListContent.innerHTML = '';
+    
+    // Create table header
+    const headerRow = document.createElement('tr');
+    headerRow.style.backgroundColor = '#f0f7ff';
+    
+    const numberHeader = document.createElement('th');
+    numberHeader.textContent = 'No.';
+    numberHeader.style.width = '40%';
+    numberHeader.style.textAlign = 'center';
+    numberHeader.style.padding = '4px';
+    
+    const amountHeader = document.createElement('th');
+    amountHeader.textContent = 'Amount (₹)';
+    amountHeader.style.width = '60%';
+    amountHeader.style.textAlign = 'center';
+    amountHeader.style.padding = '4px';
+    
+    headerRow.appendChild(numberHeader);
+    headerRow.appendChild(amountHeader);
+    prizeListContent.appendChild(headerRow);
+
+    const gap = multiplier; // Use user-defined multiplier as prize gap
+
+
+    // Calculate prize amounts
+    if (emiOrderType === 'ASC') {
+        // ASC: Start with minAmount, keep it until we can start increasing by 3000
+        const stepsPossible = Math.floor((luckyDrawAmount - miniAmount) / gap);
+        const repeatMinAmountTimes = Math.max(0, NoofDraw - stepsPossible - 1);
+        
+        for (let i = 1; i <= NoofDraw; i++) {
+            if (i <= repeatMinAmountTimes) {
+                // Repeat min amount until we can start increasing
+                addPrizeRow(prizeListContent, i, miniAmount.toFixed(2));
+            } else {
+                // Then increase by 3000 each step
+                const amount = Math.min(luckyDrawAmount, miniAmount + (i - repeatMinAmountTimes - 1) * gap);
+                addPrizeRow(prizeListContent, i, amount.toFixed(2));
+            }
+        }
+    } else {
+        // DESC: Start from luckyDrawAmount, decrease by gap, but never go below miniAmount
+        let currentAmount = luckyDrawAmount;
+        let remainingSteps = NoofDraw;
+        
+        while (remainingSteps > 0) {
+            const amount = Math.max(miniAmount, currentAmount);
+            addPrizeRow(prizeListContent, NoofDraw - remainingSteps + 1, amount.toFixed(2));
+            
+            if (currentAmount <= miniAmount) {
+                // If we've reached min, fill remaining with min amount
+                for (let i = 0; i < remainingSteps - 1; i++) {
+                    addPrizeRow(prizeListContent, NoofDraw - remainingSteps + 2 + i, miniAmount.toFixed(2));
+                }
+                break;
+            }
+            
+            currentAmount -= gap;
+            remainingSteps--;
+        }
+    }
+
+    // Toggle popup visibility
+    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+
+    // Close popup when clicking outside
+    document.addEventListener('click', function closePopup(e) {
+        if (!popup.contains(e.target) && e.target !== element) {
+            popup.style.display = 'none';
+            document.removeEventListener('click', closePopup);
+        }
+    });
+}
+
+function addPrizeRow(table, number, amount) {
+    const row = document.createElement('tr');
+    row.style.borderBottom = '1px solid #eee';
+    
+    const numberCell = document.createElement('td');
+    numberCell.textContent = number;
+    numberCell.style.width = '40%';
+    numberCell.style.textAlign = 'center';
+    numberCell.style.padding = '4px';
+    
+    const amountCell = document.createElement('td');
+    amountCell.textContent = `₹ ${amount}`;
+    amountCell.style.width = '60%';
+    amountCell.style.textAlign = 'center';
+    amountCell.style.padding = '4px';
+    
+    row.appendChild(numberCell);
+    row.appendChild(amountCell);
+    table.appendChild(row);
+}
+
+function calculateLuckyDrawAmount() {
+    const NoofDraw = parseInt(document.getElementById('NoofDraw').value) || 0;
+    const multiplier = parseFloat(document.getElementById('drawMultiplier').value) || 0;
+    const total = NoofDraw * multiplier;
+
+    document.getElementById('luckyDrawAmount').value = total.toFixed(2);
+}
+
+
+
+function loadWholesaleStock() {
+    // This function loads the content from 'omImtwholesaleList.php' into a specified container.
+    // CORRECTED: Changed '#main-content-panel' to the actual ID from your application.
+    var targetContainer = '#dtTableDivId_wrapper'; 
+
+    if ($(targetContainer).length) {
+        // We add a loading message for better user experience
+        $(targetContainer).html('<h2>Loading Wholesale Stock...</h2>'); 
+
+        $(targetContainer).load('/2/include/php/omImtWholesaleList.php', function(response, status, xhr) {
+            if (status == "error") {
+                // Handle error if the file fails to load
+                var errorMsg = "Error loading wholesale stock: " + xhr.statusText;
+                $(targetContainer).html('<p style="color: red;">' + errorMsg + '</p>'); // Show error in the container
+                console.error("Failed to load omwholesaleList.php. Status: " + xhr.status + ", " + xhr.statusText);
+            }
+        });
+    } else {
+        alert("Error: The target container '" + targetContainer + "' was not found on the page.");
+        console.error("Target container for wholesale stock list not found.");
     }
 }

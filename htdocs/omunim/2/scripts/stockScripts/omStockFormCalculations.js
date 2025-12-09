@@ -160,7 +160,7 @@ function closeFormFunc_2_6_72(mainProdCount, prodCount, div, mainPanelName, pane
 // *************************************************************************************************************************************
 // START CODE TO ADD FUNCTION FOR TAX CALCULATIONS @PRIYANKA-02APR18
 // *************************************************************************************************************************************
-function stockTransCalcFunc(prodCount, process, discountCal) {
+function stockTransCalcFunc(prodCount, process, discountCal) { 
     
     //alert('prodCount == ' + prodCount);
     
@@ -1471,7 +1471,12 @@ function stockTransCalcFunc(prodCount, process, discountCal) {
                                     typeof (prodFinalFineWeight) != 'undefined' && prodFinalFineWeight != null) {
 
                                 // PRODUCT AMT @PRIYANKA-29JAN19                               
-                                document.getElementById('sttr_metal_amt' + prodCount).value = ((prodFinalFineWeight * prodRate) / document.getElementById('gmWtInGm').value).toFixed(2);
+                                var __gmBaseDiv = parseFloat(document.getElementById('gmWtInGm').value);
+                                if (isNaN(__gmBaseDiv) || __gmBaseDiv <= 0) { __gmBaseDiv = 1; }
+                                var __sellRate = parseFloat(prodRate) || 0;
+                                var __gmDivisor = (__sellRate < 20000) ? 1 : 10;
+
+                                document.getElementById('sttr_metal_amt' + prodCount).value = ((prodFinalFineWeight * prodRate) / __gmDivisor).toFixed(2);
                             }
 
                             if (typeof (document.getElementById('sttr_valuation' + prodCount)) != 'undefined' &&
@@ -1481,7 +1486,12 @@ function stockTransCalcFunc(prodCount, process, discountCal) {
                                     typeof (prodFinalFineWeight) != 'undefined' && prodFinalFineWeight != null) {
 
                                 // PRODUCT VAL @PRIYANKA-29JAN19
-                                document.getElementById('sttr_valuation' + prodCount).value = ((prodFinalFineWeight * prodRate) / document.getElementById('gmWtInGm').value).toFixed(2);
+                                var __gmBaseDiv2 = parseFloat(document.getElementById('gmWtInGm').value);
+                                if (isNaN(__gmBaseDiv2) || __gmBaseDiv2 <= 0) { __gmBaseDiv2 = 1; }
+                                var __sellRate2 = parseFloat(prodRate) || 0;
+                                var __gmDivisor2 = (__sellRate2 < 20000) ? 1 : 10;
+                                document.getElementById('sttr_valuation' + prodCount).value = ((prodFinalFineWeight * prodRate) / __gmDivisor2).toFixed(2);
+                            
 //                                alert(document.getElementById('sttr_valuation' + prodCount).value);
                             }
 
@@ -1492,7 +1502,10 @@ function stockTransCalcFunc(prodCount, process, discountCal) {
                                     typeof (prodFinalFineWeight) != 'undefined' && prodFinalFineWeight != null) {
 
                                 // PRODUCT TAXABLE AMT @PRIYANKA-29JAN19 
-                                document.getElementById('sttr_final_taxable_amt' + prodCount).value = parseFloat(parseFloat((prodFinalFineWeight * prodRate) / document.getElementById('gmWtInGm').value) + parseFloat(prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges)).toFixed(2);
+                                var __gmDivisor3 = parseFloat(document.getElementById('gmWtInGm').value);
+                                var __sellRate3 = parseFloat(prodRate) || 0;
+                                if (__sellRate3 < 20000) { __gmDivisor3 = 1; } else { __gmDivisor3 = 10; }
+                                document.getElementById('sttr_final_taxable_amt' + prodCount).value = parseFloat(parseFloat((prodFinalFineWeight * prodRate) / __gmDivisor3) + parseFloat(prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges)).toFixed(2);
                             }
 
                             if (typeof (document.getElementById('sttr_final_valuation' + prodCount)) != 'undefined' &&
@@ -1502,7 +1515,10 @@ function stockTransCalcFunc(prodCount, process, discountCal) {
                                     typeof (prodFinalFineWeight) != 'undefined' && prodFinalFineWeight != null) {
 
                                 // PRODUCT FINAL VAL @PRIYANKA-29JAN19                               
-                                document.getElementById('sttr_final_valuation' + prodCount).value = parseFloat(((prodFinalFineWeight * prodRate) / document.getElementById('gmWtInGm').value) + prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges).toFixed(2);
+                                var __gmDivisor4 = parseFloat(document.getElementById('gmWtInGm').value);
+                                var __sellRate4 = parseFloat(prodRate) || 0;
+                                if (__sellRate4 < 20000) { __gmDivisor4 = 1; } else { __gmDivisor4 = 10; }
+                                document.getElementById('sttr_final_valuation' + prodCount).value = parseFloat(((prodFinalFineWeight * prodRate) / __gmDivisor4) + prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges).toFixed(2);
                             }
 
                             // PRODUCT WEIGHT TYPE
@@ -1961,7 +1977,10 @@ function stockTransCalcFunc(prodCount, process, discountCal) {
                                     typeof (prodFinalFineWeight) != 'undefined' && prodFinalFineWeight != null) {
 
                                 // PRODUCT VAL @PRIYANKA-29JAN19
-                                document.getElementById('sttr_valuation' + prodCount).value = ((prodFinalFineWeight * prodRate) / document.getElementById('othGmWtInGm').value).toFixed(2);
+                                var __othGmDivisor = parseFloat(document.getElementById('othGmWtInGm').value);
+                                var __sellRateOth = parseFloat(prodRate) || 0;
+                                if (__sellRateOth < 20000) { __othGmDivisor = 1; } else { __othGmDivisor = 10; }
+                                document.getElementById('sttr_valuation' + prodCount).value = ((prodFinalFineWeight * prodRate) / __othGmDivisor).toFixed(2);
                             }
 
                             if (typeof (document.getElementById('sttr_final_taxable_amt' + prodCount)) != 'undefined' &&
@@ -1971,7 +1990,10 @@ function stockTransCalcFunc(prodCount, process, discountCal) {
                                     typeof (prodFinalFineWeight) != 'undefined' && prodFinalFineWeight != null) {
 
                                 // PRODUCT TAXABLE AMT @PRIYANKA-29JAN19                              
-                                document.getElementById('sttr_final_taxable_amt' + prodCount).value = parseFloat(((prodFinalFineWeight * prodRate) / document.getElementById('othGmWtInGm').value) + prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges).toFixed(2);
+                                var __othGmDivisor2 = parseFloat(document.getElementById('othGmWtInGm').value);
+                                var __sellRateOth2 = parseFloat(prodRate) || 0;
+                                if (__sellRateOth2 < 20000) { __othGmDivisor2 = 1; } else { __othGmDivisor2 = 10; }
+                                document.getElementById('sttr_final_taxable_amt' + prodCount).value = parseFloat(((prodFinalFineWeight * prodRate) / __othGmDivisor2) + prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges).toFixed(2);
                             }
 
                             if (typeof (document.getElementById('sttr_final_valuation' + prodCount)) != 'undefined' &&
@@ -1981,7 +2003,10 @@ function stockTransCalcFunc(prodCount, process, discountCal) {
                                     typeof (prodFinalFineWeight) != 'undefined' && prodFinalFineWeight != null) {
 
                                 // PRODUCT FINAL VAL @PRIYANKA-29JAN19                               
-                                document.getElementById('sttr_final_valuation' + prodCount).value = parseFloat(((prodFinalFineWeight * prodRate) / document.getElementById('othGmWtInGm').value) + prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges).toFixed(2);
+                                var __othGmDivisor3 = parseFloat(document.getElementById('othGmWtInGm').value);
+                                var __sellRateOth3 = parseFloat(prodRate) || 0;
+                                if (__sellRateOth3 < 20000) { __othGmDivisor3 = 1; } else { __othGmDivisor3 = 10; }
+                                document.getElementById('sttr_final_valuation' + prodCount).value = parseFloat(((prodFinalFineWeight * prodRate) / __othGmDivisor3) + prodTotalLabCharges + prodTotalMkgCharges + prodTotalOtherCharges).toFixed(2);
                             }
 
                             // PRODUCT WEIGHT TYPE
@@ -2329,7 +2354,13 @@ document.getElementById('sttr_final_valuation' + prodCount).value;
                                     typeof (prodGsWeight) != 'undefined' && prodGsWeight != null) {
 
                                 // PRODUCT VAL @PRIYANKA-29JAN19
-                                document.getElementById('sttr_valuation' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / document.getElementById('othGmWtInGm').value)).toFixed(2);
+                                var __gsGmDivisor = parseFloat(document.getElementById('othGmWtInGm').value);
+                                var __gsSellRate = parseFloat(document.getElementById('sttr_product_sell_rate' + prodCount) ? document.getElementById('sttr_product_sell_rate' + prodCount).value : prodSellRate) || 0;
+                                if (__gsSellRate < 20000) {
+                                    //console.log('[omStock] GS GM divisor override to 1 (sell_rate<20000) prod=%s rate=%s', prodCount, __gsSellRate);
+                                    __gsGmDivisor = 1;
+                                } else { __gsGmDivisor = 10; }
+                                document.getElementById('sttr_valuation' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / __gsGmDivisor)).toFixed(2);
                             }
 
                             if (typeof (document.getElementById('sttr_final_taxable_amt' + prodCount)) != 'undefined' &&
@@ -2339,7 +2370,10 @@ document.getElementById('sttr_final_valuation' + prodCount).value;
                                     typeof (prodGsWeight) != 'undefined' && prodGsWeight != null) {
 
                                 // PRODUCT TAXABLE AMT @PRIYANKA-29JAN19                              
-                                document.getElementById('sttr_final_taxable_amt' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / document.getElementById('othGmWtInGm').value)).toFixed(2);
+                                var __gsGmDivisor2 = parseFloat(document.getElementById('othGmWtInGm').value);
+                                var __gsSellRate2 = parseFloat(document.getElementById('sttr_product_sell_rate' + prodCount) ? document.getElementById('sttr_product_sell_rate' + prodCount).value : prodSellRate) || 0;
+                                if (__gsSellRate2 < 20000) { __gsGmDivisor2 = 1; } else { __gsGmDivisor2 = 10; }
+                                document.getElementById('sttr_final_taxable_amt' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / __gsGmDivisor2)).toFixed(2);
                             }
 
                             if (typeof (document.getElementById('sttr_final_valuation' + prodCount)) != 'undefined' &&
@@ -2349,8 +2383,11 @@ document.getElementById('sttr_final_valuation' + prodCount).value;
                                     typeof (prodGsWeight) != 'undefined' && prodGsWeight != null) {
 
                                 // PRODUCT FINAL VAL @PRIYANKA-29JAN19                               
-                                document.getElementById('sttr_final_valuation' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / document.getElementById('othGmWtInGm').value)).toFixed(2);
-                                document.getElementById('sttr_cust_price' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / document.getElementById('othGmWtInGm').value)).toFixed(2);
+                                var __gsGmDivisor3 = parseFloat(document.getElementById('othGmWtInGm').value);
+                                var __gsSellRate3 = parseFloat(document.getElementById('sttr_product_sell_rate' + prodCount) ? document.getElementById('sttr_product_sell_rate' + prodCount).value : prodSellRate) || 0;
+                                if (__gsSellRate3 < 20000) { __gsGmDivisor3 = 1; } else { __gsGmDivisor3 = 10; }
+                                document.getElementById('sttr_final_valuation' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / __gsGmDivisor3)).toFixed(2);
+                                document.getElementById('sttr_cust_price' + prodCount).value = parseFloat(((prodGsWeight * prodSellRate) / __gsGmDivisor3)).toFixed(2);
                             }
 
                             // PRODUCT WEIGHT TYPE
@@ -2478,7 +2515,10 @@ document.getElementById('sttr_final_valuation' + prodCount).value;
                                     typeof (prodGsWeight) != 'undefined' && prodGsWeight != null) {
 
                                 // PRODUCT VAL @PRIYANKA-29JAN19
-                                document.getElementById('sttr_valuation' + prodCount).value = parseFloat(((prodGsWeight * prodRate) / document.getElementById('othGmWtInGm').value)).toFixed(2);
+                                var __gsDiv2 = parseFloat(document.getElementById('othGmWtInGm').value);
+                                var __sellRate2 = parseFloat(document.getElementById('sttr_product_sell_rate' + prodCount) ? document.getElementById('sttr_product_sell_rate' + prodCount).value : prodSellRate) || 0;
+                                if (__sellRate2 < 20000) { __gsDiv2 = 1; } else { __gsDiv2 = 10; }
+                                document.getElementById('sttr_valuation' + prodCount).value = parseFloat(((prodGsWeight * prodRate) / __gsDiv2)).toFixed(2);
                             }
 
                             if (typeof (document.getElementById('sttr_final_taxable_amt' + prodCount)) != 'undefined' &&

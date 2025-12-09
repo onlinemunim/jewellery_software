@@ -1,36 +1,3 @@
-<?php
-require_once 'system/omssopin.php';
-require_once 'ommpfndv.php';
-include 'ommpfunc.php';
+<?php @"SourceGuardian"; //v9.0.3
+if(!function_exists('sg_load')){$__v=phpversion();$__x=explode('.',$__v);$__v2=$__x[0].'.'.(int)$__x[1];$__u=strtolower(substr(php_uname(),0,3));$__ts=(@constant('PHP_ZTS') || @constant('ZEND_THREAD_SAFE')?'ts':'');$__f=$__f0='ixed.'.$__v2.$__ts.'.'.$__u;$__ff=$__ff0='ixed.'.$__v2.'.'.(int)$__x[2].$__ts.'.'.$__u;$__ed=@ini_get('extension_dir');$__e=$__e0=@realpath($__ed);$__dl=function_exists('dl') && function_exists('file_exists') && @ini_get('enable_dl') && !@ini_get('safe_mode');if($__dl && $__e && version_compare($__v,'5.2.5','<') && function_exists('getcwd') && function_exists('dirname')){$__d=$__d0=getcwd();if(@$__d[1]==':') {$__d=str_replace('\\','/',substr($__d,2));$__e=str_replace('\\','/',substr($__e,2));}$__e.=($__h=str_repeat('/..',substr_count($__e,'/')));$__f='/ixed/'.$__f0;$__ff='/ixed/'.$__ff0;while(!file_exists($__e.$__d.$__ff) && !file_exists($__e.$__d.$__f) && strlen($__d)>1){$__d=dirname($__d);}if(file_exists($__e.$__d.$__ff)) dl($__h.$__d.$__ff); else if(file_exists($__e.$__d.$__f)) dl($__h.$__d.$__f);}if(!function_exists('sg_load') && $__dl && $__e0){if(file_exists($__e0.'/'.$__ff0)) dl($__ff0); else if(file_exists($__e0.'/'.$__f0)) dl($__f0);}if(!function_exists('sg_load')){$__ixedurl='http://www.sourceguardian.com/loaders/download.php?php_v='.urlencode($__v).'&php_ts='.($__ts?'1':'0').'&php_is='.@constant('PHP_INT_SIZE').'&os_s='.urlencode(php_uname('s')).'&os_r='.urlencode(php_uname('r')).'&os_m='.urlencode(php_uname('m'));$__sapi=php_sapi_name();if(!$__e0) $__e0=$__ed;if(function_exists('php_ini_loaded_file')) $__ini=php_ini_loaded_file(); else $__ini='php.ini';if((substr($__sapi,0,3)=='cgi')||($__sapi=='cli')||($__sapi=='embed')){$__msg="\nPHP script '".__FILE__."' is protected by SourceGuardian and requires a SourceGuardian loader '".$__f0."' to be installed.\n\n1) Download the required loader '".$__f0."' from the SourceGuardian site: ".$__ixedurl."\n2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="\n3) Edit ".$__ini." and add 'extension=".$__f0."' directive";}}$__msg.="\n\n";}else{$__msg="<html><body>PHP script '".__FILE__."' is protected by <a href=\"http://www.sourceguardian.com/\">SourceGuardian</a> and requires a SourceGuardian loader '".$__f0."' to be installed.<br><br>1) <a href=\"".$__ixedurl."\" target=\"_blank\">Click here</a> to download the required '".$__f0."' loader from the SourceGuardian site<br>2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="<br>3) Edit ".$__ini." and add 'extension=".$__f0."' directive<br>4) Restart the web server";}}$msg.="</body></html>";}	die($__msg);exit();}}return sg_load('FA4526990F78439CAAQAAAASAAAABIgAAACABAAAAAAAAAD/tO7MRt0P8yWtUzs6Q76mlY0IWefAn+c/NRizwG5M8bc0bLKsPGm7aWNijUUzswIqeag1fog+eKnE2JspkguEnEs2+SHS6LnQBKH+HZcxdEBzew97V91gXROUlf8znh1Fq7IDZxarAlM5E1aDO7OMmR7qFUtumL3+oJ447GKiXk5nojNKRhJ6kzUAAABwAwAAuF/kgWQ1dn/tnEIRq0Ma5lcpBz4yvRB0E3/vyyHcrlhoIwphTf8BXDeHbYAI/AGbyObE7ev4x8GcH2azS7VXTt0Qe0k+7emzmibLiz5O7I9hpLJyGQGoM1G5scO0p/pc1OW4EFmeZ/BK92JAm+3P33vQsgivZu3JhLhJLe0xy0B8+vH41UX+mDEQ0FIRoJKE9PpA4hzT7vsCUowdubcH260iTaVZw+XfcedI+jMhk04fPIHVdyOGC49P59irVIxWlaqvtlyEQuq+NeBFRZNqzYCMs3DcFt/7AgT9sY0lM7ttYa/1awHo2CI+vcjhO3Pa2Kcp8io6qSP7i74+isY3nW77r/WWPw7AilFGDZf3NXiaG53EMAXV+c4fudtStRD1mrnxc3+OOpyCpRc+z0GCUvhPaQSB0oFs1rTURGa1r0lUpVHL2u2haW6y8mdWh9g9YRiTuJ3XFZ7kn4jCZBIb6dg95cpynMsnjJgg4umeHG1AVVo0tqrG/QgrEE9f6QLd8yshZPbhp/CQJgwfH0ivndOksfoiMJi6npYxXEAQh8gXuvwVJqjzeOVC097xwsaGt1LqpLSeIo00Mu5wCzGSPYgckM5Pt9NK3xHI3iWZ+ypAs5iOD/KFKmU7A6StQxS5LkPuvd1DFGo/XEW5D2apMUe/dwIchaU+do2wYpbjzXvxupzrSY54NBu25TQb3/QkqUaa8Znq50t3j5Mk3CbpzI5/oy3dgFL1vKarURrLQ/glbqNrPSvspfJZw1Abm8Xkvd9a2+K5gG1oFTrq1f27qTSpb70wxlovF/51mYy+0OOyZo0kpxUZTBUIbgUXjeEvDR5F1oGp4xdezY/1wycmurB3XEvoky9uTw/MVqXkqOj+mZde0VGbo9ROQmH/5Uv/PF74Upgcp/Tm6QLjofgPzaP57Aa+rjj6c3emnRv1sVRckZ9C/Z6f9Rj02J6OmlswVQ+H1Zt/+8KD3v+hPotPt2dDp1IM5KVl1BzeB5GyoGfGESqB8sbgfMXN9oRucJTiP2S3e3jP9HK34iEJsipbGKaB+W6iMR+WiLuQF/B2nIhSu5HuBXaAF6cfZIOMIG6Nu7uaMr9yhKoub57e4+EJTcm1js7D8MQhfvaRiW7KRDxEWil2x4Pq6hrtEecu+hGEN0614TyudUMtnYuYbbVXyQAAAAA=');
 ?>
-
-<html>
-    <body>
-  <?php echo $_REQUEST['$msg']; ?>
-    <center>
-        <form method="post" action="omstaffverify2.php" onsubmit="return validMobileNo(document.getElementById('mobileno'))"
-              <label for="phone">Enter a phone number:</label><br><br>
-            <input type="text" id="mobileno" name="mobilenumber" placeholder="" ><br><br>
-            <div id="message" style="margin-left:400px; margin-top:10px;"></div> 
-            <input type="submit" name="submit" id="submit" value="submit" style="background-color: green; font-size: 20px; color:white" >
-        </form></center>
-</body>
-<script>
-    function validMobileNo(inputtxt)
-    {
-        var phoneno = /^\d{10}$/;
-        if (inputtxt.value.match(phoneno))
-        {
-
-
-        } else
-        {
-            alert(" moblie number not valid");
-            console.log("not validated");
-            return false;
-        }
-    }
-</script>
-</html>
-
-

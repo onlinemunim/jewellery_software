@@ -104,11 +104,14 @@ function calculateSellPrice() {
     // FOR METAL RATE LENGTH @PRIYANKA-24DEC2021
     var metal_Rate_Int_Val_Length = metal_Rate_Int_Val.toString().length;
     //
+    // FIXED: Check actual rate value instead of digit count. Rates < 20,000 are per-gram; >= 20,000 are per-10gm/per-kg
+    var isRateLessThan20k = metalRate < 20000;
     //
     //alert('metalRate == ' + metalRate);
     //alert('metalType == ' + metalType);
     //alert('metal_Rate_Int_Val == ' + metal_Rate_Int_Val);
     //alert('metal_Rate_Int_Val_Length == ' + metal_Rate_Int_Val_Length);
+    //alert('isRateLessThan20k == ' + isRateLessThan20k);
     if (document.getElementById('checkarateonegm') != null && document.getElementById('checkarateonegm').value == 'true') {
         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
@@ -116,25 +119,26 @@ function calculateSellPrice() {
     } else {
         //
         // FOR METAL RATE @PRIYANKA-24DEC2021
-        if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3 || metal_Rate_Int_Val_Length == 4) &&
-                (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+        // UPDATED: Gold uses value-based check (<20,000 = per-gram, >=20,000 = per-10gm); Silver/StrSilver use digit-length
+        if (isRateLessThan20k && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
             //
-            // FOR GOLD METAL RATE PER GM @PRIYANKA-24DEC2021
+            // FOR GOLD METAL RATE PER GM (rate < 20,000) @PRIYANKA-24DEC2021 - UPDATED
             document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
             document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
             document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
             //
             //alert('gmWtInGm #== ' + document.getElementById('gmWtInGm').value);
             //
-        } else if (metal_Rate_Int_Val_Length == 5 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+        } else if (!isRateLessThan20k && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
             //
-            // FOR GOLD METAL RATE PER 10 GM @PRIYANKA-24DEC2021
+            // FOR GOLD METAL RATE PER 10 GM (rate >= 20,000) @PRIYANKA-24DEC2021 - UPDATED
             document.getElementById('gmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
             document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
             document.getElementById('gmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
             //
             //
-        } else if (metal_Rate_Int_Val_Length == 5 && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+        } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) &&
+                (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
             //
             // FOR SILVER METAL RATE PER KG @PRIYANKA-24DEC2021
             document.getElementById('srGmWtInKg').value = parseFloat(1).toFixed(2);
@@ -158,7 +162,8 @@ function calculateSellPrice() {
             }
             //
             //
-        } else if (metal_Rate_Int_Val_Length == 5 && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver' || metalType == 'Strsilver')) {
+        } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) &&
+                (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver' || metalType == 'Strsilver')) {
             //
             //
             // FOR STR SILVER METAL RATE PER KG @Rhushikesh-31-07-2024
@@ -170,7 +175,7 @@ function calculateSellPrice() {
         } else if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3 || metal_Rate_Int_Val_Length == 4) &&
                 (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver' || metalType == 'Strsilver')) {
             //
-            // FOR SILVER METAL RATE PER GM @PRIYANKA-24DEC2021
+            // FOR STRUCTURED SILVER METAL RATE PER GM @PRIYANKA-24DEC2021
             //FOR DISPLAY SILVER RATE ACCORDING TO PER10GM@RENUKA-15DEC2022
             if (document.getElementById('strsilverMetalRateby10gm').value == 'yes') {
                 document.getElementById('strsrGmWtInGm').value = parseFloat(10).toFixed(2);
@@ -496,7 +501,7 @@ function calculateSellPrice() {
         //
         var finalTunchCal = parseFloat(document.getElementById('slPrFinalTunch').value).toFixed(3);
         //
-        document.getElementById('slPrItemFFineWeight').value = (parseFloat((finalTunchCal * wt) / 100)).toFixed(6);
+        document.getElementById('slPrItemFFineWeight').value = (parseFloat((finalTunchCal * wt) / 100)).toFixed(5);
 //        alert(document.getElementById('slPrItemFFineWeight').value);
         //
         if (document.getElementById('addCustWastageWtInSpecifiedWt').value != 'byDefault' && document.getElementById('addCustWastageWtInSpecifiedWt').value != '') {
@@ -520,14 +525,14 @@ function calculateSellPrice() {
                 }
             }
             //
-            if (document.getElementById('utin_reverse_cal_by') != null) {
-                if (document.getElementById('utin_reverse_cal_by').value == 'BYCSWS') {
-                    document.getElementById('slPrItemFFineWeight').value = (parseFloat(document.getElementById('slPrCustWastageWt').value) + parseFloat(addCustWastageInWt)).toFixed(6);
+            if(document.getElementById('utin_reverse_cal_by') != null) {  
+                if(document.getElementById('utin_reverse_cal_by').value == 'BYCSWS') {
+                    document.getElementById('slPrItemFFineWeight').value = (parseFloat(document.getElementById('slPrCustWastageWt').value) + parseFloat(addCustWastageInWt)).toFixed(5);
                 } else {
-                    document.getElementById('slPrItemFFineWeight').value = (parseFloat(document.getElementById('slPrCustWastageWt').value) + parseFloat(addCustWastageInWt)).toFixed(6);
+                    document.getElementById('slPrItemFFineWeight').value = (parseFloat(document.getElementById('slPrCustWastageWt').value) + parseFloat(addCustWastageInWt)).toFixed(3);
                 }
             } else {
-                document.getElementById('slPrItemFFineWeight').value = (parseFloat(document.getElementById('slPrCustWastageWt').value) + parseFloat(addCustWastageInWt)).toFixed(6);
+                document.getElementById('slPrItemFFineWeight').value = (parseFloat(document.getElementById('slPrCustWastageWt').value) + parseFloat(addCustWastageInWt)).toFixed(3);
             }
 
             //
@@ -1334,7 +1339,6 @@ function calculateSellPrice() {
                 document.getElementById('totalValuation').value = Math.round(document.getElementById('totalValuation').value);
             } else {
                 document.getElementById('totalValuation').value = parseFloat(document.getElementById('totalValuation').value).toFixed(2);
-                ;
             }
         }
         document.getElementById('slPrItemFinalVal').value = parseFloat((parseFloat(document.getElementById('totalValuation').value)) +
@@ -1436,9 +1440,13 @@ function calculateSellPrice() {
     if (document.getElementById('slPrCustWastageWt').value == '0') {
         document.getElementById('slPrItemValueAdded').value = '0';
     }
+    calculateMarkupPriceOnLoad();
 
-    /* END: Check if customer wastage weight is zero and set item value added to zero. @AUTHOR: JAY - 4 APRIL 2025 */
-    document.getElementById('sttr_mkg_charges_by').value = document.getElementById('SelMkgChrgInd').value;
+     // --- FIX START: ADDED CHECK FOR NULL ELEMENT ---
+    if (document.getElementById('SelMkgChrgInd') != null && document.getElementById('sttr_mkg_charges_by') != null) {
+        document.getElementById('sttr_mkg_charges_by').value = document.getElementById('SelMkgChrgInd').value;
+    }
+    // --- FIX END ---
     return false;
 }
 /************End code to remove round off @Author:SHRI30JAN17***************/
@@ -2261,14 +2269,22 @@ function calcSellCryPrice() {
     var delId = 'del' + count;
 
     for (var dc = count; crystalEntered != ''; dc++) {
+
+        // --- FIX START: Update ID for current stone and check if exists ---
+        delId = 'del' + dc; // Update delId to match the current stone number (2, 3, etc.)
+        if (document.getElementById(delId) == null) {
+            break; // Stop the loop if the stone row does not exist
+        }
+        // --- FIX END ---
+
         if (document.getElementById('del' + dc).value != 'Deleted') {
 
-            var crystalQTY = parseInt(document.getElementById('slPrCryQty' + dc).value);
-            var crystalGsWt = parseFloat(document.getElementById('slPrCryGSW' + dc).value);
-            var crystalGsWtTyp = document.getElementById('slPrCryGSWType' + dc).value;
-            var crystalRate = parseFloat(document.getElementById('slPrCryRate' + dc).value);
-            var crystalRateType = document.getElementById('slPrCryRateType' + dc).value;
-            var crystalVal = parseFloat(document.getElementById('slPrCryVal' + dc).value);
+            var crystalQTY = document.getElementById('slPrCryQty' + dc) ? parseInt(document.getElementById('slPrCryQty' + dc).value) : 0;
+            var crystalGsWt = document.getElementById('slPrCryGSW' + dc) ? parseFloat(document.getElementById('slPrCryGSW' + dc).value) : 0;
+            var crystalGsWtTyp = document.getElementById('slPrCryGSWType' + dc) ? document.getElementById('slPrCryGSWType' + dc).value : '';
+            var crystalRate = document.getElementById('slPrCryRate' + dc) ? parseFloat(document.getElementById('slPrCryRate' + dc).value) : 0;
+            var crystalRateType = document.getElementById('slPrCryRateType' + dc) ? document.getElementById('slPrCryRateType' + dc).value : '';
+            var crystalVal = document.getElementById('slPrCryVal' + dc) ? parseFloat(document.getElementById('slPrCryVal' + dc).value) : 0;
 
             var totalGSWTNRate = 0;
 
@@ -2963,20 +2979,21 @@ function  calRawMetalFinVal() {
     var metal_Rate_Int_Val = parseInt(metalRate);
     var metal_Rate_Int_Val_Length = metal_Rate_Int_Val.toString().length;
     //
-    if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3 || metal_Rate_Int_Val_Length == 4) &&
-            (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+    // FIXED: Check actual rate value instead of digit count. Rates < 20,000 are per-gram; >= 20,000 are per-10gm/per-kg
+    var isRateLessThan20k = metalRate < 20000;
+    //
+    if (isRateLessThan20k && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
         //
-        // FOR GOLD METAL RATE PER GM @PRIYANKA-20DEC2021
+        // FOR GOLD METAL RATE PER GM (rate < 20,000) @PRIYANKA-20DEC2021 - UPDATED
         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
         //
         //alert('gmWtInGm #== ' + document.getElementById('gmWtInGm').value);
         //
-    } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) &&
-            (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+    } else if (!isRateLessThan20k && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
         //
-        // FOR GOLD METAL RATE PER 10 GM @PRIYANKA-20DEC2021
+        // FOR GOLD METAL RATE PER 10 GM (rate >= 20,000) @PRIYANKA-20DEC2021 - UPDATED
         document.getElementById('gmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
@@ -3721,6 +3738,17 @@ function calItemPrice() {
     var finalFineWeight = parseFloat(document.getElementById('sttr_final_fine_weight').value);
     var itemsQTY = parseInt(document.getElementById('sttr_quantity').value);
     var metalRate = parseFloat(document.getElementById('sttr_metal_rate').value); //change metal rate id for tax in metal rate @Author:SHRI29FEB16
+    // Guarded logging for metal rate presence/value to avoid errors on pages missing the element
+    try {
+        var sttrMetalRateElem = document.getElementById('sttr_metal_rate');
+        if (sttrMetalRateElem) {
+            console.log('[calItemPrice] sttr_metal_rate element present, value =', sttrMetalRateElem.value);
+        } else {
+            console.log('[calItemPrice] sttr_metal_rate element NOT present');
+        }
+    } catch (e) {
+        console.log('[calItemPrice] error while logging sttr_metal_rate', e);
+    }
     var metalType = document.getElementById('sttr_metal_type').value;
     var labCharges = document.getElementById('sttr_lab_charges').value;
     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
@@ -3779,30 +3807,42 @@ function calItemPrice() {
             if (wtType == 'KG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value + totalLabNOthCharges).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = ((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value + totalLabNOthCharges).toFixed(2);
+                var computedFinalVal = ((finalFineWeight * metalRate) * document.getElementById('gmWtInKg').value + totalLabNOthCharges).toFixed(2);
+                console.log('[calItemPrice] setting sttr_final_valuation (Gold KG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'GM') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value + totalLabNOthCharges).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = ((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value + totalLabNOthCharges).toFixed(2);
+                var computedFinalVal = ((finalFineWeight * metalRate) / document.getElementById('gmWtInGm').value + totalLabNOthCharges).toFixed(2);
+                console.log('[calItemPrice] setting sttr_final_valuation (Gold GM):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'MG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) / document.getElementById('gmWtInMg').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) * document.getElementById('gmWtInMg').value + totalLabNOthCharges).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = ((finalFineWeight * metalRate) / document.getElementById('gmWtInMg').value + totalLabNOthCharges).toFixed(2);
+                var computedFinalVal = ((finalFineWeight * metalRate) / document.getElementById('gmWtInMg').value + totalLabNOthCharges).toFixed(2);
+                console.log('[calItemPrice] setting sttr_final_valuation (Gold MG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             }
         } else if (metalType == 'Silver') {
 
             if (wtType == 'KG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) * document.getElementById('srGmWtInKg').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate * document.getElementById('srGmWtInKg').value) + totalLabNOthCharges).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = ((finalFineWeight * metalRate * document.getElementById('srGmWtInKg').value) + totalLabNOthCharges).toFixed(2);
+                var computedFinalVal = ((finalFineWeight * metalRate * document.getElementById('srGmWtInKg').value) + totalLabNOthCharges).toFixed(2);
+                console.log('[calItemPrice] setting sttr_final_valuation (Silver KG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'GM') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value + totalLabNOthCharges).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = ((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value + totalLabNOthCharges).toFixed(2);
+                var computedFinalVal = ((finalFineWeight * metalRate) / document.getElementById('srGmWtInGm').value + totalLabNOthCharges).toFixed(2);
+                console.log('[calItemPrice] setting sttr_final_valuation (Silver GM):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             } else if (wtType == 'MG') {
                 document.getElementById('sttr_valuation').value = ((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value)).toFixed(2);
                 document.getElementById('addItemValuation').value = ((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
-                document.getElementById('sttr_final_valuation').value = ((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                var computedFinalVal = ((finalFineWeight * metalRate) / (document.getElementById('srGmWtInMg').value) + parseFloat(totalLabNOthCharges)).toFixed(2);
+                console.log('[calItemPrice] setting sttr_final_valuation (Silver MG):', computedFinalVal, 'metalRate=', metalRate, 'finalFineWeight=', finalFineWeight);
+                document.getElementById('sttr_final_valuation').value = computedFinalVal;
             }
         } else {
             document.getElementById('sttr_valuation').value = 0;
@@ -3812,7 +3852,9 @@ function calItemPrice() {
 
         if (document.getElementById('sttr_tax').value != '') {
             document.getElementById('sttr_tot_tax').value = ((parseFloat(document.getElementById('sttr_valuation').value) * document.getElementById('sttr_tax').value) / 100).toFixed(2);
-            document.getElementById('sttr_final_valuation').value = (parseFloat(document.getElementById('sttr_valuation').value) + parseFloat(document.getElementById('sttr_tot_tax').value)).toFixed(2);
+            var computedFinalVal = (parseFloat(document.getElementById('sttr_valuation').value) + parseFloat(document.getElementById('sttr_tot_tax').value)).toFixed(2);
+            console.log('[calItemPrice] adding sttr_tot_tax to sttr_final_valuation:', computedFinalVal, 'valuation=', document.getElementById('sttr_valuation').value, 'tot_tax=', document.getElementById('sttr_tot_tax').value);
+            document.getElementById('sttr_final_valuation').value = computedFinalVal;
         }
         totVal = parseFloat(document.getElementById('sttr_final_valuation').value).toFixed(2);
         if (document.getElementById('sttr_final_valuation').value != '') {
@@ -4550,7 +4592,7 @@ function calculateCustWastage() {
         wt = 0;
     }
 
-    var finalFineWt = ((parseFloat(document.getElementById('slPrFinalTunch').value) * wt) / 100).toFixed(6);
+    var finalFineWt = ((parseFloat(document.getElementById('slPrFinalTunch').value) * wt) / 100).toFixed(3);
 
     //alert(finalFineWt);
 
@@ -4560,9 +4602,9 @@ function calculateCustWastage() {
 
     if (document.getElementById('addCustWastageWtInSpecifiedWt').value != 'byDefault' &&
             document.getElementById('addCustWastageWtInSpecifiedWt').value != '') {
-        document.getElementById('slPrItemFFineWeight').value = (parseFloat(FFNWT) + parseFloat(document.getElementById('additionalSellCustWastageWt').value)).toFixed(6);
+        document.getElementById('slPrItemFFineWeight').value = (parseFloat(FFNWT) + parseFloat(document.getElementById('additionalSellCustWastageWt').value)).toFixed(3);
     } else {
-        document.getElementById('slPrItemFFineWeight').value = parseFloat(FFNWT).toFixed(6);
+        document.getElementById('slPrItemFFineWeight').value = parseFloat(FFNWT).toFixed(3);
     }
 
     //alert('slPrItemFFineWeight == ' + document.getElementById('slPrItemFFineWeight').value);
@@ -4633,14 +4675,14 @@ function calculateCustWastageWt() {
         }
         //
         //
-        if (document.getElementById('utin_reverse_cal_by') != null) {
-            if (document.getElementById('utin_reverse_cal_by').value == 'BYCSWS') {
-                document.getElementById('slPrCustWastageWt').value = (parseFloat(defaultCustWastageWt)).toFixed(6);
+        if(document.getElementById('utin_reverse_cal_by') != null) {  
+            if(document.getElementById('utin_reverse_cal_by').value == 'BYCSWS') {
+                document.getElementById('slPrCustWastageWt').value = (parseFloat(defaultCustWastageWt)).toFixed(4);
             } else {
-                document.getElementById('slPrCustWastageWt').value = (parseFloat(defaultCustWastageWt)).toFixed(6);
+                document.getElementById('slPrCustWastageWt').value = (parseFloat(defaultCustWastageWt)).toFixed(3);
             }
         } else {
-            document.getElementById('slPrCustWastageWt').value = (parseFloat(defaultCustWastageWt)).toFixed(6);
+            document.getElementById('slPrCustWastageWt').value = (parseFloat(defaultCustWastageWt)).toFixed(3);
         }
         if (document.getElementById('slPrCustWastageWt').value == 'NaN') {
             document.getElementById('slPrCustWastageWt').value = '0';
@@ -4650,7 +4692,7 @@ function calculateCustWastageWt() {
         if (document.getElementById('addCustWastageWtInSpecifiedWt').value != 'byDefault' &&
                 document.getElementById('addCustWastageWtInSpecifiedWt').value != '') {
             //
-            document.getElementById('slPrItemFFineWeight').value = (parseFloat(defaultCustWastageWt) + parseFloat(addCustWastageInWt)).toFixed(6);
+            document.getElementById('slPrItemFFineWeight').value = (parseFloat(defaultCustWastageWt) + parseFloat(addCustWastageInWt)).toFixed(3);
 //              document.getElementById('slPrItemFFineWeight').value = (parseFloat(defaultCustWastageWt) + parseFloat(wt)).toFixed(3);
             //
         } else {
@@ -4697,17 +4739,17 @@ function calculateWastageWtPurchase() {
     //
     //
     var addCustWastageInWt = 0;
+    var addCustElem = document.getElementById('addCustWastageWtInSpecifiedWt');
     //
     //
-    if (document.getElementById('addCustWastageWtInSpecifiedWt').value == 'byFineWt' || document.getElementById('addCustWastageWtInSpecifiedWt').value == 'byFFineWt') {
+    if (addCustElem && (addCustElem.value == 'byFineWt' || addCustElem.value == 'byFFineWt')) {
         addCustWastageInWt = document.getElementById('sttr_fine_weight').value; // FINE WEIGHT 
-    } else if (document.getElementById('addCustWastageWtInSpecifiedWt').value == 'byGrossWt' ||
-            document.getElementById('addCustWastageWtInSpecifiedWt').value == 'byGrossWtWstg') {
+    } else if (addCustElem && (addCustElem.value == 'byGrossWt' || addCustElem.value == 'byGrossWtWstg')) {
         addCustWastageInWt = document.getElementById('sttr_gs_weight').value; // GROSS WEIGHT 
-    } else if (document.getElementById('addCustWastageWtInSpecifiedWt').value == 'byNetWt' ||
-            document.getElementById('addCustWastageWtInSpecifiedWt').value == 'byNetWtWstg') {
+    } else if (addCustElem && (addCustElem.value == 'byNetWt' || addCustElem.value == 'byNetWtWstg')) {
         addCustWastageInWt = document.getElementById('sttr_nt_weight').value; // NET WEIGHT 
     } else {
+        // Default to fine weight when element is missing or value doesn't match known options
         addCustWastageInWt = document.getElementById('sttr_fine_weight').value; // NET WEIGHT 
     }
     //
@@ -4715,7 +4757,8 @@ function calculateWastageWtPurchase() {
         wt = 0;
     }
 
-    if ((document.getElementById('sttr_wastage').value > 0 || document.getElementById('sttr_wastage').value < 0) && (document.getElementById('addCustWastageWtInSpecifiedWt').value != 'byDefault')) {
+    // Only proceed with additional customer wastage logic if the selector exists and is not set to 'byDefault'
+    if ((document.getElementById('sttr_wastage').value > 0 || document.getElementById('sttr_wastage').value < 0) && addCustElem && (addCustElem.value != 'byDefault')) {
         //
         //
         if (document.getElementById('addCustWastageWtInSpecifiedWt').value == 'byGrossWtWstg' ||
@@ -4728,8 +4771,7 @@ function calculateWastageWtPurchase() {
             var defaultCustWastageWt = ((parseFloat(wt) * parseFloat(document.getElementById('sttr_wastage').value)) / 100).toFixed(3);
             //
         }
-        if (document.getElementById('addCustWastageWtInSpecifiedWt').value != 'byDefault' &&
-                document.getElementById('addCustWastageWtInSpecifiedWt').value != '') {
+    if (addCustElem && addCustElem.value != 'byDefault' && addCustElem.value != '') {
             //
             document.getElementById('sttr_final_fine_weight').value = (parseFloat(defaultCustWastageWt) + parseFloat(addCustWastageInWt)).toFixed(3);
 //              document.getElementById('slPrItemFFineWeight').value = (parseFloat(defaultCustWastageWt) + parseFloat(wt)).toFixed(3);
@@ -5434,10 +5476,10 @@ function calculateSellPriceMetalFormB2() {
             var finalTunchCal = parseFloat(document.getElementById('slPrFinalTunch').value) + parseFloat(parseFloat(document.getElementById('slPrCustWastage').value).toFixed(3));
             var slPrItemFFineWeight = (((finalTunchCal) * wt) / 100).toFixed(3);
             if (document.getElementById('slPrCustWastage').value > 0) {
-                document.getElementById('slPrItemFFineWeight').value = (parseFloat(slPrItemFFineWeight) + parseFloat(document.getElementById('additionalSellCustWastageWt').value)).toFixed(6);
+                document.getElementById('slPrItemFFineWeight').value = (parseFloat(slPrItemFFineWeight) + parseFloat(document.getElementById('additionalSellCustWastageWt').value)).toFixed(3);
             } else {
                 document.getElementById('additionalSellCustWastageWt').value = 0;
-                document.getElementById('slPrItemFFineWeight').value = (parseFloat(slPrItemFFineWeight) + parseFloat(document.getElementById('additionalSellCustWastageWt').value)).toFixed(6);
+                document.getElementById('slPrItemFFineWeight').value = (parseFloat(slPrItemFFineWeight) + parseFloat(document.getElementById('additionalSellCustWastageWt').value)).toFixed(3);
             }
         }
     } else {
@@ -5448,7 +5490,7 @@ function calculateSellPriceMetalFormB2() {
                 document.getElementById('slPrCustWastageWt').value = 0;
             }
             var slffpurity = parseFloat(document.getElementById('slffpurity').value).toFixed(3);
-            document.getElementById('slPrItemFFineWeight').value = (parseFloat(slffpurity * wt) / 100).toFixed(6);
+            document.getElementById('slPrItemFFineWeight').value = (parseFloat(slffpurity * wt) / 100).toFixed(3);
         }
         /* END CODE TO CALCULATE FINAL FINE WEIGHT BY FINE WEIGHT & CUSTOMER WSATGE  */
     }

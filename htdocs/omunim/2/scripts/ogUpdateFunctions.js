@@ -987,9 +987,14 @@ function addEmpAccess(panelName, staffId) {
                     + "&stockReportAccess=" + document.getElementById('stockReportAccess').checked
                     + "&schemeMetaltypeAccess=" + document.getElementById('schemeMetaltypeAccess').checked
                     + "&sellSalesMonthAccess=" + document.getElementById('sellSalesMonthAccess').checked
+                    + "&hideWastageAccess=" + document.getElementById('hideWastageAccess').checked // <-- ADD THIS LINE
+                    + "&hidemarkupAccess=" + document.getElementById('hidemarkupAccess').checked
+                    + "&hidefinalvaluationAccess=" + document.getElementById('hidefinalvaluationAccess').checked
                     + "&hidepurchaseprice=" + document.getElementById('hidepurchaseprice').checked // YUVRAJ ADD THIS CODE FOR HIDE PURCHESE PRICE @YUVRAJ 02092022
                     + "&stockMultipleStockDeleteAccess=" + document.getElementById('stockMultipleStockDeleteAccess').checked
                     + "&schemePaidDateAccess=" + document.getElementById('schemePaidDateAccess').checked
+                    + "&luckyDrawAccess=" + document.getElementById('luckyDrawAccess').checked
+                    
 //            ######################################################################################
 //             START YUVRAJ MAKE THIS CODE FOR STAFF ACCESS STOCK REPORT LIST @ YUVRAJ 29122022
 //            ######################################################################################

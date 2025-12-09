@@ -2805,7 +2805,19 @@ function smsText(smsTempId) {
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
-            document.getElementById("smsTextDiv").innerHTML = xmlhttp.responseText;
+           var container = document.createElement('div');
+container.innerHTML = xmlhttp.responseText;
+
+// Find the script tag inside the container
+var script = container.querySelector('script');
+
+// Put the HTML part (the textarea) into the visible div
+document.getElementById("smsTextDiv").innerHTML = container.querySelector('textarea').outerHTML;
+
+// Manually run the code from the script tag
+if (script) {
+    eval(script.innerText);
+}
             searchSmsTempForPanelBlank();
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
@@ -2831,6 +2843,8 @@ function smsLogPanel(panelName)
     };
     if (panelName == 'smsLog')
         xmlhttp.open("POST", "include/php/omcsmslg" + default_theme + ".php", true);
+    else if (panelName == 'waBulkSend')
+        xmlhttp.open("POST", "include/php/omsend_campaignwabulkmsg" + default_theme + ".php", true);
     else if (panelName == 'smsRejectList')
         xmlhttp.open("POST", "include/php/omcsmsrl" + default_theme + ".php", true);
     else if (panelName == 'smsTemplate')
@@ -3041,6 +3055,7 @@ function sendSMS() {
         }
     }
     var intValue = selectedArray;
+    var smsTempContentId = document.getElementById("smsTempContentId").value;
     //alert(smsOptionValue);
     if (validateSms()) {
         if (smsOptionValue == 'allUser') {
@@ -3050,6 +3065,7 @@ function sendSMS() {
                     + "&smsFirmId=" + encodeURIComponent(document.getElementById("smsFirmId").value)
                     + "&smsTemplates=" + encodeURIComponent(document.getElementById("smsTemplates").value)
                     + "&smsText=" + encodeURIComponent(document.getElementById("smsText").value)
+                     + "&smsTempContentId=" + encodeURIComponent(smsTempContentId)
                     + "&interestList=" + encodeURIComponent(intValue)
                     + "&allUsergroup=" + encodeURIComponent(document.getElementById("allUsergroup").value)  // @AUTHOR:Maruti 10Feb21 -->
                     + "&transactionType=" + encodeURIComponent(document.getElementById("transactionType").value)
@@ -3057,11 +3073,13 @@ function sendSMS() {
         } else if (smsOptionValue == 'mobileNo') {
             poststr = "mobileNo=" + encodeURIComponent(document.getElementById("mobileNo").value)
                     + "&smsTemplates=" + encodeURIComponent(document.getElementById("smsTemplates").value)
-                    + "&smsText=" + encodeURIComponent(document.getElementById("smsText").value);
+                    + "&smsText=" + encodeURIComponent(document.getElementById("smsText").value)
+                     + "&smsTempContentId=" + encodeURIComponent(smsTempContentId);
         } else if (smsOptionValue == 'SMSList') {
             poststr = "smsPerContList=" + encodeURIComponent(document.getElementById("smsPerContList").value)
                     + "&smsTemplates=" + encodeURIComponent(document.getElementById("smsTemplates").value)
-                    + "&smsText=" + encodeURIComponent(document.getElementById("smsText").value);
+                    + "&smsText=" + encodeURIComponent(document.getElementById("smsText").value)
+                     + "&smsTempContentId=" + encodeURIComponent(smsTempContentId);
         }
         //alert(poststr);
         send_sms('include/php/omcsmsad' + default_theme + '.php', poststr);
@@ -6338,15 +6356,7 @@ function getMetalRateByPurity(purity) {
                 alert('Please Set Metal Rate !');
             } else {
                 document.getElementById("advanceMetalRate").value = xmlhttp.responseText;
-                //
-                let metRate = parseInt(document.getElementById("advanceMetalRate").value);
-                if (metRate.toString().length == 4 || metRate.toString().length == 3) {
-                    gdWt = (document.getElementById("advMoneyAmt").value * 1) / document.getElementById("advanceMetalRate").value;
-                    document.getElementById("advanceMetalWt").value = (gdWt).toFixed(3);
-                } else if (metRate.toString().length == 5) {
-                    gdWt = (document.getElementById("advMoneyAmt").value * 10) / document.getElementById("advanceMetalRate").value;
-                    document.getElementById("advanceMetalWt").value = (gdWt).toFixed(3);
-                }
+                calculateAdvanceMetalWeight();
             }
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
@@ -6355,6 +6365,30 @@ function getMetalRateByPurity(purity) {
     xmlhttp.open("POST", "include/php/omgetmetratebypurity" + default_theme + ".php?purity=" + purity, true);
     xmlhttp.send();
 }
+
+function calculateAdvanceMetalWeight() {
+    const advanceMoneyElem = document.getElementById('advMoneyAmt');
+    const advanceMoney = parseFloat(advanceMoneyElem.value);
+    let metalRateElem = document.getElementById('advanceMetalRate');
+    let metalRate = parseFloat(metalRateElem.value);
+
+    if (!advanceMoney || !metalRate) {
+        document.getElementById('advanceMetalWt').value = '';
+        return;
+    }
+
+    // If rate < 20000, it's for 1g; else, it's for 10g
+    if (metalRate <= 20000) {
+        // Per 1g
+    } else {
+        // Per 10g
+        metalRate = metalRate / 10;
+    }
+
+    const metalWeight = advanceMoney / metalRate;
+    document.getElementById('advanceMetalWt').value = metalWeight.toFixed(3);
+}
+
 //END CODE TO CREATE GLOBLE GET METAL RATE FUNCTION in JAVASCRIPT PRATHAMESH
 //
 //START CODE TO VALIDATE ONLY NUMBER WITH MINUS PRATHAMESH 03MAR2024
@@ -6690,6 +6724,7 @@ function calculateQuotationRawMetalVal() {
     let sttr_purity = ((sttr_purity_kt / 24) * 100).toFixed();
     let sttr_final_valuation_by = document.getElementById('sttr_final_valuation_by').value;
     let sttr_metal_rate = document.getElementById('sttr_metal_rate').value || 0;
+    sttr_metal_rate = adjustMetalRate(sttr_metal_rate);
     let gmWtInGm = document.getElementById('gmWtInGm').value || 1;
     let sttr_fine_weight = ((sttr_nt_weight * sttr_purity) / 100).toFixed(2);
     document.getElementById('sttr_fine_weight').value = sttr_fine_weight;
@@ -7156,3 +7191,244 @@ function CategoryFilterEcom(divPanelName, metalType, category, limit, offset, go
     xmlhttp.send();
 }
 //END FUNCTION FOR ECOM PANEL CATEGORY IMAGE UPLOAD 6 JUN 2025 GANESH
+
+
+// Yash Code for the Campaign Sending AJAX with Stop/Resume
+// file : ogNavFunctions.js
+
+// --- Global state variables for the campaign ---
+let campaignState = 'IDLE'; // Can be 'IDLE', 'RUNNING', 'PAUSED', 'FINISHED', 'ERROR'
+let abortController; // To cancel the fetch request
+let sentCount = 0; // To track progress and know where to resume
+let totalCount = 0; // To store the total number of recipients
+
+function handleUserTypeChange(selectElement) {
+    const userCountGroup = document.getElementById('user_count_group');
+    const fileUploadGroup = document.getElementById('file_upload_group');
+    const userCountInput = document.getElementById('user_count');
+    const fileInput = document.getElementById('contact_file');
+
+    if (selectElement.value === 'excel_upload') {
+        userCountGroup.style.display = 'none';
+        fileUploadGroup.style.display = 'block';
+        userCountInput.required = false;
+        fileInput.required = true;
+    } else {
+        userCountGroup.style.display = 'block';
+        fileUploadGroup.style.display = 'none';
+        userCountInput.required = true;
+        fileInput.required = false;
+    }
+}
+
+// =================================================================================
+//  MAIN CAMPAIGN CONTROL FUNCTIONS
+// =================================================================================
+
+/**
+ * Starts a new campaign from the beginning.
+ */
+function sendCampaign() {
+    const form = document.getElementById('campaignForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Reset state for a fresh start
+    sentCount = 0;
+    totalCount = 0;
+    document.getElementById('response-container').innerHTML = 'Initializing...<br/>';
+    
+    executeCampaign();
+}
+
+/**
+ * Stops the currently running campaign.
+ */
+function stopCampaign() {
+    if (campaignState === 'RUNNING' && abortController) {
+        console.log('Stopping campaign...');
+        abortController.abort(); // This will trigger the catch block in executeCampaign
+    }
+}
+
+/**
+ * Resumes a campaign that was previously stopped.
+ */
+function resumeCampaign() {
+    if (campaignState === 'PAUSED') {
+        console.log('Resuming campaign from:', sentCount);
+        document.getElementById('response-container').innerHTML += `\n<h3 style="color:#28a745;">... Resuming Campaign ...</h3>\n`;
+        executeCampaign();
+    }
+}
+
+/**
+ * Core function to run/resume the campaign via fetch.
+ */
+function executeCampaign() {
+    // 1. Get references
+    const form = document.getElementById('campaignForm');
+    const responseContainer = document.getElementById('response-container');
+
+    // 2. Setup FormData and AbortController
+    const formData = new FormData(form);
+    // Add the resume index to the form data
+    formData.append('resume_from_index', sentCount);
+    
+    abortController = new AbortController();
+    
+    // 3. Update UI for 'RUNNING' state
+    updateUI('RUNNING');
+    
+    // 4. Setup the observer to watch for progress updates from the server stream
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === 1 && node.classList.contains('progress-update')) {
+                        sentCount = parseInt(node.dataset.sent, 10);
+                        totalCount = parseInt(node.dataset.total, 10);
+                        updateProgress(sentCount, totalCount);
+                        node.remove(); // Clean up the invisible div
+                    }
+                });
+            }
+        }
+    });
+    observer.observe(responseContainer, { childList: true });
+
+    // 5. Fetch API call
+    const actionUrl = form.getAttribute('action');
+    fetch(actionUrl, { 
+        method: 'POST', 
+        body: formData,
+        signal: abortController.signal // Link the abort controller
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        // Process the stream from the server
+        const processStream = async () => {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                responseContainer.innerHTML += chunk;
+                responseContainer.scrollTop = responseContainer.scrollHeight;
+            }
+        };
+        return processStream();
+    })
+    .then(() => {
+        // This block runs when the stream is fully read (campaign finished)
+        updateUI('FINISHED');
+    })
+    .catch(error => {
+        // Check if the error was due to our abort action
+        if (error.name === 'AbortError') {
+            console.log('Fetch aborted by user.');
+            updateUI('PAUSED');
+            responseContainer.innerHTML += `<br/><strong style="color: #ffc107;">Campaign Paused.</strong><br/>`;
+        } else {
+            // A real network or server error occurred
+            console.error('Campaign Error:', error);
+            responseContainer.innerHTML += `<p style="color: red;"><strong>Error:</strong> ${error.message}.</p>`;
+            updateUI('ERROR');
+        }
+    })
+    .finally(() => {
+        observer.disconnect(); // IMPORTANT: Stop the observer
+    });
+}
+
+
+// =================================================================================
+//  UI UPDATE FUNCTIONS
+// =================================================================================
+
+/**
+ * Manages the visibility and state of buttons and progress bar based on campaign state.
+ * @param {string} state - The new state ('IDLE', 'RUNNING', 'PAUSED', 'FINISHED', 'ERROR')
+ */
+function updateUI(state) {
+    campaignState = state;
+
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resumeBtn = document.getElementById('resumeBtn');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    // Default states
+    startBtn.style.display = 'inline-block';
+    startBtn.disabled = false;
+    stopBtn.style.display = 'none';
+    resumeBtn.style.display = 'none';
+
+    switch (state) {
+        case 'RUNNING':
+            progressContainer.style.display = 'block';
+            startBtn.disabled = true;
+            stopBtn.style.display = 'inline-block';
+            resumeBtn.style.display = 'none';
+            break;
+
+        case 'PAUSED':
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'none';
+            resumeBtn.style.display = 'inline-block';
+            progressBar.style.backgroundColor = '#ffc107'; // Yellow for paused
+            progressBar.textContent = 'Paused';
+            break;
+            
+        case 'FINISHED':
+            progressBar.style.backgroundColor = '#28a745'; // Green for success
+            progressBar.textContent = 'Completed!';
+            progressText.textContent = 'Campaign has finished.';
+            startBtn.disabled = false;
+            stopBtn.style.display = 'none';
+            resumeBtn.style.display = 'none';
+            break;
+
+        case 'ERROR':
+            progressBar.style.backgroundColor = '#dc3545'; // Red for error
+            progressBar.textContent = 'Error!';
+            progressText.textContent = 'Campaign failed.';
+            startBtn.disabled = false;
+            stopBtn.style.display = 'none';
+            resumeBtn.style.display = 'none';
+            break;
+        
+        case 'IDLE':
+        default:
+             progressContainer.style.display = 'none';
+             break;
+    }
+}
+
+/**
+ * Updates the progress bar visuals.
+ * @param {number} sent - Number of messages sent.
+ * @param {number} total - Total number of messages.
+ */
+function updateProgress(sent, total) {
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    const isValidTotal = typeof total === 'number' && total > 0;
+    const totalDisplay = isValidTotal ? total : '?';
+    const percentage = isValidTotal ? Math.round((sent / total) * 100) : 0;
+
+    progressBar.style.width = percentage + '%'; 
+    progressBar.style.backgroundColor = '#007bff'; // Blue for in-progress
+    progressBar.textContent = `${sent} / ${totalDisplay}`; 
+    progressText.textContent = `Sent ${sent} of ${totalDisplay} messages`;
+}
+
+// Yash Code for the Campaign Sending AJAX start end

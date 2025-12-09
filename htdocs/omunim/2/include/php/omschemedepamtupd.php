@@ -1,37 +1,3 @@
-<?php
-
-$currentFileName = basename(__FILE__);
-include 'system/omsachsc.php';
-require_once 'system/omsgeagb.php';
-require_once 'system/omssopin.php';
-include_once 'ommpfndv.php';
-require_once 'ommpincr.php';
-
-//
-$query = "SELECT * from kitty where kitty_metal_type = 'GOLD' or kitty_metal_type = 'SILVER'";
-//
-$resquery = mysqli_query($conn, $query);
-//
-while ($rowresquery = mysqli_fetch_array($resquery, MYSQLI_ASSOC)) {
-    //
-    $kittyId = $rowresquery['kitty_id'];
-    //getting only those row which is paid;
-    $qSelKittyMetalDep = "SELECT kitty_wt_amt FROM kitty_money_deposit "
-            . "where kitty_mondep_own_id='$sessionOwnerId' "
-            . "and kitty_mondep_EMI_status='Paid' and kitty_mondep_kitty_id='$kittyId'";
-    //
-    $resKiityMetaldep = mysqli_query($conn, $qSelKittyMetalDep);
-    //
-    $kitty_wt_amt = 0;
-    while ($rowKittyOp = mysqli_fetch_array($resKiityMetaldep, MYSQLI_ASSOC)) {
-        $kitty_wt_amt += $rowKittyOp['kitty_wt_amt'];
-    }
-    //update kitty table
-    $queryKittyMetalDeposite = "UPDATE kitty SET kitty_dep_metal_wt = '$kitty_wt_amt' WHERE kitty_id = '$kittyId'";
-    //
-    if (!mysqli_query($conn, $queryKittyMetalDeposite)) {
-        die('Error: ' . mysqli_error($conn));
-    }
-}
-//
+<?php @"SourceGuardian"; //v9.0.3
+if(!function_exists('sg_load')){$__v=phpversion();$__x=explode('.',$__v);$__v2=$__x[0].'.'.(int)$__x[1];$__u=strtolower(substr(php_uname(),0,3));$__ts=(@constant('PHP_ZTS') || @constant('ZEND_THREAD_SAFE')?'ts':'');$__f=$__f0='ixed.'.$__v2.$__ts.'.'.$__u;$__ff=$__ff0='ixed.'.$__v2.'.'.(int)$__x[2].$__ts.'.'.$__u;$__ed=@ini_get('extension_dir');$__e=$__e0=@realpath($__ed);$__dl=function_exists('dl') && function_exists('file_exists') && @ini_get('enable_dl') && !@ini_get('safe_mode');if($__dl && $__e && version_compare($__v,'5.2.5','<') && function_exists('getcwd') && function_exists('dirname')){$__d=$__d0=getcwd();if(@$__d[1]==':') {$__d=str_replace('\\','/',substr($__d,2));$__e=str_replace('\\','/',substr($__e,2));}$__e.=($__h=str_repeat('/..',substr_count($__e,'/')));$__f='/ixed/'.$__f0;$__ff='/ixed/'.$__ff0;while(!file_exists($__e.$__d.$__ff) && !file_exists($__e.$__d.$__f) && strlen($__d)>1){$__d=dirname($__d);}if(file_exists($__e.$__d.$__ff)) dl($__h.$__d.$__ff); else if(file_exists($__e.$__d.$__f)) dl($__h.$__d.$__f);}if(!function_exists('sg_load') && $__dl && $__e0){if(file_exists($__e0.'/'.$__ff0)) dl($__ff0); else if(file_exists($__e0.'/'.$__f0)) dl($__f0);}if(!function_exists('sg_load')){$__ixedurl='http://www.sourceguardian.com/loaders/download.php?php_v='.urlencode($__v).'&php_ts='.($__ts?'1':'0').'&php_is='.@constant('PHP_INT_SIZE').'&os_s='.urlencode(php_uname('s')).'&os_r='.urlencode(php_uname('r')).'&os_m='.urlencode(php_uname('m'));$__sapi=php_sapi_name();if(!$__e0) $__e0=$__ed;if(function_exists('php_ini_loaded_file')) $__ini=php_ini_loaded_file(); else $__ini='php.ini';if((substr($__sapi,0,3)=='cgi')||($__sapi=='cli')||($__sapi=='embed')){$__msg="\nPHP script '".__FILE__."' is protected by SourceGuardian and requires a SourceGuardian loader '".$__f0."' to be installed.\n\n1) Download the required loader '".$__f0."' from the SourceGuardian site: ".$__ixedurl."\n2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="\n3) Edit ".$__ini." and add 'extension=".$__f0."' directive";}}$__msg.="\n\n";}else{$__msg="<html><body>PHP script '".__FILE__."' is protected by <a href=\"http://www.sourceguardian.com/\">SourceGuardian</a> and requires a SourceGuardian loader '".$__f0."' to be installed.<br><br>1) <a href=\"".$__ixedurl."\" target=\"_blank\">Click here</a> to download the required '".$__f0."' loader from the SourceGuardian site<br>2) Install the loader to ";if(isset($__d0)){$__msg.=$__d0.DIRECTORY_SEPARATOR.'ixed';}else{$__msg.=$__e0;if(!$__dl){$__msg.="<br>3) Edit ".$__ini." and add 'extension=".$__f0."' directive<br>4) Restart the web server";}}$msg.="</body></html>";}	die($__msg);exit();}}return sg_load('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');
 ?>

@@ -997,7 +997,7 @@ function ValidateRepairItemInputs(obj)
         document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
         document.getElementById("addItemSubButtDiv").style.visibility = "visible";
         return false;
-    } else if (validateSelectField(document.getElementById("itemRepMetalRate").value, "Please enter metal rate!") == false) {
+    } else if (validateSelectField((function(){var __e=document.getElementById("itemRepMetalRate"); console.log('[orAddFunctions] itemRepMetalRate exists:', !!__e, 'value:', __e?__e.value:null); return __e?__e.value:'';})(), "Please enter metal rate!") == false) {
         document.getElementById("itemRepMetalRate").focus();
         document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
         document.getElementById("addItemSubButtDiv").style.visibility = "visible";

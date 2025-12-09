@@ -6671,6 +6671,7 @@ function addInvoiceValue() {
     var metalType = document.getElementById('sttr_metal_type').value;
     var tounch = document.getElementById('sttr_purity').value;
     var metalRate = document.getElementById('sttr_metal_rate').value;
+    metalRate = adjustMetalRate(metalRate);
     var wtType = document.getElementById('sttr_nt_weight_type').value;
     var labCharges = document.getElementById('sttr_lab_charges').value;
     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
@@ -8859,21 +8860,13 @@ function calculateMetalRateAmount()
             var metal_rate_int_val = parseInt(kittyMetalRate);
             var sttr_metal_type = document.getElementById('kitty_metal_type').value;
             //
+            // Use numeric threshold for gold: <=20000 => 1 gm, otherwise 10 gm
             var metal_rate_int_val_length = metal_rate_int_val.toString().length;
-            //
-            //Setting gold rate and silver rate as per length
-            if ((metal_rate_int_val_length == 2 || metal_rate_int_val_length == 3 || metal_rate_int_val_length == 4) &&
-                    (sttr_metal_type.toLowerCase() == "gold")) {
-                //
-                document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
-                //
-                //
-            } else if ((metal_rate_int_val_length == 5 || metal_rate_int_val_length == 6) &&
-                    (sttr_metal_type.toLowerCase() == "gold")) {
-                //
-                document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
-                //
-                //
+            if (sttr_metal_type.toLowerCase() == "gold") {
+                var __goldRate = parseFloat(kittyMetalRate);
+                var __gmDiv = (__goldRate <= 20000) ? 1 : 10;
+                document.getElementById('gmWtInGm').value = parseFloat(__gmDiv).toFixed(2);
+               // console.log('[accBalance] calculateMetalRateAmount: set gmWtInGm=%s for gold rate=%s (threshold 20000)', document.getElementById('gmWtInGm').value, __goldRate);
             } else if ((metal_rate_int_val_length == 5 || metal_rate_int_val_length == 6) &&
                     (sttr_metal_type.toLowerCase() == 'silver')) {
                 //
@@ -8962,23 +8955,12 @@ function changeKittyRateAmount(kittyNo) {
     //
     var metal_rate_int_val_length = metal_rate_int_val.toString().length;
     //
-    //Setting gold rate and silver rate as per length
-    if ((metal_rate_int_val_length == 2 || metal_rate_int_val_length == 3) &&
-            (sttr_metal_type.toLowerCase() == "gold")) {
-        //
-        alert("Entered metal rate is not valid !");
-        return false;
-        //
-        //
-    } else if (metal_rate_int_val_length == 4 && (sttr_metal_type.toLowerCase() == "gold")) {
-        //
-        document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
-    } else if ((metal_rate_int_val_length == 5 || metal_rate_int_val_length == 6) &&
-            (sttr_metal_type.toLowerCase() == "gold")) {
-        //
-        document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
-        //
-        //
+    // Gold divisor based on numeric threshold: <=20000 => 1 gm, otherwise 10 gm
+    if (sttr_metal_type.toLowerCase() == "gold") {
+        var __goldRate2 = parseFloat(kittyMetalRate);
+        var __gmDiv2 = (__goldRate2 <= 20000) ? 1 : 10;
+        document.getElementById('gmWtInGm').value = parseFloat(__gmDiv2).toFixed(2);
+        console.log('[accBalance] changeKittyRateAmount: set gmWtInGm=%s for gold rate=%s (threshold 20000)', document.getElementById('gmWtInGm').value, __goldRate2);
     } else if ((metal_rate_int_val_length == 5 || metal_rate_int_val_length == 6) &&
             (sttr_metal_type.toLowerCase() == 'silver')) {
         //
@@ -9105,6 +9087,7 @@ function calSchemePaidAmt(kittyNo, dateOptStr,nepaliDateIndicator='') {
     var totalPaidDiscountAmt = 0;
     var totalAmt = 0;
     var bounsAmt = 0;
+    var luckyDrawAmt = 0;
     var paidEmiCount = 0;
 //    alert('count == ' + count);
 
@@ -9142,7 +9125,8 @@ function calSchemePaidAmt(kittyNo, dateOptStr,nepaliDateIndicator='') {
     {
         if (document.getElementById('bounsAmt').value != "" || document.getElementById('bounsAmt').value != null)
         {
-            bounsAmt = parseFloat(document.getElementById('bounsAmt').value).toFixed(2);
+            bounsAmt = parseFloat(document.getElementById('bounsAmt').value.replace(/,/g, '')).toFixed(2);
+
 
 
         } else if (document.getElementById('bounsAmt').value == 'NaN') {
@@ -9158,10 +9142,18 @@ function calSchemePaidAmt(kittyNo, dateOptStr,nepaliDateIndicator='') {
             totalPaidDiscountAmt = 0;
         }
     }
+     if (typeof (document.getElementById('luckyDrawAmt')) != 'undefined' &&
+            (document.getElementById('luckyDrawAmt') != null)) {
+      luckyDrawAmt = parseFloat(document.getElementById('luckyDrawAmt').value.replace(/,/g, '')) || 0;
+
+document.getElementById('luckyDrawAmt').value =parseFloat(luckyDrawAmt).toFixed(2);
+
+    }
+
 
     //console.log(reciptCheckDis + "*****" + recDisCount);
     document.getElementById('totalAmt').value = parseFloat(totalAmt).toFixed(2);
-    document.getElementById('totalPaidDepositAmt').value = parseFloat(totalPaidRateAmt).toFixed(2);
+    document.getElementById('totalPaidDepositAmt').value =parseFloat(totalPaidRateAmt).toFixed(2);
     if (typeof (document.getElementById('reciptCheckDis')) != 'undefined' &&
             (document.getElementById('reciptCheckDis') != null))
     {
@@ -9179,7 +9171,8 @@ function calSchemePaidAmt(kittyNo, dateOptStr,nepaliDateIndicator='') {
         document.getElementById('totalPaidDiscountAmt').value = totalPaidDiscountAmt;
     }
 
-    document.getElementById('discAmt').value = totalPaidDiscountAmt;
+    document.getElementById('discAmt').value = parseFloat(totalPaidDiscountAmt).toFixed(2);
+
     document.getElementById('amtLeft').value = parseFloat(totalAmt - totalPaidRateAmt - totalPaidDiscountAmt).toFixed(2);
     if (bounsAmt == 'NaN' || bounsAmt == "" || bounsAmt == null)
     {
@@ -9217,16 +9210,36 @@ function calSchemePaidAmt(kittyNo, dateOptStr,nepaliDateIndicator='') {
     var datesDiff = milliTodayDate - milliMaturityDate;
 //    alert(datesDiff);
 
-    if (paidEmiCount == count && (datesDiff == 0 || datesDiff > 0)) { //BONUS SHOULD INCLUDE IN FINAL AMOUNT WHEN MATURITY DATE COMPLETE @AUTHOR:SHRI30NOV19
-        document.getElementById('finalAmt').value = parseFloat(Number(totalPaidRateAmt) + Number(totalPaidDiscountAmt) + Number(bounsAmt)).toFixed(2);
-        document.getElementById('finalBonusAmountToPay').value = parseFloat(bounsAmt).toFixed(2);
-    } else if (datesDiff == 0 || datesDiff > 0) {
-        document.getElementById('finalAmt').value = parseFloat(Number(totalPaidRateAmt) + Number(totalPaidDiscountAmt) + Number(bounsAmt)).toFixed(2);
+   let finalAmount = Number(totalPaidRateAmt) + Number(totalPaidDiscountAmt);
+
+// Lucky draw is added only if all EMIs are paid
+// Lucky draw is added only if all EMIs are paid AND maturity date is reached
+if (paidEmiCount == count && (datesDiff == 0 || datesDiff > 0)) {
+    finalAmount += Number(luckyDrawAmt);
+}
+
+// Bonus logic:
+// Show bonus amount only if all EMIs are paid
+if (paidEmiCount == count) {
+    document.getElementById('bounsAmt').value =parseFloat(bounsAmt).toFixed(2);
+
+    // Bonus is added to final amount only if maturity date is reached
+    if (datesDiff == 0 || datesDiff > 0) {
+        finalAmount += Number(bounsAmt);
         document.getElementById('finalBonusAmountToPay').value = parseFloat(bounsAmt).toFixed(2);
     } else {
-        document.getElementById('finalAmt').value = parseFloat(Number(totalPaidRateAmt) + Number(totalPaidDiscountAmt)).toFixed(2);
-        document.getElementById('finalBonusAmountToPay').value = 0.00;
+        document.getElementById('finalBonusAmountToPay').value = "0.00";
     }
+
+} else {
+    // Hide bonus if EMIs are not fully paid
+    document.getElementById('bounsAmt').value = "0.00";
+    document.getElementById('finalBonusAmountToPay').value = "0.00";
+}
+
+// Final amount
+document.getElementById('finalAmt').value = parseFloat(finalAmount).toFixed(2);
+
 }
 function calSchemeFinRate(kittyNo) {
 
@@ -10235,6 +10248,10 @@ function deletePurchaseList(panelName, sttrId, stockType, status, deletereason) 
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+                  if (panelName === 'ImitationList') {
+                      showAddWhStockPanel('imitationStock');
+                      return; 
+                  }
                 if (panelName == 'retailStockPurList' || panelName == 'AllWholesaleStock' || panelName == 'whsellStockPurList' || panelName == 'Stock' || panelName == 'FineStock' || panelName == 'Imitation' || panelName == 'imitationPurchaseList' || panelName == 'Crystal' || panelName == 'ImitationList' || panelName == 'CrystalList' || panelName == 'AllStock' || panelName == 'StrelleringSilverList' || panelName == 'Strellering' || panelName == 'AvailStockListWithZeroQty' 
                         || panelName == 'AllTagStock' || panelName == 'CrystalretailStock' || panelName == 'CrystalrwholesaleStock' || panelName == 'ImitationTagList') {
                     document.getElementById("stockPanelPurchaseList").innerHTML = xmlhttp.responseText;
@@ -10957,6 +10974,9 @@ function getSchemeDetails(documentRootPath, kittyId, kittyIndicator) {
                     document.getElementById('kitty_bonus_percent').value = strArray[22];
                 }                
             }
+            if (strArray.length > 22 && strArray[22] != null && strArray[22] != '') {
+             document.getElementById('kittyTokenNo').value = strArray[22];
+         }
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
         }
@@ -12636,6 +12656,7 @@ function purReturnCalFunc() {
     var metalType = document.getElementById('sttr_metal_type').value;
     var tounch = document.getElementById('sttr_purity').value;
     var metalRate = document.getElementById('sttr_metal_rate').value;
+    metalRate = adjustMetalRate(metalRate);
     var wtType = document.getElementById('sttr_nt_weight_type').value;
     var labCharges = document.getElementById('sttr_lab_charges').value;
     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
@@ -12762,6 +12783,18 @@ function purReturnCalFunc() {
     //
     //
     document.getElementById('sttr_final_valuation').value = (parseFloat(val) + parseFloat(document.getElementById('sttr_tot_tax').value) + parseFloat(document.getElementById('sttr_stone_valuation').value)).toFixed(2);
+    var _finalValBy1 = (document.getElementById('sttr_final_valuation_by') && document.getElementById('sttr_final_valuation_by').value) ? document.getElementById('sttr_final_valuation_by').value : '';
+    var _gsWeight1 = (document.getElementById('sttr_gs_weight') && document.getElementById('sttr_gs_weight').value) ? document.getElementById('sttr_gs_weight').value : '';
+    if (_finalValBy1 === 'byGrossWt') {
+        //console.log('[accBalance] sttr_final_valuation set by gross weight (val+tax+stone)',
+            // 'gs_weight=', _gsWeight1,
+            // 'final_valuation=', document.getElementById('sttr_final_valuation').value);
+    } else {
+        // console.log('[accBalance] sttr_final_valuation NOT by gross weight (val+tax+stone)',
+        //     'final_valuation_by=', _finalValBy1,
+        //     'gs_weight=', _gsWeight1,
+        //     'final_valuation=', document.getElementById('sttr_final_valuation').value);
+    }
     //
     //
     if ((document.getElementById('sttr_final_valuation').value).trim() == '' || document.getElementById('sttr_final_valuation').value == 'NaN') {
@@ -12827,6 +12860,18 @@ function purReturnCalFunc() {
     finVal += parseFloat(document.getElementById('sttr_final_valuation').value);
     //
     document.getElementById('sttr_final_valuation').value = (finVal).toFixed(2);
+    var _finalValBy2 = (document.getElementById('sttr_final_valuation_by') && document.getElementById('sttr_final_valuation_by').value) ? document.getElementById('sttr_final_valuation_by').value : '';
+    var _gsWeight2 = (document.getElementById('sttr_gs_weight') && document.getElementById('sttr_gs_weight').value) ? document.getElementById('sttr_gs_weight').value : '';
+    if (_finalValBy2 === 'byGrossWt') {
+        // console.log('[accBalance] sttr_final_valuation set by gross weight (aggregate)',
+        //     'gs_weight=', _gsWeight2,
+        //     'final_valuation=', document.getElementById('sttr_final_valuation').value);
+    } else {
+        // console.log('[accBalance] sttr_final_valuation NOT by gross weight (aggregate)',
+        //     'final_valuation_by=', _finalValBy2,
+        //     'gs_weight=', _gsWeight2,
+        //     'final_valuation=', document.getElementById('sttr_final_valuation').value);
+    }
     //
     if ((document.getElementById('sttr_final_purity').value).trim() == '' || document.getElementById('sttr_final_purity').value == 'NaN') {
         document.getElementById('sttr_final_purity').value = 0;
@@ -12903,6 +12948,7 @@ function purFormB2CalFunc() {
     var metalType = document.getElementById('sttr_metal_type').value;
     var tounch = document.getElementById('sttr_purity').value;
     var metalRate = document.getElementById('sttr_metal_rate').value;
+    metalRate = adjustMetalRate(metalRate);
     var wtType = document.getElementById('sttr_nt_weight_type').value;
     var labCharges = document.getElementById('sttr_lab_charges').value;
     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
@@ -13217,6 +13263,7 @@ function calcFuncSupplierFineJewelleryPurchase() {
     var metalType = document.getElementById('sttr_metal_type').value;
     var tounch = document.getElementById('sttr_purity').value;
     var metalRate = document.getElementById('sttr_metal_rate').value;
+    metalRate = adjustMetalRate(metalRate);
     var wtType = document.getElementById('sttr_nt_weight_type').value;
     var labCharges = document.getElementById('sttr_lab_charges').value;
     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
@@ -13242,34 +13289,25 @@ function calcFuncSupplierFineJewelleryPurchase() {
         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
     }else{
-    //
-    // FOR METAL RATE @PRIYANKA-20DEC2021
-    if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
-        //
-        // FOR GOLD METAL RATE PER GM @PRIYANKA-20DEC2021
+    var __rate = parseFloat(metalRate) || 0;
+    if ((metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold') && __rate < 20000) {
         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-        //
-        //alert('gmWtInGm #== ' + document.getElementById('gmWtInGm').value);
-        //
-    } else if (metal_Rate_Int_Val_Length == 5 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
-        //
-        // FOR GOLD METAL RATE PER 10 GM @PRIYANKA-20DEC2021
+        // console.log('[accBalance] [calcFuncSupplierFineJewelleryPurchase] metal_rate < 20000, treating as per 1 gm for Gold');
+    } else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+        document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+        document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+        document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+    } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
         document.getElementById('gmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
-        //
-        //
     } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
-        //
-        // FOR GOLD METAL RATE PER 10 GM @PRIYANKA-20DEC2021
         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-        //
-        //
-    } else if (metal_Rate_Int_Val_Length == 5 && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+    } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
         //
         // FOR SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
         document.getElementById('srGmWtInKg').value = parseFloat(1).toFixed(2);
@@ -13285,7 +13323,7 @@ function calcFuncSupplierFineJewelleryPurchase() {
         document.getElementById('srGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
         //
         //
-    } else if (metal_Rate_Int_Val_Length == 5 && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
+    } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
         //
         // FOR SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
         document.getElementById('strsrGmWtInKg').value = parseFloat(1).toFixed(2);
@@ -14457,17 +14495,20 @@ function showQuoInv(custId, slPrPreInvoiceNo, slprinSubPanel, documentRootBSlash
             'popup', 'width=850,height=950,scrollbars=yes,resizable=yes,toolbar=no,directories=no,location=no,menubar=no,status=no,left=0,top=0');
 }
 //End Code To Open Estimate Invoice @Author-08-07-2023
-function stockManagementByCounter(panelName) {
+function stockManagementByCounter(panelName,stockTransferAccess = null) {
+    const contentArea = document.getElementById('stockPanelSubDiv');
+
     loadXMLDoc();
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
-            document.getElementById("stockPanelSubDiv").innerHTML = xmlhttp.responseText;
+            contentArea.innerHTML = xmlhttp.responseText;
+            window.initSearchableSelects(contentArea); 
         } else {
             document.getElementById("main_ajax_loading_div").style.visibility = "visible";
         }
     };
-    xmlhttp.open("POST", "include/php/omStockManagementByCounter" + default_theme + ".php?panelName=" + panelName, true);
+    xmlhttp.open("POST", "include/php/omStockManagementByCounter" + default_theme + ".php?panelName=" + panelName + "&stockTransferAccess=" + stockTransferAccess , true);
     xmlhttp.send();
 }
 //
@@ -15053,7 +15094,7 @@ function showStockTransVoucherDetails(voucherCode, transferedFirm) {
 // *********************************************************************************************************
 // Start Code To Add Function For Stock Transfer Voucher Number @Author:PRIYANKA-29JULY2022
 // *********************************************************************************************************
-function stockTransferVoucherFunc(updatePanelName, preVoucherNo, postVoucherNo, productCounter, selectedStaff, selectedFirm) {
+function stockTransferVoucherFunc(updatePanelName, preVoucherNo, postVoucherNo, productCounter, selectedStaff, selectedFirm, stockTransferAccess) {
     //
     loadXMLDoc();
     xmlhttp.onreadystatechange = function () {
@@ -15068,7 +15109,7 @@ function stockTransferVoucherFunc(updatePanelName, preVoucherNo, postVoucherNo, 
     xmlhttp.open("POST", "include/php/omStockManagementByCounter" + default_theme + ".php?updatePanelName=" + updatePanelName +
             "&preVoucherNo=" + preVoucherNo + "&postVoucherNo=" + postVoucherNo +
             "&productCounter=" + productCounter +
-            "&selectedStaff=" + selectedStaff + "&selectedFirm=" + selectedFirm, true);
+            "&selectedStaff=" + selectedStaff + "&selectedFirm=" + selectedFirm + "&stockTransferAccess=" + stockTransferAccess, true);
     //
     xmlhttp.send();
     //
@@ -15456,6 +15497,7 @@ function purFormB2MakFunc() {
     var metalType = document.getElementById('sttr_metal_type').value;
     var tounch = document.getElementById('sttr_purity').value;
     var metalRate = document.getElementById('sttr_metal_rate').value;
+    metalRate = adjustMetalRate(metalRate);
     var wtType = document.getElementById('sttr_nt_weight_type').value;
     var makCharges = document.getElementById('sttr_making_charges').value;
     var makChargesType = document.getElementById('sttr_making_charges_type').value;
@@ -15646,4 +15688,282 @@ function changeKittyEmiMonth(emiMonth,kitty_mondep_id,kitty_id,userId,firmId) {
         xmlhttp.open("GET", "include/php/omktchngemimonth.php?kitty_mondep_id=" + kitty_mondep_id + "&emiMonth=" + emiMonth, true);
         xmlhttp.send();
 }
+function saveWinnerDetails(kittyId) {
+    var form = document.getElementById('winnerForm' + kittyId);
+    if (!form) {
+        console.error("Could not find form with ID: winnerForm" + kittyId);
+        alert("Form configuration error. Please refresh the page.");
+        return;
+    }
+    var winnerNo = form.querySelector('select[name="kitty_winner_no"]');
+    var winnerAmount = form.querySelector('input[name="kitty_winner_amount"]');
+    var submitBtn = form.querySelector('input[type="button"]');
 
+    if (!winnerNo || !winnerAmount || !submitBtn) {
+        console.error("Could not find required form elements within form: winnerForm" + kittyId);
+        alert("Form configuration error. Please refresh the page.");
+        return;
+    }
+
+    var formData = {
+        save_winner_ajax: 1,
+        kitty_id: kittyId,
+        kitty_winner_no: winnerNo.value,
+        kitty_winner_amount: winnerAmount.value
+    };
+
+    submitBtn.value = "Saving...";
+    submitBtn.disabled = true;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/2/include/php/omsw.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            submitBtn.value = "SUBMIT";
+            submitBtn.disabled = false;
+            
+            try {
+                // First check if response is valid JSON
+                var response = xhr.responseText.trim();
+                if (response.startsWith('<') || response.startsWith('Warning:') || response.startsWith('Fatal error:')) {
+                    // This is an HTML/error response, not JSON
+                    console.error("Server error:", response);
+                    alert('Server error occurred. Please check the console for details.');
+                    return;
+                }
+                
+                // Try to parse as JSON
+                var jsonResponse = JSON.parse(response);
+                
+                if (xhr.status == 200) {
+                    if (jsonResponse.success) {
+                        var luckyDrawAmt = document.getElementById('luckyDrawAmt');
+                        if (luckyDrawAmt) {
+                            luckyDrawAmt.value = formData.kitty_winner_amount;
+                        }
+                        if (typeof calSchemePaidAmt === "function") {
+                            calSchemePaidAmt('', '', '');
+                        }
+                        alert("✅ " +jsonResponse.message);
+                    } else {
+                        alert("❌ " + jsonResponse.message);
+                    }
+                } else {
+                    alert('Request failed. Status: ' + xhr.status);
+                }
+            } catch (e) {
+                console.error("Parsing error:", e, "Response:", xhr.responseText);
+                alert('Invalid server response. Please check the console.');
+            }
+        }
+    };
+
+    var encodedData = Object.keys(formData).map(function(key) {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(formData[key]);
+    }).join('&');
+
+    xhr.send(encodedData);
+}
+
+
+
+function calculateWinningAmount(selectElement) {
+    const position = parseInt(selectElement.value);
+    const luckyAmt = parseInt(selectElement.dataset.luckyamt);
+    const multiplier = parseInt(selectElement.dataset.multiplier);
+    const minAmt = parseInt(selectElement.dataset.minamt);
+
+    if (!position || isNaN(position)) return;
+
+    let amount = luckyAmt - (position - 1) * multiplier;
+    if (amount < minAmt) amount = minAmt;
+
+    document.querySelector('input[name="kitty_winner_amount"]').value = amount;
+}
+
+function saveWinnerRow(buttonElement) {
+    const row = buttonElement.closest('tr');
+    if (!row) return;
+
+    const formData = new FormData();
+    const rank = row.querySelector('[name="rank"]')?.value;
+    const winnerId = row.querySelector('[name="winner_id"]')?.value;
+    const winnerAmount = row.querySelector('[name="winner_amount"]')?.value;
+    const status = row.querySelector('[name="status"]')?.value;
+    const schemeName = row.querySelector('[name="scheme_name"]')?.value;
+
+    if (!winnerId || status !== 'Winner') {
+        alert('Please select a valid winner and status.');
+        return;
+    }
+
+    formData.append('ranks[]', rank);
+    formData.append('winner_ids[]', winnerId);
+    formData.append('winner_amounts[]', winnerAmount);
+    formData.append('statuses[]', status);
+    formData.append('scheme_name', schemeName);
+
+    buttonElement.disabled = true;
+    const originalText = buttonElement.innerHTML;
+    buttonElement.innerHTML = 'Saving...';
+
+    fetch('/2/include/php/omsld.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+          buttonElement.innerHTML = 'Saved';
+            buttonElement.classList.remove('btn-primary');
+            buttonElement.classList.add('btn-success');
+            row.querySelector('[name="winner_id"]').disabled = true;
+            row.querySelector('[name="status"]').disabled = true;
+        } else {
+            alert('Error: ' + data.message);
+            buttonElement.disabled = false;
+            buttonElement.innerHTML = originalText;
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Something went wrong.');
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = originalText;
+    });
+}
+
+
+/**
+ * Transforms a standard HTML <select> element into a searchable dropdown.
+ *
+ * @author      badshah
+ * @date        Saturday, 7 September 2025 
+ * @version     1.0.0
+ * @param       {HTMLElement} originalSelect The original <select> element to make searchable.
+ * @returns     {void}
+ * @example
+ * // Make a specific select element searchable by its ID
+ * makeSelectSearchable(document.getElementById('user-select'));
+ */
+
+
+(function() {
+    let styleInjected = false;
+
+    // ... (The injectStyles function remains exactly the same as before) ...
+    function injectStyles() {
+        if (styleInjected) return;
+        const css = `
+            .searchable-select-container { position: relative; width: 300px; user-select: none; }
+            .searchable-select-display { padding: 10px 15px; background-color: #fff; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .searchable-select-display::after { content: '▼'; font-size: 12px; color: #555; transition: transform 0.3s ease; }
+            .searchable-select-container.open .searchable-select-display::after { transform: rotate(180deg); }
+            .searchable-select-dropdown { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: #fff; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 1000; }
+            .searchable-select-container.open .searchable-select-dropdown { display: block; }
+            .searchable-select-input { width: calc(100% - 20px); padding: 10px; border: none; border-bottom: 1px solid #eee; outline: none; font-size: 16px; box-sizing: border-box; }
+            .searchable-select-options { max-height: 200px; overflow-y: auto; }
+            .searchable-select-option { padding: 10px 15px; cursor: pointer; transition: background-color 0.2s; }
+            .searchable-select-option:hover { background-color: #f0f0f0; }
+            .searchable-select-option.hidden { display: none; }
+            /* Add a class to mark an element as initialized */
+            .searchable-select-initialized { display: none !important; } 
+        `;
+        const style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = css;
+        document.head.appendChild(style);
+        styleInjected = true;
+    }
+
+    // This function transforms a single <select> element
+    function makeSelectSearchable(originalSelect) {
+        // Prevent re-initializing the same element
+        if (originalSelect.classList.contains('searchable-select-initialized')) {
+            return;
+        }
+
+        injectStyles(); // Ensure styles are on the page
+
+        // Mark the original select as initialized to hide it and prevent re-running
+        originalSelect.classList.add('searchable-select-initialized');
+
+        // ... (The rest of the function that creates the custom dropdown is THE SAME) ...
+        const container = document.createElement('div');
+        container.className = 'searchable-select-container';
+        const display = document.createElement('div');
+        display.className = 'searchable-select-display';
+        const dropdown = document.createElement('div');
+        dropdown.className = 'searchable-select-dropdown';
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.className = 'searchable-select-input';
+        searchInput.placeholder = 'Search...';
+        const optionsList = document.createElement('div');
+        optionsList.className = 'searchable-select-options';
+        Array.from(originalSelect.options).forEach(option => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'searchable-select-option';
+            optionDiv.textContent = option.textContent;
+            optionDiv.dataset.value = option.value;
+            optionsList.appendChild(optionDiv);
+            optionDiv.addEventListener('click', () => {
+                display.textContent = option.textContent;
+                originalSelect.value = option.value;
+                originalSelect.dispatchEvent(new Event('change'));
+                container.classList.remove('open');
+            });
+        });
+        display.textContent = originalSelect.options[originalSelect.selectedIndex].textContent;
+        dropdown.appendChild(searchInput);
+        dropdown.appendChild(optionsList);
+        container.appendChild(display);
+        container.appendChild(dropdown);
+        originalSelect.parentNode.insertBefore(container, originalSelect.nextSibling);
+        display.addEventListener('click', (e) => { e.stopPropagation(); container.classList.toggle('open'); });
+        document.addEventListener('click', () => { if (container.classList.contains('open')) { container.classList.remove('open'); } });
+        dropdown.addEventListener('click', (e) => e.stopPropagation());
+        searchInput.addEventListener('input', () => {
+            const filter = searchInput.value.toLowerCase();
+            optionsList.querySelectorAll('.searchable-select-option').forEach(opt => {
+                const text = opt.textContent.toLowerCase();
+                opt.classList.toggle('hidden', !text.includes(filter));
+            });
+        });
+    }
+
+    /**
+     * Finds and initializes all searchable selects within a given element or the whole document.
+     * @param {HTMLElement} parentElement - The element to search within. Defaults to the document body.
+     */
+    function initSearchableSelects(parentElement = document) {
+        const selects = parentElement.querySelectorAll('select[data-searchable="true"]');
+        selects.forEach(makeSelectSearchable);
+    }
+    
+    // Expose the initialization function to the global scope
+    window.initSearchableSelects = initSearchableSelects;
+
+    // Automatically run for elements present on initial page load
+    document.addEventListener('DOMContentLoaded', () => {
+        initSearchableSelects();
+    });
+})();
+
+
+
+function adjustMetalRate(metalRate) {
+  metalRate = parseFloat(metalRate);
+  if (isNaN(metalRate)) {
+    console.error("Invalid metal rate value.");
+    return 0; 
+  }
+
+  if (metalRate > 20000) {
+    metalRate = metalRate / 10;
+  }
+
+  return metalRate;
+}
