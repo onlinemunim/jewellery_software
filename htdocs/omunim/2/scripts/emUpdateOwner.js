@@ -4370,8 +4370,7 @@ function udhaarDepositMoney(obj, udhaarId, firmId, count, utin_main_inv_no) {
         var udhaarDepLoanCrAccId = parseInt(document.getElementById("udhaarDepLoanCrAccId").value);
         var udhaarDepLoanDrAccId = parseInt(document.getElementById("udhaarDepLoanDrAccId").value);
         var udhaarDepDiscPaidAccId = parseInt(document.getElementById("udhaarDepDiscPaidAccId").value);
-        var udhaarDepIntRecAccId = parseInt(document.getElementById("udhaarDepIntRecAccId").value); // 🔥 Add THIS line
-
+         var udhaarDepIntRecAccId = document.getElementById("udhaarDepIntRecAccId") ? document.getElementById("udhaarDepIntRecAccId").value : '';
     }
     //alert("Deposit amount(" + depositAmt + ") & udhaar amount(" + udhaarLeftAmt + ")!");
     if (depositAmt > udhaarLeftAmt) {
@@ -4398,7 +4397,7 @@ function udhaarDepositMoney(obj, udhaarId, firmId, count, utin_main_inv_no) {
                     + "&DOBYear=" + encodeURIComponent(document.getElementById("DOBYear" + count).value)
                     + "&udhaarOtherInfo=" + encodeURIComponent(document.getElementById("udhaarOtherInfo").value)
                     + "&udhaarDepLoanAccId=" + udhaarDepLoanCrAccId
-                    + "&depositIntAmt=" + encodeURIComponent(document.getElementById("depositIntAmt" + count).value)
+                    + "&depositIntAmt=" +depositIntAmt
                      + "&udhaarDepIntRecAccId=" + udhaarDepIntRecAccId
                     + "&udhaarDepLoanDrAccId=" + udhaarDepLoanDrAccId
                     + "&udhaarDepDiscPaidAccId=" + udhaarDepDiscPaidAccId;

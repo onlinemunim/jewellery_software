@@ -1743,8 +1743,8 @@ function getInvoiceNumber(documentRootPath){
     xmlhttp.send();
 }
 
-function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slPrInvoiceNo, emiChkValue, panel, metalSellType, UpdatePanelName, eInvoiceNo, eInvoicePreNo, subPanelName ,panelnamee) {
-
+    function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slPrInvoiceNo, emiChkValue, panel, metalSellType, UpdatePanelName, eInvoiceNo, eInvoicePreNo, subPanelName ,panelnamee) {
+//   console.log(panelName+' '+ panel);
     var xmlhttp = new XMLHttpRequest();
 
     if ( panelName == 'imitationreturnupdatepanel' ){
@@ -1837,7 +1837,11 @@ function showSellDetUpdatePanel(documentRootPath, custId, itemId, panelName, slP
         xmlhttp.open("POST", documentRootPath + "/include/php/ogsprtilt" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=" + panelName + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo, true);
     } else if (panelName == 'SellDetUpPanel' && panel == 'fineb2') {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=FINE_JEWELLERY_SELL_B2" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue, true);
-    } else if (panelName == "RetailStockItemReturn") {
+    } else if (panelName == 'SellDetUpPanel' && panelnamee == 'RETAIL_SELL_PANEL' || (panelName == 'SellPayUp' && panelnamee == 'RETAIL_SELL_PANEL')) {
+        xmlhttp.open("POST", documentRootPath + "/include/php/ogspjsdvretail" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=RETAIL_SELL_PANEL" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue + "&panelnamee=" + panelnamee, true);
+    }else if ((panelName == 'SellDetUpPanel' && panelnamee == 'WHOLESALE_SELL_PANEL') || (panelName == 'SellPayUp' && panelnamee == 'WHOLESALE_SELL_PANEL')) {
+        xmlhttp.open("POST", documentRootPath + "/include/php/ogspjsdvwholesale" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=WHOLESALE_SELL_PANEL" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo + "&emiChkValue=" + emiChkValue + "&panelnamee=" + panelnamee, true);
+    }else if (panelName == "RetailStockItemReturn") {
         xmlhttp.open("POST", documentRootPath + "/include/php/omitmrtn" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&mainPanel=RetailStockItemReturn" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo, true);
     } else if (panel == 'RetailStockUpdate') {
         xmlhttp.open("POST", documentRootPath + "/include/php/ogijaitdvB2sell" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId + "&panelName=" + panelName + "&mainPanel=ImitationPurchasePanel", true);
@@ -4688,14 +4692,14 @@ function showAdvMoneyDepositMoneyDiv(custId, admnId, amtLeft, firmId, preInvoice
     // console.log(' sdate: ',sdate);
     let parts = preInvoiceNo.split(" - ");
     discountIntAmt = parts[2];
-    discountIntAmtElement = document.getElementById(discountIntAmt);
+   var discountIntAmtElement = document.getElementById(discountIntAmt) ? document.getElementById(discountIntAmt) : { value: 0 };
     // console.log('discount amount id : ',parts[2]); 
     // console.log('discount amount id element : ',discountIntAmtElement); 
     // console.log(' discount amount: ',discountIntAmtElement.value);
 
-    var udhaarDepLoanDrAccId = parseInt(document.getElementById("udhaarDepLoanDrAccId").value);
-    var udhaarDepDiscPaidAccId = parseInt(document.getElementById("udhaarDepDiscPaidAccId").value);
-    var udhaarDepIntRecAccId = parseInt(document.getElementById("udhaarDepIntRecAccId").value);
+    var udhaarDepLoanDrAccId = document.getElementById("udhaarDepLoanDrAccId") ? parseInt(document.getElementById("udhaarDepLoanDrAccId").value) : 0;
+    var udhaarDepDiscPaidAccId = document.getElementById("udhaarDepDiscPaidAccId")? parseInt(document.getElementById("udhaarDepDiscPaidAccId").value) : 0;
+    var udhaarDepIntRecAccId = document.getElementById("udhaarDepIntRecAccId") ? parseInt(document.getElementById("udhaarDepIntRecAccId").value) : 0;
     
     if (amtLeft == 0) {
         alert('Please enter deposit amount.');
@@ -4726,10 +4730,11 @@ function showAdvMoneyDepositMoneyDiv(custId, admnId, amtLeft, firmId, preInvoice
 
         if (admnId == '') {
             var paymInfo = document.getElementById("advMoneyPayOtherInfo").value;
-            var interestAmt = document.getElementById("depositIntAmt" + admnId).value;
-            var interestAccId = document.getElementById("udhaarDepIntRecAccId" + admnId).value;
-             var roi = document.getElementById("selROIValue" + admnId).value;
-              var type = document.getElementById("udhaInterestType" + admnId).value;
+            var interestAmt = document.getElementById("depositIntAmt" + admnId) ? document.getElementById("depositIntAmt" + admnId).value : 0;
+           var interestAccId = document.getElementById("udhaarDepIntRecAccId" + admnId) ? document.getElementById("udhaarDepIntRecAccId" + admnId).value : 0;
+           var roi = document.getElementById("selROIValue" + admnId) ? document.getElementById("selROIValue" + admnId).value : 0;
+            var type = document.getElementById("udhaInterestType" + admnId) ? document.getElementById("udhaInterestType" + admnId).value : '';
+
             
             xmlhttp.open("POST", "include/php/ompyamt" + default_theme + ".php?userId=" + custId + "&amtLeft=" + amtLeft +
                     "&firmId=" + firmId + "&PreInvoiceNo=" + preInvoiceNo + "&PostInvoiceNo=" + InvoiceNo + "&accCrId=" + accCr + "&PayOtherInfo=" + OthInfo
@@ -4737,7 +4742,7 @@ function showAdvMoneyDepositMoneyDiv(custId, admnId, amtLeft, firmId, preInvoice
         } else 
             // +"&udhaarDepIntRecAccId=" + interestAccId
             xmlhttp.open("POST", "include/php/ompyamt" + default_theme + ".php?userId=" + custId + "&admnId=" + admnId + "&amtLeft=" + amtLeft +
-                    "&firmId=" + firmId + "&DOBDay=" + sdate + "&DOBMonth=" + mdate + "&DOBYear=" + ydate + "&depsoitDisc=" + discount + "&depositIntAmt=" + discountIntAmtElement.value  +  "&serialNum=" + preInvoiceNo + "&paymentPanelName=UdhaarPayment&mainPanelName=MONEY&transPanelName=ADVMONEY"+ "&udhaarDepIntRecAccId=" + udhaarDepIntRecAccId
+                    "&firmId=" + firmId + "&DOBDay=" + sdate + "&DOBMonth=" + mdate + "&DOBYear=" + ydate + "&depsoitDisc=" + discount + "&depositIntAmt=" + discountIntAmtElement.value  +  "&serialNum=" + preInvoiceNo + "&paymentPanelName=UdhaarPayment&mainPanelName=MONEY&transPanelName=MONEY"+ "&udhaarDepIntRecAccId=" + udhaarDepIntRecAccId
                     + "&udhaarDepLoanDrAccId=" + udhaarDepLoanDrAccId
                     + "&udhaarDepDiscPaidAccId=" + udhaarDepDiscPaidAccId, true);
                     
@@ -7729,4 +7734,38 @@ function updateSettledUtinIds(settledUtinId, utinid, add) {
 
     // Join the array back into a '|' separated string
     return idArray.join(',');
+}
+function showSellFormB2UpdatePanel(documentRootPath, custId, itemId, panelName, slPrInvoiceNo, emiChkValue) {
+    //
+    //alert('panelName : ' + panelName);
+    //
+    if (documentRootPath == '') {
+        if (typeof (document.getElementById('documentRootPath')) != 'undefined' &&
+                (document.getElementById('documentRootPath') != null)) {
+            documentRootPath = document.getElementById('documentRootPath').value;
+        }
+    }
+    //
+    if (panelName.indexOf("#") !== -1) {
+        var panelNameArray = new Array();
+        panelNameArray = panelName.split('#');
+        panelName = panelNameArray[0];
+    }
+    //
+    loadXMLDoc();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            document.getElementById("cust_middle_body").innerHTML = xmlhttp.responseText;
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    //
+    xmlhttp.open("POST", documentRootPath + "/include/php/ogspisdv" + default_theme + ".php?custId=" + custId + "&slPrId=" + itemId +
+            "&mainPanel=FINE_JEWELLERY_SELL_B2" + "&panelName=" + panelName + "&invoiceNo=" + slPrInvoiceNo +
+            "&emiChkValue=" + emiChkValue + "&redirectionPanelName=FINE_JEWELLERY_SELL_B2", true);
+    //
+    xmlhttp.send();
+    //
 }

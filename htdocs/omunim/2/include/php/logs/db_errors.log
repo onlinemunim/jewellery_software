@@ -1,0 +1,16 @@
+[2025-12-29 12:46:12] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected T_ELSE in omspnewtaxTblRight.php on line 1640
+[2025-12-29 15:20:29] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected '[', expecting ')' in omspnewtaxTblRight.php on line 1639
+[2025-12-29 15:25:39] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected '[', expecting ')' in omspnewtaxTblRight.php on line 1637
+[2025-12-29 15:30:00] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected '[', expecting ')' in omspnewtaxTblRight.php on line 1634
+[2025-12-30 10:19:43] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected T_IF in omspnewtaxTblRight.php on line 1643
+[2025-12-30 10:57:08] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected T_ELSE in omspnewtaxTblRight.php on line 390
+[2025-12-30 11:35:36] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected T_STRING in omspnewtaxTblRight.php on line 386
+[2025-12-30 11:46:12] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected $end in omspnewtaxTblRight.php on line 2825
+[2025-12-30 12:08:32] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected '}' in omspnewtaxTblRight.php on line 2801
+[2025-12-31 15:30:17] Error in omerror_handler.php at line 45: [FATAL] Call to undefined function getAllData() in ogspinvo.php on line 61
+[2025-12-31 17:11:10] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected '<' in ogspindtRight.php on line 3752
+[2025-12-31 17:12:11] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected T_ELSE in ogspindtRight.php on line 3756
+[2025-12-31 17:57:10] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected ';' in ogspinvItemInfo.php on line 2369
+[2025-12-31 17:57:19] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected ';' in ogspinvItemInfo.php on line 2369
+[2025-12-31 17:57:32] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected ';' in ogspinvItemInfo.php on line 2369
+[2026-01-17 00:21:26] Error in omerror_handler.php at line 45: [FATAL] syntax error, unexpected '[' in omtbclab.php on line 405

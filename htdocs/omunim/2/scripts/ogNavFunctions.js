@@ -1666,6 +1666,30 @@ function getRepairTableDiv() {
     }
 }
 /********end Code To Add Function For Repair Table @AUthor:PRIYA10APR13******************/
+/********Start Code To Add Function For Deep Repair Table @AUthor:PRIYA10APR13******************/
+function getDeepRepairTableDiv() {
+    confirm_box = confirm("Do you really want Deep Repair Data Base?\n" + takeBackupAlertMsg); //add variables of alert msgs @AUTHOR: SANDY29JAN14
+
+    if (confirm_box == true)
+    {
+        loadXMLDoc();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                if (xmlhttp.responseText == 'Success') {
+                    // document.getElementById("dataRepairButt").innerHTML.style.visibility = "hidden";
+                    document.getElementById("deepdataRepairButt").innerHTML = "<span class='textLabel20CalibriNormalGreen'>Database has been Deeply Repaired Successfully. &nbsp; डेटाबेस की सफलतापूर्वक मरम्मत की गई है!</span>";
+                } else {
+                    document.getElementById("deepdataRepairButt").innerHTML = "<span class='textLabel20CalibriNormalRed'>" + xmlhttp.responseText + "</span>";
+                }
+            } else {
+                document.getElementById("deepdataRepairButt").innerHTML = "<img src='images/ajaxLoad.gif' />";
+            }
+        };
+        xmlhttp.open("POST", "include/php/ommptbdrp" + default_theme + ".php", true);
+        xmlhttp.send();
+    }
+}
+/********end Code To Add Function For Deep Repair Table @AUthor:PRIYA10APR13******************/
 /*******Start Code To Search Stock By Amount Range @AUTHOR:PRIYA18APR13*********/
 function valSearchStockByAmountRangeInputs(obj) {
     if (validateEmptyField(document.srch_stock_AmtRange.stockAmtStartRange.value, "Please enter start range!") == false) {
@@ -7192,6 +7216,101 @@ function CategoryFilterEcom(divPanelName, metalType, category, limit, offset, go
 }
 //END FUNCTION FOR ECOM PANEL CATEGORY IMAGE UPLOAD 6 JUN 2025 GANESH
 
+// Saif code for retail sell panel
+function searchItemByItemIdretail(searchItemId, autoEntryValue, custId, firm_Id) {
+    // console.log(
+    //     "searchItemByItemIdretail() ->",
+    //     "searchItemId:", searchItemId,
+    //     "autoEntryValue:", autoEntryValue,
+    //     "custId:", custId,
+    //     "firm_Id:", firm_Id
+    // );
+
+    var searchItemIdLen = searchItemId.length;
+    var searchItemIdTemp = searchItemId;
+    var tempLen = searchItemIdLen;
+    var charLen = tempLen;
+    //var alphaExp = /^[a-zA-Z]+$/;
+    var alphaExp = /#/; //CODE ADDED TO SEARCH PRODUCT BY # PREID,@AUTHOR:HEMA-13JUL2020
+    while (tempLen > 0) {
+        var field = searchItemIdTemp.substr(tempLen - 1);
+        searchItemIdTemp = searchItemIdTemp.substr(0, tempLen - 1);
+        if (isNaN(field) == false) {
+            charLen = charLen - 1;
+        } else if (field.match(alphaExp)) {
+            charLen = charLen;
+            break;
+        } else {
+            break;
+        }
+        //        if (field.match(alphaExp)) {
+        //            charLen = charLen + 1;//IF MATCH FIELD IS # THEN INCREMENT LENGTH BY 1,@AUTHOR:HEMA-17JULY2020
+        //            break;
+        //        }else{
+        //          charLen = charLen + 1;//IF MATCH FIELD IS NOT # THEN INCREMENT LENGTH BY 1,@AUTHOR:HEMA-17JULY2020
+        //        }
+        tempLen = tempLen - 1;
+    }
+    var searchItemIdCharPart = searchItemId.substr(0, charLen);
+    var searchItemIdNumPart = searchItemId.substr(charLen, searchItemId.length);
+    //
+    var lastIndexOfHash = searchItemIdNumPart.lastIndexOf("#");
+
+    if (lastIndexOfHash > 0) {
+        searchItemIdCharPart = searchItemId.substr(0, lastIndexOfHash + 2);
+        searchItemIdNumPart = searchItemId.substr(lastIndexOfHash + 2);
+    }
+    searchItemIdCharPart = encodeURIComponent(searchItemIdCharPart);
+    searchItemIdNumPart = encodeURIComponent(searchItemIdNumPart);
+    //
+    //    alert('searchItemIdCharPart == ' + searchItemIdCharPart);
+    //    alert('searchItemIdNumPart == ' + searchItemIdNumPart);
+
+    if (document.getElementById("srchDelItemId")) {
+        // ADDED CONDITION FOR RETURN ITEM CODE @RATNAKAR 09FEB2018
+        if (document.getElementById('srchDelItemId').value != '') {
+            // IT WILL SET ITEM PRE ID & POST ID IN CASE OF WINDOW ITEM RETURN @RATNAKAR 09FEB2018
+            document.getElementById('srchdelItemPreId').value = searchItemIdCharPart;
+            document.getElementById('srchdelItemPostId').value = searchItemIdNumPart;
+        } else {
+            // IT WILL SET ITEM PRE ID & POST ID IN CASE OF ITEM SELL/PURCHASE @RATNAKAR 09FEB2018
+            document.getElementById('srchItemPreId').value = searchItemIdCharPart;
+            document.getElementById('srchItemPostId').value = searchItemIdNumPart;
+        }
+    } else {
+
+        // IT WILL SET ITEM PRE ID & POST ID IN CASE OF ITEM SELL/PURCHASE @RATNAKAR 09FEB2018
+        document.getElementById('srchItemPreId').value = searchItemIdCharPart;
+        document.getElementById('srchItemPostId').value = searchItemIdNumPart;
+    }
+
+    if (autoEntryValue == 'YES') {
+        loadXMLDoc();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+                document.getElementById("slPrDiv").innerHTML = xmlhttp.responseText;
+            } else {
+                document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+            }
+        };
+
+        if (document.getElementById("srchDelItemId")) {
+
+            xmlhttp.open("GET", "include/php/ogspjsdvretail" + default_theme + ".php?srchItemPreId=" + searchItemIdCharPart + "&srchItemPostId=" + searchItemIdNumPart +
+                "&custId=" + custId + "&panelName=" + 'autoEntry' + "&autoEntry=" + autoEntryValue + "&charLen=" + charLen, true);
+
+        } else {
+            xmlhttp.open("GET", "include/php/ogspjsdvretail" + default_theme + ".php?srchItemPreId=" + searchItemIdCharPart + "&srchItemPostId=" + searchItemIdNumPart +
+                "&custId=" + custId + "&panelName=" + 'autoEntry' + "&autoEntry=" + autoEntryValue + "&charLen=" + charLen, true);
+        }
+        xmlhttp.send();
+
+    } else {
+        return false;
+    }
+}
+// End code
 
 // Yash Code for the Campaign Sending AJAX with Stop/Resume
 // file : ogNavFunctions.js
@@ -7228,18 +7347,54 @@ function handleUserTypeChange(selectElement) {
 /**
  * Starts a new campaign from the beginning.
  */
-function sendCampaign() {
+async function sendCampaign() {
     const form = document.getElementById('campaignForm');
+    const fileInput = document.getElementById('campaign_image');
+    const startBtn = document.getElementById('startBtn');
+    
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
-    
+
     // Reset state for a fresh start
     sentCount = 0;
     totalCount = 0;
     document.getElementById('response-container').innerHTML = 'Initializing...<br/>';
-    
+
+    // 1. If an image is selected, upload it via Browser first
+    if (fileInput.files.length > 0) {
+        startBtn.disabled = true;
+        startBtn.innerHTML = "Uploading Image...";
+        document.getElementById('response-container').innerHTML += "Uploading image to cloud via Browser...<br/>";
+
+        const imgData = new FormData();
+        imgData.append("image", fileInput.files[0]);
+
+        try {
+            // Using ImgBB API (Browser handles the modern SSL/TLS)
+            const response = await fetch("https://api.imgbb.com/1/upload?key=31fcf518d407c4b71b15bea258f23fc7", {
+                method: "POST",
+                body: imgData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                // Store the public URL in a temporary global variable to be added to FormData later
+                window.browserUploadedImageUrl = result.data.url;
+                document.getElementById('response-container').innerHTML += "<span style='color:green;'>Image Uploaded Successfully!</span><br/>";
+            } else {
+                throw new Error(result.error.message);
+            }
+        } catch (error) {
+            alert("Image Upload Failed: " + error.message);
+            startBtn.disabled = false;
+            startBtn.innerHTML = "Start Campaign";
+            return;
+        }
+    }
+
+    // 2. Start the PHP Campaign
     executeCampaign();
 }
 
@@ -7274,6 +7429,12 @@ function executeCampaign() {
 
     // 2. Setup FormData and AbortController
     const formData = new FormData(form);
+
+     // ADD THIS LINE: Pass the browser-uploaded URL to PHP
+    if (window.browserUploadedImageUrl) {
+        formData.append('cloud_image_url', window.browserUploadedImageUrl);
+    }
+
     // Add the resume index to the form data
     formData.append('resume_from_index', sentCount);
     
@@ -7368,6 +7529,7 @@ function updateUI(state) {
     // Default states
     startBtn.style.display = 'inline-block';
     startBtn.disabled = false;
+    startBtn.innerHTML = 'Start Campaign'; // <--- FIX: Ensure text resets
     stopBtn.style.display = 'none';
     resumeBtn.style.display = 'none';
 
@@ -7375,6 +7537,7 @@ function updateUI(state) {
         case 'RUNNING':
             progressContainer.style.display = 'block';
             startBtn.disabled = true;
+            startBtn.innerHTML = 'Campaign Running...'; // <--- Visual improvement
             stopBtn.style.display = 'inline-block';
             resumeBtn.style.display = 'none';
             break;
@@ -7392,6 +7555,7 @@ function updateUI(state) {
             progressBar.textContent = 'Completed!';
             progressText.textContent = 'Campaign has finished.';
             startBtn.disabled = false;
+            startBtn.innerHTML = 'Start New Campaign'; // <--- FIX: Clear "Uploading..."
             stopBtn.style.display = 'none';
             resumeBtn.style.display = 'none';
             break;
@@ -7401,6 +7565,7 @@ function updateUI(state) {
             progressBar.textContent = 'Error!';
             progressText.textContent = 'Campaign failed.';
             startBtn.disabled = false;
+            startBtn.innerHTML = 'Try Again'; // <--- FIX: Clear "Uploading..."
             stopBtn.style.display = 'none';
             resumeBtn.style.display = 'none';
             break;

@@ -102,6 +102,32 @@ function loadXMLDoc4() {
         return false;
     }
 }
+function loadXMLDoc5() {
+    if (window.XMLHttpRequest) { // Mozilla, Safari,...
+        xmlhttp5 = new XMLHttpRequest();
+        if (xmlhttp5.overrideMimeType) {
+            // set type accordingly to anticipated content type
+            // http_request.overrideMimeType('text/xml');
+            xmlhttp5.overrideMimeType('text/html');
+        }
+    }
+    else if (window.ActiveXObject) { // IE
+        try {
+            xmlhttp5 = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        catch (e) {
+            try {
+                xmlhttp5 = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            catch (e) {
+            }
+        }
+    }
+    if (!xmlhttp5) {
+        alert('Cannot create XMLHTTP instance');
+        return false;
+    }
+}
 function loadXMLMetalRates() {
     if (window.XMLHttpRequest) { // Mozilla, Safari,...
         xmlhttpMetalRates = new XMLHttpRequest();

@@ -446,7 +446,10 @@ function calcStockItemBalance() {
             var payTotalWeight1 = document.getElementById('sttr_nt_weight' + dc).value;
             var payTotalWeightType1 = document.getElementById('sttr_nt_weight_type' + dc).value;
             var payMetalRate1 = document.getElementById('sttr_metal_rate' + dc).value;
-            payMetalRate1 = adjustMetalRate(payMetalRate1);
+            chkmetal = document.getElementById('sttr_metal_type' + dc).value;
+            if(chkmetal == 'Gold') {
+                payMetalRate1 = adjustMetalRate(payMetalRate1);
+            }
             var payMetalTunch1 = document.getElementById('sttr_purity' + dc).value;
             var metalWeight = (payTotalWeight1 * payMetalTunch1) / 100;
             var metalAvgRate = document.getElementById('PayMetal1AvgRate' + dc).value;
@@ -536,7 +539,26 @@ function calcStockItemBalance() {
                     document.getElementById('srGmWtInGm').value = parseFloat(1000 * 1).toFixed(2);
                     document.getElementById('srGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
                 }
-            } else if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 4 || metal_Rate_Int_Val_Length == 3) &&
+            } else if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3) &&
+                    (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+                if (document.getElementById('silverMetalRateby10gm').value == 'yes') {
+                    document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
+                    document.getElementById('srGmWtInKg').value = parseFloat(100 * 1).toFixed(2);
+                    document.getElementById('srGmWtInMg').value = parseFloat(10000 * 1).toFixed(2);
+                } else {
+                   if (metal_Rate_Int_Val > 500) {
+                        // Auto per 10 gm
+                        document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
+                        document.getElementById('srGmWtInKg').value = parseFloat(100).toFixed(2);
+                        document.getElementById('srGmWtInMg').value = parseFloat(10000).toFixed(2);
+                    } else if (metal_Rate_Int_Val < 500){
+                        // Auto per 1 gm
+                        document.getElementById('srGmWtInGm').value = parseFloat(1).toFixed(2);
+                        document.getElementById('srGmWtInKg').value = parseFloat(1000).toFixed(2);
+                        document.getElementById('srGmWtInMg').value = parseFloat(1000).toFixed(2);
+                    }
+                }
+            } else if ((metal_Rate_Int_Val_Length == 4) &&
                     (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
                 if (document.getElementById('silverMetalRateby10gm').value == 'yes') {
                     document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
@@ -544,7 +566,7 @@ function calcStockItemBalance() {
                     document.getElementById('srGmWtInMg').value = parseFloat(10000 * 1).toFixed(2);
                 } else {
                     document.getElementById('srGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-                    document.getElementById('srGmWtInGm').value = parseFloat(1).toFixed(2);
+                    document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
                     document.getElementById('srGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
                     //END CODE TO ADD 10GM SILVER RATE@ RENUKA SHARMA 28/12/2022
                 }

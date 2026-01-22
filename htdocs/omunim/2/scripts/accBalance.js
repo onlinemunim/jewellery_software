@@ -6025,7 +6025,7 @@ function showkittyCloseDetails() {
 /********Strat code to add updateSize55BarCode @Author:GAUR14SEP16**************/
 function updateSize55BarCode(omLayoutOptionTop, omLayFontSize1, fontSizeBarCode1, omLayFontSize2, fontSizeBarCode2, omLayFontSize3, fontSizeBarCode3, omLayFontSize4, fontSizeBarCode4, omLayFontSize5, fontSizeBarCode5,
         omLayFontSize6, fontSizeBarCode6, omLayFontSize7, fontSizeBarCode7, omLayFontSize8, fontSizeBarCode8, omLayFontSize9, fontSizeBarCode9, omLayFontSize10, fontSizeBarCode10, omLayFontSize11, fontSizeBarCode11,
-        caption1, caption2, caption3, caption4, caption5, caption6, caption7, caption8, caption9, caption10, caption11, panel, fontSizeBarCode12, caption12, omLayFontSize12) {
+        caption1, caption2, caption3, caption4, caption5, caption6, caption7, caption8, caption9, caption10, caption11, panel, fontSizeBarCode12, caption12, omLayFontSize12, fontSizeBarCode13, caption13, omLayFontSize13,fontSizeBarCode14, caption14, omLayFontSize14, fontSizeBarCode15, caption15, omLayFontSize15, fontSizeBarCode16, caption16, omLayFontSize16, fontSizeBarCode17, caption17, omLayFontSize17, fontSizeBarCode18, caption18, omLayFontSize18) {
     loadXMLDoc();
     //alert(fontSizeBarCode1);
 
@@ -6047,7 +6047,7 @@ function updateSize55BarCode(omLayoutOptionTop, omLayFontSize1, fontSizeBarCode1
 
             + '&fontSize8=' + omLayFontSize8 + '&fontSizeValue8=' + fontSizeBarCode8 + '&fontSize9=' + omLayFontSize9 + '&fontSizeValue9=' + fontSizeBarCode9 + '&fontSize10=' + omLayFontSize10 + '&fontSizeValue10=' + fontSizeBarCode10 + '&fontSize11=' + omLayFontSize11 + '&fontSizeValue11=' + fontSizeBarCode11 + '&captionvalue1=' + caption1 +
             '&captionvalue2=' + caption2 + '&captionvalue3=' + caption3 + '&captionvalue4=' + caption4 + '&captionvalue5=' + caption5 + '&captionvalue6=' + caption6
-            + '&captionvalue7=' + caption7 + '&captionvalue8=' + caption8 + '&captionvalue9=' + caption9 + '&captionvalue10=' + caption10 + '&captionvalue11=' + caption11 + '&panel=' + panel + '&fontSizeValue12=' + fontSizeBarCode12 + '&captionvalue12=' + caption12 + '&fontSize12=' + omLayFontSize12;
+            + '&captionvalue7=' + caption7 + '&captionvalue8=' + caption8 + '&captionvalue9=' + caption9 + '&captionvalue10=' + caption10 + '&captionvalue11=' + caption11 + '&panel=' + panel + '&fontSizeValue12=' + fontSizeBarCode12 + '&captionvalue12=' + caption12 + '&fontSize12=' + omLayFontSize12 + '&captionvalue13=' + caption13  + '&fontSizeValue13=' + fontSizeBarCode13 + '&fontSize13=' + omLayFontSize13 + '&captionvalue14=' + caption14 + '&fontSizeValue14=' + fontSizeBarCode14 + '&fontSize14=' + omLayFontSize14 + '&captionvalue15=' + caption15 + '&fontSizeValue15=' + fontSizeBarCode15 + '&fontSize15=' + omLayFontSize15 + '&captionvalue16=' + caption16 + '&fontSizeValue16=' + fontSizeBarCode16 + '&fontSize16=' + omLayFontSize16 + '&captionvalue17=' + caption17 + '&fontSizeValue17=' + fontSizeBarCode17 + '&fontSize17=' + omLayFontSize17 + '&captionvalue18=' + caption18 + '&fontSizeValue18=' + fontSizeBarCode18 + '&fontSize18=' + omLayFontSize18;
     xmlhttp.open("POST", "include/php/ombcbcup" + default_theme + ".php?" + postStr, true);
     xmlhttp.send();
 }
@@ -9639,7 +9639,7 @@ function getHistoryBookByFrmId(firmId, dd, mm, yyyy, CustId) {
     xmlhttp.send();
 }
 //****End code for add function for cust trans history:Author:SANT27MAR17
-function showSellPurchaseItmDet(custId, preId, default1, default2, postId, default3, default4) {
+function showSellPurchaseItmDet(custId, preId, default1, default2, postId, default3, default4,panelnamee) {
     var documentRootPath = document.getElementById('documentRootPath').value;
     loadXMLDoc();
     xmlhttp.onreadystatechange = function () {
@@ -9675,7 +9675,7 @@ function showSellPurchaseItmDet(custId, preId, default1, default2, postId, defau
                 "&preInvoiceNo=" + preId + "&postInvoiceNo=" + postId, true);
     } else {
         xmlhttp.open("POST", documentRootPath + "/include/php/omcdccdd" + default_theme + ".php?custId=" + custId + "&custPanelOption=SellPurchase" + "&mainPanel=ItemPurchase" + "&panelName=SellPayUp" + "&divMainMiddlePanel=SellPayUp" +
-                "&preInvoiceNo=" + preId + "&postInvoiceNo=" + postId + "&default3=" + default3 + "&default4=" + default4, true);
+                "&preInvoiceNo=" + preId + "&postInvoiceNo=" + postId + "&default3=" + default3 + "&default4=" + default4 + "&panelnamee=" + panelnamee, true);
     }
     xmlhttp.send();
 }
@@ -10869,6 +10869,8 @@ function getSchemeDetails(documentRootPath, kittyId, kittyIndicator) {
             if (kittyIndicator == '') {
                 document.getElementById("kittyGroup").value = strArray[0];
                 document.getElementById("kittyNoOfEmi").value = strArray[1];
+
+                calculateEndDate(); // Now we call our new function
                 if (strArray[2] == '' || strArray[2] == null) {
                     document.getElementById("kittyNoOfDays").value = '1';
                 } else {
@@ -10984,6 +10986,59 @@ function getSchemeDetails(documentRootPath, kittyId, kittyIndicator) {
     xmlhttp.open("POST", documentRootPath + "/include/php/omktitdt" + default_theme + ".php?kittyId=" + kittyId, true);
     xmlhttp.send();
 }
+
+function calculateEndDate() {
+
+    // ✅ SAFE GUARD (this prevents breaking other flows)
+    if (
+        !document.getElementById('schemeDOBDay') ||
+        !document.getElementById('schemeDOBMonth') ||
+        !document.getElementById('schemeDOBYear') ||
+        !document.getElementById('kittyNoOfEmi') ||
+        !document.getElementById('kittyEndDate')
+    ) {
+        return; // silently exit
+    }
+    const startDayEl = document.getElementById('schemeDOBDay');
+    const startMonthEl = document.getElementById('schemeDOBMonth');
+    const startYearEl = document.getElementById('schemeDOBYear');
+    const noOfEmiEl = document.getElementById('kittyNoOfEmi'); // This holds the number of installments
+    const endDateField = document.getElementById('kittyEndDate');
+
+    
+
+    // 2. Get the values from the form fields
+    const startDay = startDayEl.value;
+    const startMonthStr = startMonthEl.value;
+    const startYear = startYearEl.value;
+    const noOfEmiValue = noOfEmiEl.value;
+
+    const noOfEmi = parseInt(noOfEmiValue, 10);
+
+    // 3. Check if we have the number of installments.
+    if (!noOfEmiValue || isNaN(parseInt(noOfEmiValue, 10)) || parseInt(noOfEmiValue, 10) <= 0) {
+        console.warn("Warning: Number of EMI is missing or invalid. Clearing end date.");
+        endDateField.value = ''; // Clear the end date if number of EMI is unknown
+        return;
+    }
+
+    // 4. Create a map to convert month names
+    const monthMap = { 'JAN': 0, 'FEB': 1, 'MAR': 2, 'APR': 3, 'MAY': 4, 'JUN': 5, 'JUL': 6, 'AUG': 7, 'SEP': 8, 'OCT': 9, 'NOV': 10, 'DEC': 11 };
+    const startMonth = monthMap[startMonthStr.toUpperCase()];
+
+    let endDate = new Date(startYear, startMonth, startDay);
+    endDate.setMonth(endDate.getMonth() + noOfEmi);
+
+    // 6. Format the final date
+    const endDay = ('0' + endDate.getDate()).slice(-2);
+    const endMonthName = Object.keys(monthMap).find(key => monthMap[key] === endDate.getMonth());
+    const endYear = endDate.getFullYear();
+    const formattedEndDate = `${endDay}-${endMonthName}-${endYear}`;
+
+    // 7. Set the value
+    endDateField.value = formattedEndDate;
+}
+
 function showHideSpouseDetails(maritalStatus) {
     if (maritalStatus == 'S') {
 //        document.getElementById('spouseName').style.visibility = "hidden";
@@ -13224,6 +13279,629 @@ function updateChargePercentage(documentRootPath, custId, girviId, chargeAmountP
 }
 //
 //
+
+//OLD FUNCTION FOR CALULATING THE VALUATION IN PURCHASE function calcFuncSupplierFineJewelleryPurchase() {
+//     var suppPurLotEntered = 0;
+//     var totalFinVal = 0;
+//     var totalLabNOthCharges = 0;
+//     var wastg = 0;
+//     var suppPurItemEntered = 0;
+//     var totalVal = 0;
+//     var totalLabNOthCharges = 0;
+//     var totalGsWt = 0;
+//     var gsWtKG = 0;
+//     var gsWtGM = 0;
+//     var ntWtKG = 0;
+//     var ntWtGM = 0;
+//     var totalNtWt = 0;
+//     var finVal = 0;
+//     var fnWt = 0;
+//     var itemCryVal;
+//     var finVal;
+//     var itemTotCryVal;
+//     var totVal;
+//     var finTotVal;
+//     var labTotal = 0;
+//     var rateNWt;
+//     var totalRateNWt = 0;
+//     var finalTotalVal = 0;
+//     var wastageWt = 0;
+//     var weightForMetalCal = 0;
+//     //
+//     if (document.getElementById('sttr_gs_weight_type').value != document.getElementById('sttr_nt_weight_type').value) {
+//         document.getElementById('sttr_nt_weight_type').value = document.getElementById('sttr_gs_weight_type').value;
+//         document.getElementById('utransFinalWeightTyp').value = document.getElementById('sttr_gs_weight_type').value;
+//         document.getElementById('sttr_pkt_weight_type').value = document.getElementById('sttr_gs_weight_type').value;
+//     }
+//     //
+//     var netweight = document.getElementById('sttr_nt_weight').value;
+//     var weight = document.getElementById('sttr_final_fine_weight').value;
+//     var metalType = document.getElementById('sttr_metal_type').value;
+//     var tounch = document.getElementById('sttr_purity').value;
+//     var metalRate = document.getElementById('sttr_metal_rate').value;
+//     metalRate = adjustMetalRate(metalRate);
+//     var wtType = document.getElementById('sttr_nt_weight_type').value;
+//     var labCharges = document.getElementById('sttr_lab_charges').value;
+//     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
+//     var wastg = document.getElementById('sttr_wastage').value;
+//     var qty = document.getElementById('sttr_quantity').value;
+//     var addHallamrkChargOnSilverItem = document.getElementById('addHallamrkChargOnSilverItem').value;
+//     //
+//     //
+//     //
+//     // FOR METAL RATE IN INTEGER FORMAT @PRIYANKA-20DEC2021
+//     var metal_Rate_Int_Val = parseInt(metalRate);
+//     //
+//     // FOR METAL RATE LENGTH @PRIYANKA-20DEC2021
+//     var metal_Rate_Int_Val_Length = metal_Rate_Int_Val.toString().length;
+//     //
+//     //
+//     //alert('metalRate == ' + metalRate);
+//     //alert('metalType == ' + metalType);
+//     //alert('metal_Rate_Int_Val == ' + metal_Rate_Int_Val);
+//     //alert('metal_Rate_Int_Val_Length == ' + metal_Rate_Int_Val_Length);
+//      if(document.getElementById('checkarateonegm').value == 'true'){
+//         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+//         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+//     }else{
+//     var __rate = parseFloat(metalRate) || 0;
+//     if ((metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold') && __rate < 20000) {
+//         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+//         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+//         // console.log('[accBalance] [calcFuncSupplierFineJewelleryPurchase] metal_rate < 20000, treating as per 1 gm for Gold');
+//     } else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+//         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+//         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+//     } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+//         document.getElementById('gmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
+//         document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
+//         document.getElementById('gmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
+//     } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+//         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+//         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+//     } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+//         //
+//         // FOR SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
+//         document.getElementById('srGmWtInKg').value = parseFloat(1).toFixed(2);
+//         document.getElementById('srGmWtInGm').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('srGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
+//         //
+//         //
+//     } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+//         //
+//         // FOR SILVER METAL RATE PER GM @PRIYANKA-20DEC2021
+//         document.getElementById('srGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('srGmWtInGm').value = parseFloat(1).toFixed(2);
+//         document.getElementById('srGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+//         //
+//         //
+//     } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
+//         //
+//         // FOR SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
+//         document.getElementById('strsrGmWtInKg').value = parseFloat(1).toFixed(2);
+//         document.getElementById('strsrGmWtInGm').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('strsrGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
+//         //
+//         //
+//     } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
+//         //
+//         // FOR SILVER METAL RATE PER GM @PRIYANKA-20DEC2021
+//         document.getElementById('strsrGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('strsrGmWtInGm').value = parseFloat(1).toFixed(2);
+//         document.getElementById('strsrGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+//         //
+//         //
+//     }else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Platinum' || metalType == 'PLATINUM' || metalType == 'platinum')) {
+//         //
+//         // FOR GOLD METAL RATE PER GM @PRIYANKA-20DEC2021
+//         document.getElementById('platinumGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+//         document.getElementById('platinumGmWtInGm').value = parseFloat(1).toFixed(2);
+//         document.getElementById('platinumgmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+//         //
+//         //alert('gmWtInGm #== ' + document.getElementById('gmWtInGm').value);
+//         //
+//     } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Platinum' || metalType == 'PLATINUM' || metalType == 'platinum')) {
+//         //
+//         // FOR GOLD METAL RATE PER 10 GM @PRIYANKA-20DEC2021
+//         document.getElementById('platinumGmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
+//         document.getElementById('platinumGmWtInGm').value = parseFloat(10).toFixed(2);
+//         document.getElementById('platinumgmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
+//         //
+//         //
+//     }
+//     }
+//     //
+//     //
+//     //alert('gmWtInKg @== ' + document.getElementById('gmWtInKg').value);
+//     //alert('gmWtInGm @== ' + document.getElementById('gmWtInGm').value);
+//     //alert('gmWtInMg @== ' + document.getElementById('gmWtInMg').value);
+//     //
+//     //alert('srGmWtInKg @== ' + document.getElementById('srGmWtInKg').value);
+//     //alert('srGmWtInGm @== ' + document.getElementById('srGmWtInGm').value);
+//     //alert('srGmWtInMg @== ' + document.getElementById('srGmWtInMg').value);
+//     //
+//     //
+//     //
+//     if (document.getElementById('sttr_final_val_by').value == 'byGrossWt') {
+//         var weight = document.getElementById('sttr_gs_weight').value;
+//         var wtType = document.getElementById('sttr_gs_weight_type').value;
+//     } else {
+//         var weight = document.getElementById('sttr_nt_weight').value;
+//         var wtType = document.getElementById('sttr_nt_weight_type').value;
+//     }
+
+//     if (document.getElementById('sttr_other_charges_by').value == 'lbByNetWt') {
+//         weight = parseFloat(document.getElementById('sttr_nt_weight').value);
+//     } else if (document.getElementById('sttr_other_charges_by').value == 'lbByGrossWt') {
+//         weight = parseFloat(document.getElementById('sttr_gs_weight').value);
+//     } else if (document.getElementById('sttr_other_charges_by').value == 'lbByFineWt') {
+//         var weight = document.getElementById('sttr_final_fine_weight').value;
+//     }
+
+//     if (labCharges != '') {
+//         if (labChargesType == 'KG') {
+//             if (wtType == 'KG')
+//                 totalLabNOthCharges = labCharges * weight;
+//             else if (wtType == 'GM')
+//                 totalLabNOthCharges = (labCharges / 1000) * weight;
+//             else
+//                 totalLabNOthCharges = (labCharges / (1000 * 1000)) * weight;
+//         } else if (labChargesType == 'GM') {
+//             if (wtType == 'KG')
+//                 totalLabNOthCharges = labCharges * 1000 * weight;
+//             else if (wtType == 'GM')
+//                 totalLabNOthCharges = labCharges * weight;
+//             else
+//                 totalLabNOthCharges = (labCharges / 1000) * weight;
+//         } else if (labChargesType == 'MG') {
+//             if (wtType == 'KG')
+//                 totalLabNOthCharges = labCharges * 1000 * 1000 * weight;
+//             else if (wtType == 'GM')
+//                 totalLabNOthCharges = labCharges * 1000 * weight;
+//             else
+//                 totalLabNOthCharges = labCharges * weight;
+//         } else if (labChargesType == 'PP') {
+//             totalLabNOthCharges = parseFloat(labCharges * qty);
+//         } else if (labChargesType == 'per') {
+//             labChargeByPer = (labCharges * weight) / 100;
+//             totalLabNOthCharges = labChargeByPer * metalRate;
+//         }else if (labChargesType == 'Fixed') {
+//             labChargeByPer = labCharges;
+//             totalLabNOthCharges = labChargeByPer;
+//         }
+//     }
+
+//     var labCharges = document.getElementById('sttr_lab_charges').value;
+//     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
+
+//     document.getElementById('sttr_total_lab_charges').value = parseFloat(totalLabNOthCharges).toFixed(2);
+
+//     document.getElementById('sttr_fine_weight').value = (((parseFloat(tounch)) * netweight) / 100).toFixed(3);
+
+//     if ((document.getElementById('sttr_fine_weight').value).trim() == '' || document.getElementById('sttr_fine_weight').value == 'NaN') {
+//         document.getElementById('sttr_fine_weight').value = 0;
+//     }
+
+//     document.getElementById('sttr_final_purity').value = (parseFloat(document.getElementById('sttr_purity').value) + parseFloat(document.getElementById('sttr_wastage').value)); //added @Author:SHRI24FEB17
+
+//     if ((document.getElementById('sttr_final_purity').value).trim() == '' || document.getElementById('sttr_final_purity').value == 'NaN') {
+//         document.getElementById('sttr_final_purity').value = 0;
+//     }
+
+//     if (wastg == '')
+//         wastg = 0;
+
+//     weight = (((parseFloat(wastg) + parseFloat(tounch)) * netweight) / 100).toFixed(3);
+//     //
+//     if (document.getElementById('sttr_wastage_by').value == 'wastageByFineWt') {
+//         wastageWt = ((parseFloat(wastg) * document.getElementById('sttr_fine_weight').value) / 100).toFixed(3);
+//     } else if (document.getElementById('sttr_wastage_by').value == 'wastageByNetWt') {
+//         wastageWt = ((parseFloat(wastg) * document.getElementById('sttr_nt_weight').value) / 100).toFixed(3);
+//     } else {
+//         wastageWt = ((parseFloat(wastg) * document.getElementById('sttr_gs_weight').value) / 100).toFixed(3);
+//     }
+//     //
+//     document.getElementById('sttr_final_fine_weight').value = parseFloat(parseFloat(document.getElementById('sttr_fine_weight').value) + parseFloat(wastageWt)).toFixed(3);
+//    if(document.getElementById('calcPurchFnWt') != null){
+//     calculateWastageWtPurchase();
+//     }
+//     //
+//     if ((document.getElementById('sttr_final_fine_weight').value).trim() == '' || document.getElementById('sttr_final_fine_weight').value == 'NaN') {
+//         document.getElementById('sttr_final_fine_weight').value = 0;
+//     }
+
+//     var gsWt = document.getElementById('sttr_gs_weight').value
+//     var gsWtType = document.getElementById('sttr_gs_weight_type').value;
+
+//     if (gsWt != '') {
+//         if (gsWtType != 'GM')
+//             gsWtKG += convert('GM', gsWtType, gsWt);
+//         else
+//             gsWtGM += parseFloat(gsWt);
+//         totalGsWt = parseFloat(gsWtKG) + parseFloat(gsWtGM);
+//     }
+
+//     var ntWt = document.getElementById('sttr_nt_weight').value;
+//     var ntWtType = document.getElementById('sttr_nt_weight_type').value;
+//     if (ntWt != '') {
+//         if (ntWtType != 'GM')
+//             ntWtKG = convert('GM', ntWtType, ntWt);
+//         else
+//             ntWtGM += parseFloat(ntWt);
+//         totalNtWt = parseFloat(ntWtKG) + parseFloat(ntWtGM);
+//     }
+
+//     var finalFineWeight = document.getElementById('sttr_final_fine_weight').value;
+
+//     if (finalFineWeight != '') {
+//         fnWt += parseFloat(finalFineWeight);
+//         document.getElementById('sttr_final_fine_weight').value = (fnWt).toFixed(3);
+//     }
+//     //
+//     if (document.getElementById('sttr_final_valuation_by').value == 'byGrossWt') {
+//         weightForMetalCal = document.getElementById('sttr_gs_weight').value;
+//     } else if (document.getElementById('sttr_final_valuation_by').value == 'byNetWt') {
+//         weightForMetalCal = document.getElementById('sttr_nt_weight').value;
+//     } else if (document.getElementById('sttr_final_valuation_by').value == 'byFineWt') {
+//         weightForMetalCal = document.getElementById('sttr_fine_weight').value;
+//     } else if (document.getElementById('sttr_final_valuation_by').value == 'byFFineWt') {
+//         weightForMetalCal = document.getElementById('sttr_final_fine_weight').value;
+//     } else {
+//         weightForMetalCal = document.getElementById('sttr_gs_weight').value;
+//     }
+//     //
+//     if (metalType == 'Gold') {
+//         if (wtType == 'KG') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) * document.getElementById('gmWtInKg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) * document.getElementById('gmWtInKg').value + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'GM') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('gmWtInGm').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('gmWtInGm').value + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'MG') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('gmWtInMg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('gmWtInMg').value + totalLabNOthCharges).toFixed(2);
+//         }
+//     } else if (metalType == 'Silver') {
+//         if (wtType == 'KG') {
+//             document.getElementById('sttr_valuation').value = (weightForMetalCal * metalRate * document.getElementById('srGmWtInKg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate * document.getElementById('srGmWtInKg').value) + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'GM') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('srGmWtInGm').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('srGmWtInGm').value + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'MG') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('srGmWtInMg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('srGmWtInMg').value + totalLabNOthCharges).toFixed(2);
+//         }
+//     } else if (metalType == 'strsilver') {
+//         if (wtType == 'KG') {
+//             document.getElementById('sttr_valuation').value = (weightForMetalCal * metalRate * document.getElementById('strsrGmWtInKg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate * document.getElementById('strsrGmWtInKg').value) + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'GM') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('strsrGmWtInGm').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('strsrGmWtInGm').value + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'MG') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('strsrGmWtInMg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('strsrGmWtInMg').value + totalLabNOthCharges).toFixed(2);
+//         }
+//     }else if (metalType == 'Platinum') {
+//         if (wtType == 'KG') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) * document.getElementById('platinumGmWtInKg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) * document.getElementById('platinumGmWtInKg').value + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'GM') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('platinumGmWtInGm').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('platinumGmWtInGm').value + totalLabNOthCharges).toFixed(2);
+//         } else if (wtType == 'MG') {
+//             document.getElementById('sttr_valuation').value = ((weightForMetalCal * metalRate) / document.getElementById('platinumgmWtInMg').value).toFixed(2);
+//             document.getElementById('suppItemTotVal').value = ((weightForMetalCal * metalRate) / document.getElementById('platinumgmWtInMg').value + totalLabNOthCharges).toFixed(2);
+//         }
+//     } else {
+//         document.getElementById('sttr_valuation').value = 0;
+//         document.getElementById('suppItemTotVal').value = 0;
+//     }
+
+//     if ((document.getElementById('sttr_tax').value).trim() == '' || document.getElementById('sttr_tax').value == 'NaN') {
+//         document.getElementById('sttr_tax').value = 0;
+//     }
+
+//     var val = parseFloat(document.getElementById('suppItemTotVal').value).toFixed(2);
+
+//     if (val == '') {
+//         val = 0;
+//     }
+//     //
+//     // ========================================================================================================== //
+//     // START CODE TO CALCULATE TOTAL HALLMARK CHARGES BY HALLMARK CHARGES AND QUANTITY @AUTHOR:MADHUREE-15JAN2022 //
+//     // ========================================================================================================== //
+//     //
+// //    var hallmarkCharges = document.getElementById('sttr_hallmark_charges').value;
+// //    var totalHallmarkCharges = '';
+// //    //
+// //    if (hallmarkCharges == '') {
+// //        hallmarkCharges = 0;
+// //    }
+// //    //
+// //    if (hallmarkCharges > 0) {
+// //        if (qty == '' || qty == 0) {
+// //            totalHallmarkCharges = parseFloat(hallmarkCharges).toFixed(2);
+// //        } else {
+// //            totalHallmarkCharges = parseFloat(hallmarkCharges * qty).toFixed(2);
+// //        }
+// //    } else {
+// //        totalHallmarkCharges = 0;
+// //    }
+// //    //
+// //    document.getElementById('sttr_total_hallmark_charges').value = parseFloat(totalHallmarkCharges).toFixed(2);
+//     //
+//     // ======================================================================================================== //
+//     // END CODE TO CALCULATE TOTAL HALLMARK CHARGES BY HALLMARK CHARGES AND QUANTITY @AUTHOR:MADHUREE-15JAN2022 //
+//     // ======================================================================================================== //
+//     //
+//     if ((document.getElementById('sttr_valuation').value).trim() == '' || document.getElementById('sttr_valuation').value == 'NaN') {
+//         document.getElementById('sttr_valuation').value = (0).toFixed(2);
+//     }
+
+//     var tax = document.getElementById('sttr_tax').value;
+
+//     if (tax == '')
+//         tax = 0;
+
+//     if (document.getElementById('sttr_tax').value > 0) {
+//         document.getElementById('sttr_tot_tax').value = (parseFloat(val) * parseFloat(tax) / 100).toFixed(2);
+//     } else {
+//         //
+//         // METAL CGST IN % @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_cgst_per').value == '' || document.getElementById('sttr_tot_price_cgst_per').value == 'NaN') {
+//             document.getElementById('sttr_tot_price_cgst_per').value = 0;
+//         }
+
+//         // CALCULATE MET CGST AMT => (METAL VAL * MET CGST IN %) / 100 @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_cgst_per').value != '') {
+//             document.getElementById('sttr_tot_price_cgst_chrg').value = (parseFloat(val) * (parseFloat(document.getElementById('sttr_tot_price_cgst_per').value) / 100)).toFixed(2);
+//         }
+
+//         // MET CGST CHRG @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_cgst_chrg').value == '' || document.getElementById('sttr_tot_price_cgst_chrg').value == 'NaN') {
+//             document.getElementById('sttr_tot_price_cgst_chrg').value = 0;
+//         }
+
+//         // METAL SGST IN % @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_sgst_per').value == '' || document.getElementById('sttr_tot_price_sgst_per').value == 'NaN') {
+//             document.getElementById('sttr_tot_price_sgst_per').value = 0;
+//         }
+
+//         // CALCULATE MET SGST AMT => (METAL VAL * MET SGST IN %) / 100 @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_sgst_per').value != '') {
+//             document.getElementById('sttr_tot_price_sgst_chrg').value = (parseFloat(val) * (parseFloat(document.getElementById('sttr_tot_price_sgst_per').value) / 100)).toFixed(2);
+//         }
+
+//         // MET SGST CHRG @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_sgst_chrg').value == '' || document.getElementById('sttr_tot_price_sgst_chrg').value == 'NaN') {
+//             document.getElementById('sttr_tot_price_sgst_chrg').value = 0;
+//         }
+
+//         // METAL IGST IN % @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_igst_per').value == '' || document.getElementById('sttr_tot_price_igst_per').value == 'NaN') {
+//             document.getElementById('sttr_tot_price_igst_per').value = 0;
+//         }
+
+//         // CALCULATE MET IGST AMT => (METAL VAL * MET IGST IN %) / 100 @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_igst_per').value != '') {
+//             document.getElementById('sttr_tot_price_igst_chrg').value = (parseFloat(val) * (parseFloat(document.getElementById('sttr_tot_price_igst_per').value) / 100)).toFixed(2);
+//         }
+
+//         // MET IGST CHRG @PRIYANKA-12MAR2021
+//         if (document.getElementById('sttr_tot_price_igst_chrg').value == '' || document.getElementById('sttr_tot_price_igst_chrg').value == 'NaN') {
+//             document.getElementById('sttr_tot_price_igst_chrg').value = 0;
+//         }
+//         //
+//         //
+//         // CALCULATE TOT TAX AMT => MET CGST AMT + MET SGST AMT + MET IGST AMT @PRIYANKA-12MAR2021
+//         document.getElementById('sttr_tot_tax').value = parseFloat(parseFloat(document.getElementById('sttr_tot_price_cgst_chrg').value) +
+//                 parseFloat(document.getElementById('sttr_tot_price_sgst_chrg').value) +
+//                 parseFloat(document.getElementById('sttr_tot_price_igst_chrg').value)).toFixed(2);
+//         //
+//         //
+//         if (document.getElementById('sttr_tot_tax').value == '' || document.getElementById('sttr_tot_tax').value == 'NaN') {
+//             document.getElementById('sttr_tot_tax').value = 0;
+//         }
+//         //
+//         //
+//     }
+
+//     if (document.getElementById('sttr_tot_tax').value == '')
+//         document.getElementById('sttr_tot_tax').value = 0;
+
+//     if ((document.getElementById('sttr_tot_tax').value).trim() == '' || document.getElementById('sttr_tot_tax').value == 'NaN') {
+//         document.getElementById('sttr_tot_tax').value = 0;
+//     }
+
+//     if ((document.getElementById('sttr_tot_tax').value).trim() == '' || document.getElementById('sttr_tot_tax').value == 'NaN') {
+//         document.getElementById('sttr_tot_tax').value = 0;
+//     }
+
+//     if ((document.getElementById('sttr_tot_tax').value).trim() == '' || document.getElementById('sttr_tot_tax').value == 'NaN') {
+//         document.getElementById('sttr_tot_tax').value = 0;
+//     }
+
+//     if ((document.getElementById('sttr_stone_valuation').value) == '' || document.getElementById('sttr_stone_valuation').value == 'NaN') {
+//         document.getElementById('sttr_stone_valuation').value = 0;
+//     }
+//     //
+//     //
+//     // *************************************************************************************************************
+//     // ADDED FOR TOTAL HALLMARKING CHARGES INTO FINAL VALUATION @PRIYANKA-08JUNE2022
+//     // *************************************************************************************************************
+//     if ((metalType == 'Gold' || metalType == 'gold' || metalType == 'GOLD') || (addHallamrkChargOnSilverItem == 'YES' && (metalType == 'Silver' || metalType == 'silver' || metalType == 'SILVER'))) {   // ADDED CONDITIONS FOR ADD GOLD ITEM @SIMRAN:17APR2023
+//         if (typeof (document.getElementById('hallmarkingChargesBySetupPanel')) != 'undefined' &&
+//                 (document.getElementById('hallmarkingChargesBySetupPanel') != null)) {
+//             //
+//             //
+//             if (typeof (document.getElementById('hallmarkingChargesTypeBySetupPanel')) != 'undefined' &&
+//                     (document.getElementById('hallmarkingChargesTypeBySetupPanel') != null)) {
+//                 //
+//                 //
+//                 if (document.getElementById('sttr_total_hallmark_charges').value == '' || document.getElementById('sttr_total_hallmark_charges').value == 'NaN') {
+//                     document.getElementById('sttr_total_hallmark_charges').value = 0;
+//                 }
+//                 //
+//                 //
+//                 if (document.getElementById('hallmarkingChargesBySetupPanel').value == '' || document.getElementById('hallmarkingChargesBySetupPanel').value == 'NaN') {
+//                     document.getElementById('hallmarkingChargesBySetupPanel').value = 0;
+//                 }
+//                 //
+//                 //
+//                 // FOR HALLMARK CGST % @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('sttr_hallmark_cgst_per').value == '' || document.getElementById('sttr_hallmark_cgst_per').value == 'NaN') {
+//                     document.getElementById('sttr_hallmark_cgst_per').value = 0;
+//                 }
+//                 //
+//                 //
+//                 // FOR HALLMARK SGST % @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('sttr_hallmark_sgst_per').value == '' || document.getElementById('sttr_hallmark_sgst_per').value == 'NaN') {
+//                     document.getElementById('sttr_hallmark_sgst_per').value = 0;
+//                 }
+//                 //
+//                 //
+//                 // FOR HALLMARK IGST % @PRIYANKA-08JUNE2022
+//                 //if (document.getElementById('sttr_hallmark_igst_per').value == '' || document.getElementById('sttr_hallmark_igst_per').value == 'NaN') {
+//                 document.getElementById('sttr_hallmark_igst_per').value = 0;
+//                 //}                      
+//                 //
+//                 //
+//                 //
+//                 var totalHallmarkCharges = 0;
+//                 //
+//                 //   
+//                 if (document.getElementById('sttr_hallmark_charges').value != '' && document.getElementById('sttr_hallmark_charges').value != null) {
+//                     document.getElementById('hallmarkingChargesBySetupPanel').value = parseFloat(document.getElementById('sttr_hallmark_charges').value).toFixed(2);
+//                 }
+//                 //
+//                 // FOR HALLMARKING CHARGES TYPE - FX @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('hallmarkingChargesTypeBySetupPanel').value == 'FX') {
+//                     totalHallmarkCharges = parseFloat(document.getElementById('hallmarkingChargesBySetupPanel').value).toFixed(2);
+//                 }
+//                 // 
+//                 // FOR HALLMARKING CHARGES TYPE - PP @PRIYANKA-08JUNE2022
+//                 else if (document.getElementById('hallmarkingChargesTypeBySetupPanel').value == 'PP') {
+//                     totalHallmarkCharges = parseFloat(parseFloat(qty) * parseFloat(document.getElementById('hallmarkingChargesBySetupPanel').value)).toFixed(2);
+//                 }
+//                 // 
+//                 // FOR HALLMARKING CHARGES TYPE - GM @PRIYANKA-08JUNE2022
+//                 else if (document.getElementById('hallmarkingChargesTypeBySetupPanel').value == 'GM' && document.getElementById('sttr_gs_weight_type').value == 'GM') {
+//                     totalHallmarkCharges = parseFloat(parseFloat(document.getElementById('sttr_gs_weight').value) * parseFloat(document.getElementById('hallmarkingChargesBySetupPanel').value)).toFixed(2);
+//                 }
+//                 // 
+//                 // FOR HALLMARKING CHARGES TYPE - KG @PRIYANKA-08JUNE2022
+//                 else if (document.getElementById('hallmarkingChargesTypeBySetupPanel').value == 'KG' && document.getElementById('sttr_gs_weight_type').value == 'KG') {
+//                     totalHallmarkCharges = parseFloat(parseFloat(document.getElementById('sttr_gs_weight').value) * parseFloat(document.getElementById('hallmarkingChargesBySetupPanel').value)).toFixed(2);
+//                 } else {
+//                     totalHallmarkCharges = parseFloat(document.getElementById('hallmarkingChargesBySetupPanel').value).toFixed(2);
+//                 }
+//                 //
+//                 //
+//                 // TO CALCULATE HALLMARK CGST AMT @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('sttr_hallmark_cgst_per').value > 0) {
+//                     document.getElementById('sttr_hallmark_cgst_amt').value = parseFloat(parseFloat(totalHallmarkCharges) * (parseFloat(document.getElementById('sttr_hallmark_cgst_per').value) / 100)).toFixed(2);
+//                 }
+//                 //
+//                 // TO CALCULATE HALLMARK SGST AMT @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('sttr_hallmark_sgst_per').value > 0) {
+//                     document.getElementById('sttr_hallmark_sgst_amt').value = parseFloat(parseFloat(totalHallmarkCharges) * (parseFloat(document.getElementById('sttr_hallmark_sgst_per').value) / 100)).toFixed(2);
+//                 }
+//                 //
+//                 // TO CALCULATE HALLMARK IGST AMT @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('sttr_hallmark_igst_per').value > 0) {
+//                     document.getElementById('sttr_hallmark_igst_amt').value = parseFloat(parseFloat(totalHallmarkCharges) * (parseFloat(document.getElementById('sttr_hallmark_igst_per').value) / 100)).toFixed(2);
+//                 }
+//                 //
+//                 //
+//                 //alert('sttr_hallmark_cgst_amt @== ' + document.getElementById('sttr_hallmark_cgst_amt').value);
+//                 //alert('sttr_hallmark_sgst_amt @== ' + document.getElementById('sttr_hallmark_sgst_amt').value);
+//                 //alert('sttr_hallmark_igst_amt @== ' + document.getElementById('sttr_hallmark_igst_amt').value);
+//                 //alert('totalHallmarkCharges @== ' + totalHallmarkCharges);
+//                 //
+//                 //
+//                 // FOR HALLMARK CGST AMT @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('sttr_hallmark_cgst_amt').value == '' || document.getElementById('sttr_hallmark_cgst_amt').value == 'NaN') {
+//                     document.getElementById('sttr_hallmark_cgst_amt').value = 0;
+//                 }
+//                 //
+//                 // FOR HALLMARK SGST AMT @PRIYANKA-08JUNE2022
+//                 if (document.getElementById('sttr_hallmark_sgst_amt').value == '' || document.getElementById('sttr_hallmark_sgst_amt').value == 'NaN') {
+//                     document.getElementById('sttr_hallmark_sgst_amt').value = 0;
+//                 }
+//                 //
+//                 // FOR HALLMARK IGST AMT @PRIYANKA-08JUNE2022
+//                 //if (document.getElementById('sttr_hallmark_igst_amt').value == '' || document.getElementById('sttr_hallmark_igst_amt').value == 'NaN') {
+//                 document.getElementById('sttr_hallmark_igst_amt').value = 0;
+//                 //}
+//                 //
+//                 //
+//                 // TO CALCULATE TOTAL HALLMARKING CHARGES @PRIYANKA-08JUNE2022
+//                 document.getElementById('sttr_total_hallmark_charges').value = parseFloat(parseFloat(document.getElementById('sttr_hallmark_cgst_amt').value) +
+//                         parseFloat(document.getElementById('sttr_hallmark_sgst_amt').value) +
+//                         parseFloat(document.getElementById('sttr_hallmark_igst_amt').value) +
+//                         parseFloat(totalHallmarkCharges)).toFixed(2);
+//                 //
+//                 if (document.getElementById('sttr_total_hallmark_charges').value == '' || document.getElementById('sttr_total_hallmark_charges').value == 'NaN') {
+//                     document.getElementById('sttr_total_hallmark_charges').value = 0;
+//                 }
+//                 //
+//                 //
+//                 // TO CALCULATE FINAL VALUATION WITH HALLMARKING CHARGES @PRIYANKA-08JUNE2022
+//                 //document.getElementById('sttr_final_valuation').value = parseFloat(parseFloat(document.getElementById('sttr_final_valuation').value) + parseFloat(document.getElementById('sttr_total_hallmark_charges').value)).toFixed(2);
+//                 //
+//                 //
+//             }
+//         }
+//     } 
+// //    else {
+// //        document.getElementById('sttr_total_hallmark_charges').value = 0;
+// //        document.getElementById('hallmarkingChargesBySetupPanel').value = 0;
+// //        document.getElementById('sttr_hallmark_cgst_per').value = 0;
+// //        document.getElementById('sttr_hallmark_sgst_per').value = 0;
+// //        document.getElementById('sttr_hallmark_igst_per').value = 0;
+// //    }  // END CONDITION FOR ADD GOLD STOCK @SIMRAN:17APR2023   
+// //        
+//      if (document.getElementById('sttr_total_hallmark_charges').value == '' || document.getElementById('sttr_total_hallmark_charges').value == 'NaN') {
+//       document.getElementById('sttr_total_hallmark_charges').value = 0;
+//        }
+
+//     document.getElementById('sttr_final_valuation').value = (parseFloat(val) + parseFloat(document.getElementById('sttr_tot_tax').value) + parseFloat(document.getElementById('sttr_stone_valuation').value) + parseFloat(document.getElementById('sttr_total_hallmark_charges').value)).toFixed(2); // Crystal Valuation added @Author:SHRI06JAN17
+
+//     if ((document.getElementById('sttr_final_valuation').value).trim() == '' || document.getElementById('sttr_final_valuation').value == 'NaN') {
+//         document.getElementById('sttr_final_valuation').value = 0;
+//     }
+
+//     finVal += parseFloat(document.getElementById('sttr_final_valuation').value);
+
+//     document.getElementById('sttr_final_valuation').value = (finVal).toFixed(2);
+
+//     var cashRec = 0;
+
+//     if (cashRec == '')
+//         cashRec = 0;
+
+//     var totAmt = 0;
+
+//     if (totAmt == '')
+//         totAmt = 0;
+
+//     var totAmtRec = 0;
+
+//     if (totAmtRec == '')
+//         totAmtRec = 0;
+
+//     totalLabNOthCharges = 0;
+
+//     suppPurLotEntered++;
+//     return false;
+// }
+
 function calcFuncSupplierFineJewelleryPurchase() {
     var suppPurLotEntered = 0;
     var totalFinVal = 0;
@@ -13262,8 +13940,14 @@ function calcFuncSupplierFineJewelleryPurchase() {
     var weight = document.getElementById('sttr_final_fine_weight').value;
     var metalType = document.getElementById('sttr_metal_type').value;
     var tounch = document.getElementById('sttr_purity').value;
-    var metalRate = document.getElementById('sttr_metal_rate').value;
-    metalRate = adjustMetalRate(metalRate);
+    
+    // --- UPDATED CODE START: Sanitize Metal Rate (Remove commas) ---
+    var rawMetalRate = document.getElementById('sttr_metal_rate').value;
+    // This removes commas so "1,90,000" becomes "190000" ensuring accurate calculation
+    var metalRate = rawMetalRate.toString().replace(/,/g, ''); 
+    // metalRate = adjustMetalRate(metalRate); 
+    // --- UPDATED CODE END ---
+
     var wtType = document.getElementById('sttr_nt_weight_type').value;
     var labCharges = document.getElementById('sttr_lab_charges').value;
     var labChargesType = document.getElementById('sttr_lab_charges_type').value;
@@ -13280,96 +13964,71 @@ function calcFuncSupplierFineJewelleryPurchase() {
     var metal_Rate_Int_Val_Length = metal_Rate_Int_Val.toString().length;
     //
     //
-    //alert('metalRate == ' + metalRate);
-    //alert('metalType == ' + metalType);
-    //alert('metal_Rate_Int_Val == ' + metal_Rate_Int_Val);
-    //alert('metal_Rate_Int_Val_Length == ' + metal_Rate_Int_Val_Length);
-     if(document.getElementById('checkarateonegm').value == 'true'){
+    if(document.getElementById('checkarateonegm').value == 'true'){
         document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
         document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-    }else{
-    var __rate = parseFloat(metalRate) || 0;
-    if ((metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold') && __rate < 20000) {
-        document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
-        document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-        // console.log('[accBalance] [calcFuncSupplierFineJewelleryPurchase] metal_rate < 20000, treating as per 1 gm for Gold');
-    } else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
-        document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
-        document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-    } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
-        document.getElementById('gmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
-        document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
-        document.getElementById('gmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
-    } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
-        document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
-        document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-    } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
-        //
-        // FOR SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
-        document.getElementById('srGmWtInKg').value = parseFloat(1).toFixed(2);
-        document.getElementById('srGmWtInGm').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('srGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
-        //
-        //
-    } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
-        //
-        // FOR SILVER METAL RATE PER GM @PRIYANKA-20DEC2021
-        document.getElementById('srGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('srGmWtInGm').value = parseFloat(1).toFixed(2);
-        document.getElementById('srGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-        //
-        //
-    } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
-        //
-        // FOR SILVER METAL RATE PER KG @PRIYANKA-20DEC2021
-        document.getElementById('strsrGmWtInKg').value = parseFloat(1).toFixed(2);
-        document.getElementById('strsrGmWtInGm').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('strsrGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
-        //
-        //
-    } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
-        //
-        // FOR SILVER METAL RATE PER GM @PRIYANKA-20DEC2021
-        document.getElementById('strsrGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('strsrGmWtInGm').value = parseFloat(1).toFixed(2);
-        document.getElementById('strsrGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-        //
-        //
-    }else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Platinum' || metalType == 'PLATINUM' || metalType == 'platinum')) {
-        //
-        // FOR GOLD METAL RATE PER GM @PRIYANKA-20DEC2021
-        document.getElementById('platinumGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('platinumGmWtInGm').value = parseFloat(1).toFixed(2);
-        document.getElementById('platinumgmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-        //
-        //alert('gmWtInGm #== ' + document.getElementById('gmWtInGm').value);
-        //
-    } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Platinum' || metalType == 'PLATINUM' || metalType == 'platinum')) {
-        //
-        // FOR GOLD METAL RATE PER 10 GM @PRIYANKA-20DEC2021
-        document.getElementById('platinumGmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
-        document.getElementById('platinumGmWtInGm').value = parseFloat(10).toFixed(2);
-        document.getElementById('platinumgmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
-        //
-        //
+    } else {
+        var __rate = parseFloat(metalRate) || 0;
+        
+        // --- GOLD LOGIC (UNCHANGED) ---
+        if ((metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold') && __rate < 20000) {
+            document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+            document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+            document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+        } else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+            document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+            document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+            document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+        } else if ((metal_Rate_Int_Val_Length == 5 || metal_Rate_Int_Val_Length == 6) && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+            document.getElementById('gmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
+            document.getElementById('gmWtInGm').value = parseFloat(10).toFixed(2);
+            document.getElementById('gmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
+        } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Gold' || metalType == 'GOLD' || metalType == 'gold')) {
+            document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+            document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+            document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+            
+        // --- SILVER LOGIC (UPDATED TO FIX 190000 ISSUE) ---
+        // Changed condition to (Length >= 4) so 190000 (6 digits) is correctly treated as Per KG.
+        } else if ((metal_Rate_Int_Val_Length >= 4) && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+            // FOR SILVER METAL RATE PER KG
+            // 190000 / 1000 = 190 per gram
+            document.getElementById('srGmWtInKg').value = parseFloat(1).toFixed(2);
+            document.getElementById('srGmWtInGm').value = parseFloat(1000 * 1).toFixed(2); 
+            document.getElementById('srGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
+            
+        } else if ((metal_Rate_Int_Val_Length <= 3) && (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+            // FOR SILVER METAL RATE PER GM
+            document.getElementById('srGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+            document.getElementById('srGmWtInGm').value = parseFloat(1).toFixed(2);
+            document.getElementById('srGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+            
+        } else if ((metal_Rate_Int_Val_Length >= 4) && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
+            // FOR SILVER METAL RATE PER KG
+            document.getElementById('strsrGmWtInKg').value = parseFloat(1).toFixed(2);
+            document.getElementById('strsrGmWtInGm').value = parseFloat(1000 * 1).toFixed(2);
+            document.getElementById('strsrGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
+            
+        } else if ((metal_Rate_Int_Val_Length <= 3) && (metalType == 'StrSilver' || metalType == 'STRSILVER' || metalType == 'strsilver')) {
+            // FOR SILVER METAL RATE PER GM
+            document.getElementById('strsrGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+            document.getElementById('strsrGmWtInGm').value = parseFloat(1).toFixed(2);
+            document.getElementById('strsrGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+            
+        } else if (metal_Rate_Int_Val_Length == 4 && (metalType == 'Platinum' || metalType == 'PLATINUM' || metalType == 'platinum')) {
+            document.getElementById('platinumGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+            document.getElementById('platinumGmWtInGm').value = parseFloat(1).toFixed(2);
+            document.getElementById('platinumgmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
+        } else if (metal_Rate_Int_Val_Length == 2 && (metalType == 'Platinum' || metalType == 'PLATINUM' || metalType == 'platinum')) {
+            document.getElementById('platinumGmWtInKg').value = parseFloat(1000 / 10).toFixed(2);
+            document.getElementById('platinumGmWtInGm').value = parseFloat(10).toFixed(2);
+            document.getElementById('platinumgmWtInMg').value = parseFloat(1000 * 10).toFixed(2);
+        }
     }
-    }
-    //
-    //
-    //alert('gmWtInKg @== ' + document.getElementById('gmWtInKg').value);
-    //alert('gmWtInGm @== ' + document.getElementById('gmWtInGm').value);
-    //alert('gmWtInMg @== ' + document.getElementById('gmWtInMg').value);
-    //
-    //alert('srGmWtInKg @== ' + document.getElementById('srGmWtInKg').value);
-    //alert('srGmWtInGm @== ' + document.getElementById('srGmWtInGm').value);
-    //alert('srGmWtInMg @== ' + document.getElementById('srGmWtInMg').value);
-    //
-    //
-    //
+
+    // --- REST OF THE FUNCTION CONTINUES NORMALLY ---
+    
     if (document.getElementById('sttr_final_val_by').value == 'byGrossWt') {
         var weight = document.getElementById('sttr_gs_weight').value;
         var wtType = document.getElementById('sttr_gs_weight_type').value;
@@ -13430,7 +14089,7 @@ function calcFuncSupplierFineJewelleryPurchase() {
         document.getElementById('sttr_fine_weight').value = 0;
     }
 
-    document.getElementById('sttr_final_purity').value = (parseFloat(document.getElementById('sttr_purity').value) + parseFloat(document.getElementById('sttr_wastage').value)); //added @Author:SHRI24FEB17
+    document.getElementById('sttr_final_purity').value = (parseFloat(document.getElementById('sttr_purity').value) + parseFloat(document.getElementById('sttr_wastage').value)); 
 
     if ((document.getElementById('sttr_final_purity').value).trim() == '' || document.getElementById('sttr_final_purity').value == 'NaN') {
         document.getElementById('sttr_final_purity').value = 0;
@@ -13556,34 +14215,7 @@ function calcFuncSupplierFineJewelleryPurchase() {
     if (val == '') {
         val = 0;
     }
-    //
-    // ========================================================================================================== //
-    // START CODE TO CALCULATE TOTAL HALLMARK CHARGES BY HALLMARK CHARGES AND QUANTITY @AUTHOR:MADHUREE-15JAN2022 //
-    // ========================================================================================================== //
-    //
-//    var hallmarkCharges = document.getElementById('sttr_hallmark_charges').value;
-//    var totalHallmarkCharges = '';
-//    //
-//    if (hallmarkCharges == '') {
-//        hallmarkCharges = 0;
-//    }
-//    //
-//    if (hallmarkCharges > 0) {
-//        if (qty == '' || qty == 0) {
-//            totalHallmarkCharges = parseFloat(hallmarkCharges).toFixed(2);
-//        } else {
-//            totalHallmarkCharges = parseFloat(hallmarkCharges * qty).toFixed(2);
-//        }
-//    } else {
-//        totalHallmarkCharges = 0;
-//    }
-//    //
-//    document.getElementById('sttr_total_hallmark_charges').value = parseFloat(totalHallmarkCharges).toFixed(2);
-    //
-    // ======================================================================================================== //
-    // END CODE TO CALCULATE TOTAL HALLMARK CHARGES BY HALLMARK CHARGES AND QUANTITY @AUTHOR:MADHUREE-15JAN2022 //
-    // ======================================================================================================== //
-    //
+   
     if ((document.getElementById('sttr_valuation').value).trim() == '' || document.getElementById('sttr_valuation').value == 'NaN') {
         document.getElementById('sttr_valuation').value = (0).toFixed(2);
     }
@@ -13803,14 +14435,6 @@ function calcFuncSupplierFineJewelleryPurchase() {
             }
         }
     } 
-//    else {
-//        document.getElementById('sttr_total_hallmark_charges').value = 0;
-//        document.getElementById('hallmarkingChargesBySetupPanel').value = 0;
-//        document.getElementById('sttr_hallmark_cgst_per').value = 0;
-//        document.getElementById('sttr_hallmark_sgst_per').value = 0;
-//        document.getElementById('sttr_hallmark_igst_per').value = 0;
-//    }  // END CONDITION FOR ADD GOLD STOCK @SIMRAN:17APR2023   
-//        
      if (document.getElementById('sttr_total_hallmark_charges').value == '' || document.getElementById('sttr_total_hallmark_charges').value == 'NaN') {
       document.getElementById('sttr_total_hallmark_charges').value = 0;
        }
@@ -13824,23 +14448,6 @@ function calcFuncSupplierFineJewelleryPurchase() {
     finVal += parseFloat(document.getElementById('sttr_final_valuation').value);
 
     document.getElementById('sttr_final_valuation').value = (finVal).toFixed(2);
-
-    var cashRec = 0;
-
-    if (cashRec == '')
-        cashRec = 0;
-
-    var totAmt = 0;
-
-    if (totAmt == '')
-        totAmt = 0;
-
-    var totAmtRec = 0;
-
-    if (totAmtRec == '')
-        totAmtRec = 0;
-
-    totalLabNOthCharges = 0;
 
     suppPurLotEntered++;
     return false;

@@ -4061,6 +4061,23 @@ function saveprnPrintTailLabel(){
 }
 
 
+function savetsplprnPrintTailLabel(){
+     loadXMLDoc();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("main_ajax_loading_div").style.visibility = "hidden";
+            alert(xmlhttp.responseText);
+        } else {
+            document.getElementById("main_ajax_loading_div").style.visibility = "visible";
+        }
+    };
+    //&setQuantity=Yes
+
+    xmlhttp.open("GET", "include/php/omsave_positions_tvs" + default_theme + ".php", true);
+    xmlhttp.send();
+}
+
+
 function handleBisSizeChange(value){
     loadXMLDoc();
     xmlhttp.onreadystatechange = function () {
@@ -7746,6 +7763,7 @@ function togglePaymentPopup(icon) {
 }
 // CHANGES DONE IN FUNCTION FOR ADDING SOME PARAMETERS LIKE TRANSACTION TYPE, INDICATOR, STOCK TYPE, OPERATION @PRIYANKA-12MAY18
 function navigatationPanelByFileName(divName, fileName, panelName, indicator, transactionType, stockType, operation, type, custId, metType, mainPanel, payCRDR, firmId, preInvNo, postInvNo, girviId) {
+    console.log("divName:", divName, "fileName:", fileName, "panelName:", panelName, "indicator:", indicator, "transactionType:", transactionType, "stockType:", stockType, "operation:", operation, "type:", type, "custId:", custId, "metType:", metType, "mainPanel:", mainPanel, "payCRDR:", payCRDR, "firmId:", firmId, "preInvNo:", preInvNo, "postInvNo:", postInvNo, "girviId:", girviId);
     //alert(panelName)
     var panel = panelName;
     loadXMLDoc();
@@ -14254,4 +14272,143 @@ function loadWholesaleStock() {
         alert("Error: The target container '" + targetContainer + "' was not found on the page.");
         console.error("Target container for wholesale stock list not found.");
     }
+}
+
+function calculateMkgLateFee() {
+    const checkbox = document.getElementById('late_fee_mkg_check');
+
+    const hiddenInput = document.getElementById('kitty_emi_late_mkg_chk');
+    const outputGold = document.getElementById('kitty_emi_late_fee_mkg_gold');
+    const outputDiamond = document.getElementById('kitty_emi_late_fee_mkg_diamond');
+
+    if (!checkbox.checked) {
+        hiddenInput.value = 'false';
+        outputGold.value = '';
+        outputDiamond.value = '';
+        return;
+    }
+
+    hiddenInput.value = 'true';
+
+    const noOfEmi = parseFloat(document.getElementById('noOfEMI').value);
+    const gold = parseFloat(document.getElementById('kitty_gold_making_per').value);
+    const diamond = parseFloat(document.getElementById('kitty_diamond_making_per').value);
+
+    // GOLD
+    if (!isNaN(noOfEmi) && noOfEmi > 0 && !isNaN(gold)) {
+        let resultGold = gold / noOfEmi;
+        outputGold.value = parseFloat(resultGold.toFixed(2)); // remove .00
+    } else {
+        outputGold.value = '';
+    }
+
+    // DIAMOND
+    if (!isNaN(noOfEmi) && noOfEmi > 0 && !isNaN(diamond)) {
+        let resultDiamond = diamond / noOfEmi;
+        outputDiamond.value = parseFloat(resultDiamond.toFixed(2)); // remove .00
+    } else {
+        outputDiamond.value = '';
+    }
+}
+
+function refreshCityList(fileName) {
+    if (!fileName) {
+        alert("System Error: Filename missing for AJAX call.");
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    // Append a query parameter to tell PHP to only load the list
+    var url = fileName + "?ajax_action=refresh_city_list";
+
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var resultDiv = document.getElementById("citiesListDiv");
+            if (resultDiv) {
+                resultDiv.innerHTML = this.responseText;
+            } else {
+                console.error("Target DIV 'citiesListDiv' not found.");
+            }
+        }
+    };
+    
+    xhr.open("GET", url, true);
+    xhr.send();
+}
+
+function refreshStateList(fileName) {
+    if (!fileName) {
+        alert("System Error: Filename missing for AJAX call.");
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    // Append a query parameter to tell PHP to only load the list
+    var url = fileName + "?ajax_action=refresh_state_list";
+
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var resultDiv = document.getElementById("statesListDiv");
+            if (resultDiv) {
+                resultDiv.innerHTML = this.responseText;
+            } else {
+                console.error("Target DIV 'statesListDiv' not found.");
+            }
+        }
+    };
+    
+    xhr.open("GET", url, true);
+    xhr.send();
+}
+
+
+function validateBeforeSubmit(e, rootPath) {
+    var barcodeEl = document.getElementById('sttr_barcode') || document.getElementsByName('sttr_barcode')[0];
+    var rfidEl = document.getElementById('sttr_rfid_no') || document.getElementsByName('sttr_rfid_no')[0];
+    
+    // Clean data here too
+    var barcode = barcodeEl ? barcodeEl.value.replace(/[\n\r]/g, "").trim() : "";
+    var rfid = rfidEl ? rfidEl.value.replace(/[\n\r]/g, "").trim() : "";
+    
+    var panelName = document.getElementById('panelName').value;
+    var sttrId = document.getElementById('sttrId').value;
+
+    if (barcode === "" && rfid === "") {
+        return addItem(rootPath);
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", rootPath + "/include/php/omcheck_duplicate.php", false); 
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    
+    var params = "barcode=" + encodeURIComponent(barcode) + 
+                 "&rfid=" + encodeURIComponent(rfid) + 
+                 "&panelName=" + encodeURIComponent(panelName) + 
+                 "&sttrId=" + encodeURIComponent(sttrId);
+    
+    xhr.send(params);
+
+    if (xhr.status === 200) {
+        try {
+            var response = JSON.parse(xhr.responseText);
+            if (response.exists === true) {
+                var msg = "⚠️ DUPLICATE DETECTED!\n------------------------------------------\n";
+                for (var i = 0; i < response.details.length; i++) {
+                    var item = response.details[i];
+                    msg += "Matched Via : " + item.type + "\n";
+                    msg += "Product Code: " + item.itemcode + "\n";
+                    msg += "Status      : " + item.status + "\n";
+                    if (i < response.details.length - 1) msg += "------------------------------------------\n";
+                }
+                msg += "------------------------------------------\nPlease use a different Barcode/RFID.";
+                alert(msg);
+                return false; 
+            }
+            else
+            {
+            //    alert("DEBUG - RFID QUERY:\n" + response.sql2);
+            }
+        } catch(e) { console.log("JSON Error"); }
+    }
+    return addItem(rootPath);
 }

@@ -1249,22 +1249,40 @@ function printOneAllLoanBarcodeByGirvId(girviId, systemOnOrOff1, systemOnOrOff, 
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 //
 // START CODE TO ADD FUNCTION FOR IMITATION AUTO BARCODE PRINT @PRIYANKA-30JULY18
-function printOneAllLabelImiBarcodeBySttrId(sttrId,count=null)
-{
-    if(count==null || count==''){
-        count=1;
+function printOneAllLabelImiBarcodeBySttrId(sttrId, count, systemOnOrOff) {
+    if (count == null || count == '' || count == 0) {
+        count = 1;
     }
-    for (let i = 1; i<=count;i++) {
-        var panel = 'Items55x13IMBarCodePanel';
-        loadXMLDoc();
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                document.getElementById("AllLabelsDivs").innerHTML = xmlhttp.responseText;
+    
+    // Get the root path if defined
+    var documentRootPath = '';
+    if (document.getElementById('documentRootPath')) {
+        documentRootPath = document.getElementById('documentRootPath').value;
+    }
+
+    var panel = 'Items55x13IMBarCodePanel';
+    var url = "include/php/ogibbc55x13imi" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel;
+    
+    if (documentRootPath != '') {
+        url = documentRootPath + "/" + url;
+    }
+
+    loadXMLDoc();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById("AllLabelsDivs").innerHTML = xmlhttp.responseText;
+            
+            // THIS TRIGGER WAS MISSING IN YOUR CODE:
+            if (systemOnOrOff == 'ON') {
+                // We use a small timeout to ensure the HTML is loaded before triggering the bat file
+                setTimeout(function() {
+                    parent.location = "localexplorer:C:/OMPRN/omprn.bat";
+                }, 500);
             }
-        };
-        xmlhttp.open("GET", "include/php/ogibbc55x13imi" + default_theme + ".php?sttrId=" + sttrId + "&panel=" + panel, true);
-        xmlhttp.send();
-    }
+        }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
 }
 // END CODE TO ADD FUNCTION FOR IMITATION AUTO BARCODE PRINT @PRIYANKA-30JULY18
 function stockMasterValidate(documentRootPath) {

@@ -3631,6 +3631,9 @@ function showAddWhStockPanel(panel) {
     else if (panel == 'imitationStock') {
         xmlhttp.open("POST", "include/php/omimistockreports" + default_theme + ".php?panelName=" + panel, true);
     }
+    else if (panel == 'retailandwholesale' || panel == 'retailandwholesale_wholesale') {
+        xmlhttp.open("POST", "include/php/omavailableretailandwholesale" + default_theme + ".php?panelName=" + panel, true);
+    }
     /* END CODE FOR ADDED STOCK REPORT WITJ ZERO QTY @SIMRAN:02MAY2023*/
     else {
         xmlhttp.open("POST", "include/php/ogiamndv" + default_theme + ".php?panel=" + panel + "&panelName=AddStock", true);
@@ -4990,11 +4993,12 @@ function calStockItemPrice() {
     //alert('metal_Rate_Int_Val == ' + metal_Rate_Int_Val);
     //alert('metal_Rate_Int_Val_Length == ' + metal_Rate_Int_Val_Length);
     //alert('isRateLessThan20k == ' + isRateLessThan20k);
-    if (document.getElementById('checkarateonegm').value == 'true') {
-        document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
-        document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
+   const check = document.getElementById('checkarateonegm');
+if (check && check.value === 'true') {
+    document.getElementById('gmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
+    document.getElementById('gmWtInGm').value = parseFloat(1).toFixed(2);
         document.getElementById('gmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
-    } else {
+} else {
         //
         // FOR METAL RATE @PRIYANKA-20DEC2021
         // UPDATED: Gold uses value-based check (<20,000 = per-gram, >=20,000 = per-10gm); Silver/StrSilver use digit-length
@@ -7392,6 +7396,10 @@ function showSlPrJewelleryInvDiv(srchItemPreId, srchItemPostId, custId, panelNam
         xmlhttp.open("POST", "include/php/ogspjsdvb3" + default_theme + ".php?srchItemPreId=" + srchItemPreId + "&srchItemPostId=" + srchItemPostId + "&custId=" + custId + "&panelName=" + panelName + "&txtType=" + txtType + "&returnItem=" + returnItem + "&invoiceNo=" + invoiceNo + "&firmId=" + firmId, true);
     } else if (panelName == 'FINE_JEWELLERY_SELL_CAD') {
         xmlhttp.open("POST", "include/php/ogspjsdvcad" + default_theme + ".php?srchItemPreId=" + srchItemPreId + "&srchItemPostId=" + srchItemPostId + "&custId=" + custId + "&panelName=" + panelName + "&txtType=" + txtType + "&returnItem=" + returnItem + "&invoiceNo=" + invoiceNo + "&firmId=" + firmId, true);
+    }else if (panelName == 'RETAIL_SELL_PANEL') {
+        xmlhttp.open("POST", "include/php/ogspjsdvretail" + default_theme + ".php?srchItemPreId=" + srchItemPreId + "&srchItemPostId=" + srchItemPostId + "&custId=" + custId + "&panelName=" + panelName + "&txtType=" + txtType + "&returnItem=" + returnItem + "&invoiceNo=" + invoiceNo + "&firmId=" + firmId, true);
+    }else if (panelName == 'WHOLESALE_SELL_PANEL') {
+        xmlhttp.open("POST", "include/php/ogspjsdvwholesale" + default_theme + ".php?srchItemPreId=" + srchItemPreId + "&srchItemPostId=" + srchItemPostId + "&custId=" + custId + "&panelName=" + panelName + "&txtType=" + txtType + "&returnItem=" + returnItem + "&invoiceNo=" + invoiceNo + "&firmId=" + firmId, true);    
     } else
         xmlhttp.open("POST", "include/php/ogspjsdv" + default_theme + ".php?srchItemPreId=" + srchItemPreId + "&srchItemPostId=" + srchItemPostId + "&custId=" + custId + "&panelName=" + panelName + "&txtType=" + txtType, true);
 //        } 
@@ -17465,11 +17473,22 @@ function showInvoiceDetailsAutoSell(requestData) {
     xmlhttp2.send();
 
 }
+// function notworhkingapplyMarkup() {
+//     console.log('the markup function is called ');
+//     var fixedPriceCheckbox = document.getElementById('sttr_fixed_price_status_checkbox');
+//     var fixedPriceCheckboxsell = document.getElementById('sttr_fixed_price_status');
+//     if (fixedPriceCheckbox.checked || fixedPriceCheckboxsell.checked) {
+//         toggleFixedPrice();
+//     }
+// }
 function applyMarkup() {
-    console.log('the markup function is called ');
+    // console.log('the markup function is called ');
     var fixedPriceCheckbox = document.getElementById('sttr_fixed_price_status_checkbox');
     var fixedPriceCheckboxsell = document.getElementById('sttr_fixed_price_status');
-    if (fixedPriceCheckbox.checked || fixedPriceCheckboxsell.checked) {
+    // Check only if elements exist
+    var isFixed1 = fixedPriceCheckbox ? fixedPriceCheckbox.checked : false;
+    var isFixed2 = fixedPriceCheckboxsell ? fixedPriceCheckboxsell.checked : false;
+    if (isFixed1 || isFixed2) {
         toggleFixedPrice();
     }
 }
@@ -17550,7 +17569,7 @@ function toggleFixedPrice() {
 // }
 
 function calculateMarkupPrice() {
-    console.log('the function is called calculateMarkupPrice');
+    // console.log('the function is called calculateMarkupPrice');
 
     // 1. Get the markup field
     var markupInput = document.getElementById('sttr_markup');
@@ -17562,10 +17581,10 @@ function calculateMarkupPrice() {
         var finalAmountInputB2 = document.getElementById('sttr_final_valuation');
         var customPriceInput = document.getElementById('sttr_cust_price');
 
-        console.log("markupInput:", markupInput ? markupInput.value : 'Not Found');
-        console.log("finalAmountInput:", finalAmountInput ? finalAmountInput.value : 'Not Found');
-        console.log("finalAmountInputB2:", finalAmountInputB2 ? finalAmountInputB2.value : 'Not Found');
-        console.log("customPriceInput:", customPriceInput ? customPriceInput.value : 'Not Found');
+        // console.log("markupInput:", markupInput ? markupInput.value : 'Not Found');
+        // console.log("finalAmountInput:", finalAmountInput ? finalAmountInput.value : 'Not Found');
+        // console.log("finalAmountInputB2:", finalAmountInputB2 ? finalAmountInputB2.value : 'Not Found');
+        // console.log("customPriceInput:", customPriceInput ? customPriceInput.value : 'Not Found');
 
         // Safety check
         if (!customPriceInput) {
@@ -17587,8 +17606,8 @@ function calculateMarkupPrice() {
             return;
         }
 
-        console.log('Base Amount:', baseAmount);
-        console.log('Markup %:', markupPercentage);
+        // console.log('Base Amount:', baseAmount);
+        // console.log('Markup %:', markupPercentage);
 
         // 4. Perform calculation only if both are valid
         if (markupPercentage > 0 && baseAmount > 0) {
@@ -17610,7 +17629,7 @@ function calculateMarkupPrice() {
 
 function calculateMarkupPriceOnLoad() {
         // 1. Get the elements we need
-      console.log('the function is called calculateMarkupPriceOnLoad');
+    //   console.log('the function is called calculateMarkupPriceOnLoad');
 
 var markupInput = document.getElementById('sttr_markup');
 
@@ -17620,9 +17639,9 @@ if (markupInput && markupInput.value !== "") {
     var finalAmountInput = document.getElementById('slPrItemFinalVal');
     var customPriceInput = document.getElementById('sttr_cust_price');
 
-    console.log('markupInput:', markupInput ? markupInput.value : 'Not Found');
-    console.log('finalAmountInput:', finalAmountInput ? finalAmountInput.value : 'Not Found');
-    console.log('customPriceInput:', customPriceInput ? customPriceInput.value : 'Not Found');
+    // console.log('markupInput:', markupInput ? markupInput.value : 'Not Found');
+    // console.log('finalAmountInput:', finalAmountInput ? finalAmountInput.value : 'Not Found');
+    // console.log('customPriceInput:', customPriceInput ? customPriceInput.value : 'Not Found');
 
     // Safety check
     if (!finalAmountInput || !customPriceInput) {
@@ -17664,4 +17683,282 @@ if (markupInput && markupInput.value !== "") {
     };
 
     xhr.send("action=update");
+}
+
+// pop function of the wastage,putity, making charges --saif
+function openWastagePopup() {
+
+    // Clear any previous success message
+    document.getElementById('wastage_submit_msg').innerHTML = '';
+
+    // --- WHOLESALE CHECK ---
+    var h_ws_purity = document.getElementById('sttr_wholesale_purity').value;
+    var h_ws_wastage = document.getElementById('sttr_wholesale_wastage').value;
+    var h_ws_making = document.getElementById('sttr_wholesale_making_charges').value;
+    var h_ws_making_type = document.getElementById('sttr_wholesale_making_charges_type').value;
+
+    // Fill WS Inputs if hidden has value, else clear
+    if (h_ws_purity != "") {
+        document.getElementById('ws_purity').value = h_ws_purity;
+    } else {
+        document.getElementById('ws_purity').value = '';
+    }
+    if (h_ws_wastage != "") {
+        document.getElementById('ws_wastage').value = h_ws_wastage;
+    } else {
+        document.getElementById('ws_wastage').value = '';
+    }
+    if (h_ws_making != "") {
+        document.getElementById('ws_making').value = h_ws_making;
+    } else {
+        document.getElementById('ws_making').value = '';
+    }
+    if (h_ws_making_type != "") {
+        document.getElementById('ws_making_type').value = h_ws_making_type;
+    } else {
+        document.getElementById('ws_making_type').value = 'GM';
+    }
+
+    // --- RETAIL CHECK ---
+    var h_rt_purity = document.getElementById('sttr_retail_purity').value;
+    var h_rt_wastage = document.getElementById('sttr_retail_wastage').value;
+    var h_rt_making = document.getElementById('sttr_retail_making_charges').value;
+    var h_rt_making_type = document.getElementById('sttr_retail_making_charges_type').value;
+
+    // Fill RT Inputs if hidden has value, else clear
+    if (h_rt_purity != "") {
+        document.getElementById('rt_purity').value = h_rt_purity;
+    } else {
+        document.getElementById('rt_purity').value = '';
+    }
+    if (h_rt_wastage != "") {
+        document.getElementById('rt_wastage').value = h_rt_wastage;
+    } else {
+        document.getElementById('rt_wastage').value = '';
+    }
+    if (h_rt_making != "") {
+        document.getElementById('rt_making').value = h_rt_making;
+    } else {
+        document.getElementById('rt_making').value = '';
+    }
+    if (h_rt_making_type != "") {
+        document.getElementById('rt_making_type').value = h_rt_making_type;
+    } else {
+        document.getElementById('rt_making_type').value = 'per';
+    }
+
+    // Show the popup
+    document.getElementById('wastage_popup_modal').style.display = 'block';
+
+    // Focus on first field
+    document.getElementById('ws_purity').focus();
+}
+
+// 2. APPLY DATA: POPUP -> HIDDEN -> MAIN FORM VISIBLE (Visual Only)
+// function applyWastageData(prefix) {
+
+//     // Reset message to show it "blinking" or refreshing if submitted again
+//     document.getElementById('wastage_submit_msg').innerHTML = "";
+
+//     // A. Get values from the popup inputs
+//     var purityVal = document.getElementById(prefix + '_purity').value;
+//     var wastageVal = document.getElementById(prefix + '_wastage').value;
+//     var makingVal = document.getElementById(prefix + '_making').value;
+//     var makingType = document.getElementById(prefix + '_making_type').value;
+
+//     // Define hidden field IDs based on prefix (ws=wholesale, rt=retail)
+//     var hiddenPurityId = (prefix == 'ws') ? 'sttr_wholesale_purity' : 'sttr_retail_purity';
+//     var hiddenWastageId = (prefix == 'ws') ? 'sttr_wholesale_wastage' : 'sttr_retail_wastage';
+//     var hiddenMakingId = (prefix == 'ws') ? 'sttr_wholesale_making_charges' : 'sttr_retail_making_charges';
+//     var hiddenMakingTypeId = (prefix == 'ws') ? 'sttr_wholesale_making_charges_type' : 'sttr_retail_making_charges_type';
+
+//     // B. Store these values into the HIDDEN fields (Memory)
+//     document.getElementById(hiddenPurityId).value = purityVal;
+//     document.getElementById(hiddenWastageId).value = wastageVal;
+//     document.getElementById(hiddenMakingId).value = makingVal;
+//     document.getElementById(hiddenMakingTypeId).value = makingType;
+
+//     // C. Show Success Message
+//     setTimeout(function () {
+//         document.getElementById('wastage_submit_msg').innerHTML = "Submitted Successfully";
+//     }, 50);
+// }
+function applyAllWastageData() {
+    // UPDATED HELPER: Returns "0" if the input box is empty
+    function getPopupVal(id) {
+        var el = document.getElementById(id);
+        if (!el) return "0"; 
+        var val = el.value.trim();
+        // If blank, return "0". Otherwise, return the value typed by user.
+        return (val === "") ? "0" : val;
+    }
+    document.getElementById('sttr_wholesale_purity').value = getPopupVal('ws_purity');
+    document.getElementById('sttr_wholesale_wastage').value = getPopupVal('ws_wastage');
+    document.getElementById('sttr_wholesale_making_charges').value = getPopupVal('ws_making');
+    
+    // For the Type dropdown
+    var wsType = document.getElementById('ws_making_type').value;
+    document.getElementById('sttr_wholesale_making_charges_type').value = wsType ? wsType : "GM";
+
+    // --- 2. Update Retail Hidden Fields ---
+    var rtPurity = getPopupVal('rt_purity');
+    document.getElementById('sttr_retail_purity').value = rtPurity;
+    document.getElementById('sttr_retail_wastage').value = getPopupVal('rt_wastage');
+    document.getElementById('sttr_retail_making_charges').value = getPopupVal('rt_making');
+    var rtType = document.getElementById('rt_making_type').value;
+    document.getElementById('sttr_retail_making_charges_type').value = rtType ? rtType : "GM";
+    if(document.getElementById('sttr_sell_purity')) {
+        document.getElementById('sttr_sell_purity').value = rtPurity;
+    }
+    document.getElementById('wastage_popup_modal').style.display = 'none';
+}
+
+function clearWastageInputs() {
+    // Clear Visual Inputs
+    document.getElementById('ws_purity').value = "";
+    document.getElementById('ws_wastage').value = "";
+    document.getElementById('ws_making').value = "";
+    document.getElementById('ws_making_type').selectedIndex = 0; // Reset dropdown
+
+    document.getElementById('rt_purity').value = "";
+    document.getElementById('rt_wastage').value = "";
+    document.getElementById('rt_making').value = "";
+    // Set retail dropdown to GM (index 0 based on code structure above)
+    var rtDrop = document.getElementById('rt_making_type');
+    for (var i = 0; i < rtDrop.options.length; i++) {
+        if (rtDrop.options[i].value == 'GM') {
+            rtDrop.selectedIndex = i;
+            break;
+        }
+    }
+
+    // Clear Hidden Fields (to ensure "Null" state is saved)
+    var hiddenFields = [
+        'sttr_wholesale_purity', 'sttr_wholesale_wastage', 'sttr_wholesale_making_charges', 'sttr_wholesale_making_charges_type',
+        'sttr_retail_purity', 'sttr_retail_wastage', 'sttr_retail_making_charges', 'sttr_retail_making_charges_type'
+    ];
+
+    for (var i = 0; i < hiddenFields.length; i++) {
+        if (document.getElementById(hiddenFields[i])) {
+            document.getElementById(hiddenFields[i]).value = "";
+        }
+    }
+
+    document.getElementById('wastage_submit_msg').innerHTML = "Cleared";
+}
+function restoreOriginalValuesForSubmit() {
+    // This function swaps the Retail values currently in the input boxes
+    // with the Original Supplier values right before submitting.
+
+    // var origWastage = document.getElementById('sttr_val_original_wastage').value;
+    var origPurity = document.getElementById('sttr_val_original_purity').value;
+    var Purity = document.getElementById('sttr_purity').value;
+    // var origMaking = document.getElementById('sttr_val_original_making').value;
+    // var origMakingType = document.getElementById('sttr_val_original_making_type').value;
+
+    // Swap Wastage
+    // if(document.getElementById('slPrItemWastage')) {
+    //     document.getElementById('slPrItemWastage').value = origWastage;
+    // }
+
+    // console.log("Restoring -> Purity:", origPurity, " Purity:", Purity);
+
+    // Swap Purity (Tunch) - Note: The input ID in ogiatnch.php is usually sttr_purity
+    if (document.getElementById('sttr_purity')) {
+        document.getElementById('sttr_purity').value = origPurity;
+    }
+
+    // Swap Making Charges
+    // if(document.getElementById('slPrItemLabCharges')) {
+    //     document.getElementById('slPrItemLabCharges').value = origMaking;
+    // }
+
+    // // Swap Making Charges Type
+    // if(document.getElementById('slPrItemLabChargesType')) {
+    //     document.getElementById('slPrItemLabChargesType').value = origMakingType;
+    // }
+    console.log("Original Purity (sttr_val_original_purity):", origPurity);
+    console.log("Updated sttr_purity Value:", document.getElementById('sttr_purity').value);
+    return true;
+}
+function reverseCalcOfRawPurchase() {
+    // 1. Get Base Values
+    var totalAmount = parseFloat(document.getElementById('sttr_final_valuation').value) || 0;
+    var valBy = document.getElementById('sttr_final_valuation_by').value; 
+    var metalType = document.getElementById('sttr_metal_type').value.toLowerCase();
+    var check1gm = document.getElementById('checkarateonegm').value; // 'on' or 'off'
+    var wtType = document.getElementById('sttr_gs_weight_type').value; // 'KG', 'GM', or 'MG'
+
+    // 2. Determine which weight value to use
+    var weightValue = 0;
+    if (valBy === 'byFineWt') {
+        weightValue = parseFloat(document.getElementById('sttr_fine_weight').value) || 0;
+    } else if (valBy === 'byFinalFineWt' || valBy === 'byFFineWt') {
+        weightValue = parseFloat(document.getElementById('sttr_final_fine_weight').value) || 0;
+    } else if (valBy === 'byNetWt') {
+        weightValue = parseFloat(document.getElementById('sttr_nt_weight').value) || 0;
+    } else if (valBy === 'byGrossWt') {
+        weightValue = parseFloat(document.getElementById('sttr_gs_weight').value) || 0;
+    } else {
+        weightValue = parseFloat(document.getElementById('sttr_fine_weight').value) || 0;
+    }
+
+    if (weightValue > 0 && totalAmount > 0) {
+        // 3. Subtract Tax to get the base taxable value
+        var taxPer = parseFloat(document.getElementById('sttr_tax').value) || 0;
+        var taxableValue = totalAmount;
+        if (taxPer > 0) {
+            taxableValue = totalAmount / (1 + (taxPer / 100));
+        }
+
+        // 4. Convert Entered Weight into "Grams" for calculation
+        // This fixes the error where Silver in KG shows the wrong rate
+        var weightInGrams = 0;
+        if (wtType === 'KG') {
+            weightInGrams = weightValue * 1000;
+        } else if (wtType === 'MG') {
+            weightInGrams = weightValue / 1000;
+        } else {
+            weightInGrams = weightValue; // Already in Grams
+        }
+
+        // 5. Calculate Basic Rate (Price per 1 Gram)
+        var ratePerGram = taxableValue / weightInGrams;
+        var finalCalculatedRate = 0;
+
+        // 6. Handle Metal Specific Multipliers (Gold per 10gm, Silver per 1kg)
+        if (check1gm === 'on') {
+            // "Convert to 1gm" is checked
+            finalCalculatedRate = ratePerGram;
+        } else {
+            if (metalType === 'gold') {
+                // Gold Standard: Rate per 10 Grams
+                // Use system hidden field if available, else default to 10
+                var goldFactor = document.getElementById('gmWtInGm') ? parseFloat(document.getElementById('gmWtInGm').value) : 10;
+                finalCalculatedRate = ratePerGram * goldFactor;
+            } 
+            else if (metalType === 'silver' || metalType === 'strsilver') {
+                // Silver Standard: Rate per 1 Kilogram (1000 Grams)
+                // If your system prices silver per 10gm, change 1000 to 10
+                finalCalculatedRate = ratePerGram * 1000; 
+            } 
+            else {
+                // Default fallback for Alloy/Other (usually 10gm)
+                finalCalculatedRate = ratePerGram * 10;
+            }
+        }
+
+        // 7. Update the Metal Rate fields
+        document.getElementById('sttr_metal_rate').value = finalCalculatedRate.toFixed(2);
+        
+        if(document.getElementById('sttr_product_purchase_rate')){
+            document.getElementById('sttr_product_purchase_rate').value = finalCalculatedRate.toFixed(2);
+        }
+
+        // 8. Sync all other form fields (Total Lab Charges, Taxes, etc.)
+        if (typeof calRawMetalFinVal === "function") {
+            calRawMetalFinVal();
+        }
+    }
+    return false;
 }

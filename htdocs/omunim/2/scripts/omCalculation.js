@@ -146,7 +146,7 @@ function calculateSellPrice() {
             document.getElementById('srGmWtInMg').value = parseFloat((1000 * 1000) * 1).toFixed(2);
             //
             //
-        } else if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3 || metal_Rate_Int_Val_Length == 4) &&
+        } else if ((metal_Rate_Int_Val_Length == 2 || metal_Rate_Int_Val_Length == 3) &&
                 (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
             //
             // FOR SILVER METAL RATE PER GM @PRIYANKA-24DEC2021
@@ -156,7 +156,26 @@ function calculateSellPrice() {
                 document.getElementById('srGmWtInKg').value = parseFloat(100 * 1).toFixed(2);
                 document.getElementById('srGmWtInMg').value = parseFloat(10000 * 1).toFixed(2);
             } else {
-                document.getElementById('srGmWtInGm').value = parseFloat(1).toFixed(2);
+                 if (metalRate > 500) {
+                    document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
+                    document.getElementById('srGmWtInKg').value = parseFloat(100).toFixed(2);
+                    document.getElementById('srGmWtInMg').value = parseFloat(10000).toFixed(2);
+                } else if (metalRate < 500){
+                    document.getElementById('srGmWtInGm').value = parseFloat(1).toFixed(2);
+                    document.getElementById('srGmWtInKg').value = parseFloat(1000).toFixed(2);
+                    document.getElementById('srGmWtInMg').value = parseFloat(1000).toFixed(2);
+                }
+            }
+            //
+            //
+        }else if ((metal_Rate_Int_Val_Length == 4) &&
+                (metalType == 'Silver' || metalType == 'SILVER' || metalType == 'silver')) {
+            if (document.getElementById('silverMetalRateby10gm').value == 'yes') {
+                document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
+                document.getElementById('srGmWtInKg').value = parseFloat(100 * 1).toFixed(2);
+                document.getElementById('srGmWtInMg').value = parseFloat(10000 * 1).toFixed(2);
+            } else {
+                document.getElementById('srGmWtInGm').value = parseFloat(10).toFixed(2);
                 document.getElementById('srGmWtInKg').value = parseFloat(1000 * 1).toFixed(2);
                 document.getElementById('srGmWtInMg').value = parseFloat(1000 * 1).toFixed(2);
             }
@@ -4902,7 +4921,15 @@ function reverseCalcOfPaymentOnSell() {
             // END CODE TO GET MAKING CHARGES WITHOUT GST AMOUNT IF MAKING GST IS PRESENT @AUTHOR:MADHUREE-05SEP2020 //
             // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX //
             //
-            document.getElementById('slPrItemLabCharges').value = parseFloat(newMakingCharges).toFixed(2);
+            // document.getElementById('slPrItemLabCharges').value = parseFloat(newMakingCharges).toFixed(2);
+            var labChargesEl = document.getElementById('slPrItemLabCharges');
+            var currentMkg = parseFloat(labChargesEl.value);
+
+            // Check if element exists, is a valid number, and is not zero
+            if (labChargesEl && !isNaN(currentMkg) && currentMkg !== 0) {
+                labChargesEl.value = parseFloat(newMakingCharges).toFixed(2);
+            } else {
+            }
 
         } else if (saleReverseCalByForMoreAmt == 'byCustWastage') {
             //
